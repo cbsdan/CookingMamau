@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\AvailableScheduleController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,7 +31,7 @@ Route::middleware(['admin'])->group(function () {
 });
 
 
-//Creating Users
+//Users
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('admin.users.create');
@@ -41,10 +42,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 });
 
 
+
+
+// Discounts 
 Route::get('discounts', [DiscountController::class, 'index'])->name('discounts.index');
-
-
-// Discounts CRUD
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('discounts/create', [DiscountController::class, 'create'])->name('discounts.create');
     Route::post('discounts', [DiscountController::class, 'store'])->name('discounts.store');
@@ -52,3 +53,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('discounts/{discount}', [DiscountController::class, 'update'])->name('discounts.update');
     Route::delete('discounts/{discount}', [DiscountController::class, 'destroy'])->name('discounts.destroy');
 });
+
+
+
+// Available Schedule
+Route::get('available_schedules', [AvailableScheduleController::class, 'index'])->name('available_schedules.index');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('available_schedules/create', [AvailableScheduleController::class, 'create'])->name('available_schedules.create');
+    Route::post('available_schedules', [AvailableScheduleController::class, 'store'])->name('available_schedules.store');
+    Route::get('available_schedules/{available_schedule}/edit', [AvailableScheduleController::class, 'edit'])->name('available_schedules.edit');
+    Route::put('available_schedules/{available_schedule}', [AvailableScheduleController::class, 'update'])->name('available_schedules.update');
+    Route::delete('available_schedules/{available_schedule}', [AvailableScheduleController::class, 'destroy'])->name('available_schedules.destroy');
+});
+

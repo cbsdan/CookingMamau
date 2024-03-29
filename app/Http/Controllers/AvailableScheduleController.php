@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\AvailableSchedule;
 
@@ -14,12 +15,21 @@ class AvailableScheduleController extends Controller
      */
     public function index()
     {
-        // Retrieve all available schedules
-        $schedules = AvailableSchedule::all();
-
-        // Return the view with the available schedules
-        return view('available_schedules.index', compact('schedules'));
+        // Get all schedules
+        $allSchedules = AvailableSchedule::all();
+        
+        // Separate upcoming and past schedules
+        $upcomingSchedules = $allSchedules->filter(function ($schedule) {
+            return Carbon::parse($schedule->schedule)->isAfter(now());
+        });
+        
+        $pastSchedules = $allSchedules->filter(function ($schedule) {
+            return Carbon::parse($schedule->schedule)->isBefore(now());
+        });
+        
+        return view('available_schedules.index', compact('upcomingSchedules', 'pastSchedules'));
     }
+    
 
     /**
      * Show the form for creating a new available schedule.
@@ -28,7 +38,6 @@ class AvailableScheduleController extends Controller
      */
     public function create()
     {
-        // Return the view for creating a new available schedule
         return view('available_schedules.create');
     }
 
@@ -40,18 +49,20 @@ class AvailableScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request data
+        // Validate the submitted data
         $request->validate([
-            'schedule' => ['required', 'date']
-            // Add validation rules for other fields if necessary
+            'schedules.*' => 'required|date',
         ]);
 
-        // Create the available schedule
-        AvailableSchedule::create($request->all());
+        // Process each schedule date and store it in the database
+        foreach ($request->schedules as $schedule) {
+            AvailableSchedule::create([
+                'schedule' => $schedule,
+            ]);
+        }
 
-        // Redirect after creating the available schedule
-        return redirect()->route('available_schedules.index')
-                         ->with('success', 'Available schedule created successfully.');
+        // Redirect back to the index page with a success message
+        return redirect()->route('available_schedules.index')->with('success', 'Available schedules created successfully.');
     }
 
     /**
@@ -62,7 +73,7 @@ class AvailableScheduleController extends Controller
      */
     public function edit(AvailableSchedule $availableSchedule)
     {
-        // Return the view for editing the available schedule
+        $availableSchedules = AvailableSchedule::all();
         return view('available_schedules.edit', compact('availableSchedule'));
     }
 
@@ -78,7 +89,6 @@ class AvailableScheduleController extends Controller
         // Validate the request data
         $request->validate([
             'schedule' => ['required', 'date']
-            // Add validation rules for other fields if necessary
         ]);
 
         // Update the available schedule
