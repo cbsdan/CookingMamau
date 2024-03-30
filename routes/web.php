@@ -10,6 +10,8 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\BakedGoodsController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\AvailableScheduleController;
+use App\Http\Controllers\CartController;
+
 
 Route::get('/', [HomeController::class, 'index']);
 
@@ -91,3 +93,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::put('/ingredients/{ingredient}', [IngredientController::class, 'update'])->name('ingredients.update');
     Route::delete('/ingredients/{ingredient}', [IngredientController::class, 'destroy'])->name('ingredients.destroy');
 });
+
+
+// Define routes for cart-related actions
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+// Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+// Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
