@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ReviewImage extends Model
+{
+    use HasFactory;
+
+    protected $primaryKey = 'id_review_image';
+    public $timestamps = true;
+
+    protected $fillable = [
+        'image_path',
+        'id_review',
+    ];
+
+    // Relationships
+    public function review()
+    {
+        return $this->belongsTo(OrderReview::class, 'id_review');
+    }
+}
