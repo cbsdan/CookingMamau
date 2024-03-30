@@ -7,15 +7,15 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\BakedGoodsController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\AvailableScheduleController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index']);
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'home'])->name('home');
 
 Route::middleware(['auth'])->group(function() {
     Route::get('/profile', [ProfileController::class, 'index'])->name('user.profile');
@@ -66,3 +66,28 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('available_schedules/{available_schedule}', [AvailableScheduleController::class, 'destroy'])->name('available_schedules.destroy');
 });
 
+
+
+//Baked Goods
+Route::get('/baked_goods', [BakedGoodsController::class, 'index'])->name('baked_goods.index');
+Route::get('/baked_goods/{bakedGood}', [BakedGoodsController::class, 'show'])->name('baked_goods.show');
+
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/baked_goods/create', [BakedGoodsController::class, 'create'])->name('baked_goods.create');
+    Route::post('/baked_goods', [BakedGoodsController::class, 'store'])->name('baked_goods.store');
+    Route::get('/baked_goods/{bakedGood}/edit', [BakedGoodsController::class, 'edit'])->name('baked_goods.edit');
+    Route::put('/baked_goods/{bakedGood}', [BakedGoodsController::class, 'update'])->name('baked_goods.update');
+    Route::delete('/baked_goods/{bakedGood}', [BakedGoodsController::class, 'destroy'])->name('baked_goods.destroy');
+    Route::delete('/baked_goods/{bakedGoodImage}/delete-image', [BakedGoodsController::class, 'deleteImage'])->name('baked_goods.delete_image');
+});
+
+//Ingredients
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/ingredients', [IngredientController::class, 'index'])->name('ingredients.index');
+    Route::get('/ingredients/create', [IngredientController::class, 'create'])->name('ingredients.create');
+    Route::get('/ingredients/add/{bakedGood}', [IngredientController::class, 'add'])->name('ingredients.add');
+    Route::post('/ingredients', [IngredientController::class, 'store'])->name('ingredients.store');
+    Route::get('/ingredients/{ingredient}/edit', [IngredientController::class, 'edit'])->name('ingredients.edit');
+    Route::put('/ingredients/{ingredient}', [IngredientController::class, 'update'])->name('ingredients.update');
+    Route::delete('/ingredients/{ingredient}', [IngredientController::class, 'destroy'])->name('ingredients.destroy');
+});

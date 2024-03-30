@@ -4,6 +4,12 @@
 <div class="container">
     <h1>Available Schedules</h1>
 
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Link to create a new available schedule -->
     <div class="mb-3">
         <a href="{{ route('available_schedules.create') }}" class="btn btn-primary">Create New Schedule</a>

@@ -60,6 +60,16 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     @if (auth()->user()->is_admin)
+                                        <a class="dropdown-item" href="{{ route('ingredients.index') }}">
+                                            {{ __('Baked Goods Ingredients') }}
+                                        </a>
+                                    @endif  
+                                    @if (auth()->user()->is_admin)
+                                        <a class="dropdown-item" href="{{ route('baked_goods.index') }}">
+                                            {{ __('Baked Goods') }}
+                                        </a>
+                                    @endif  
+                                    @if (auth()->user()->is_admin)
                                         <a class="dropdown-item" href="{{ route('available_schedules.index') }}">
                                             {{ __('Available Schedule') }}
                                         </a>

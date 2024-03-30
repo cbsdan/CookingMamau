@@ -49,7 +49,7 @@
                         @endphp
                         <img src="{{ asset($imagePath) }}" class="img-thumbnail" alt="Discount" >   
                     </td>
-                    <td>{{ $discount->percent . "%" }}</td>
+                    <td>{{ $discount->percent . "% OFF" }}</td>
                     <td>{{ (isset($discount->max_number_buyer) ? $discount->max_number_buyer : 'No maximum buyers') }}</td>
                     <td>{{ (isset($discount->min_order_price) ? $discount->min_order_price : 'No minimum order') }}</td>
                     <td>{{ (isset($discount->max_discount_amount) ? $discount->max_discount_amount : 'No maximun amount') }}</td>

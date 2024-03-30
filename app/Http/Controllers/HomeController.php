@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BakedGood;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,7 +24,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $bakedGoods = BakedGood::all();
+        return view('welcome', compact('bakedGoods'));
+    }
+    public function home()
+    {
+        $bakedGoods = BakedGood::all();
+        return view('home', compact('bakedGoods'));
     }
 
 }
