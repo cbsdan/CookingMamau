@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\AvailableSchedule;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -59,17 +62,44 @@ class CartController extends Controller
         return redirect()->back()->with('error', 'Product not found in cart.');
     }
 
-    public function viewCart()
+    // public function viewCart()
+    // {
+    //     // Retrieve the current cart items from the session
+    //     $cartItems = session()->get('cart', []);
+    
+    //     // Pass the cart items to the view for rendering
+    //     return view('cart.view', compact('cartItems'));
+    // }
+
+    public function updateCart(Request $request)
     {
+        // Retrieve the product ID and updated quantity from the request
+        $bakedGoodId = $request->input('id');
+        $quantity = $request->input('qty');
+
         // Retrieve the current cart items from the session
         $cartItems = session()->get('cart', []);
-    
-        // Pass the cart items to the view for rendering
-        return view('cart.view', compact('cartItems'));
-    }
 
+        // Check if the product exists in the cart
+        if (isset($cartItems[$bakedGoodId])) {
+            // Update the quantity of the specified product
+            $cartItems[$bakedGoodId]['quantity'] = $quantity;
+
+            // Save the updated cart items back to the session
+            session()->put('cart', $cartItems);
+
+            return redirect()->back()->with('success', 'Cart updated successfully.');
+        }
+        
+        // If the product does not exist in the cart, redirect back with an error message
+        return redirect()->back()->with('error', 'Product not found in cart.');
+    }
+    
     public function checkout()
     {
-        // Add logic to handle the checkout process
+        $cartItems = session()->get('cart', []);
+        $user = Auth::user();
+        $availableSchedules = AvailableSchedule::where('schedule', '>=', Carbon::now())->limit(20)->get();
+        return view('order.checkout', compact('cartItems', 'user', 'availableSchedules'));
     }
 }

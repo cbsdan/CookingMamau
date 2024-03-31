@@ -28,8 +28,7 @@ class LoginController extends Controller
     {
         if (auth()->user()->is_admin) {
             return '/admin/dashboard'; // Redirect admin to admin dashboard
-        }
-
+        } 
         return '/home'; // Redirect regular user to home page
     }
     /**

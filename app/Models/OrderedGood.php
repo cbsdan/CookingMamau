@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderedMeal extends Model
+class OrderedGood extends Model
 {
     use HasFactory;
 
@@ -16,6 +16,7 @@ class OrderedMeal extends Model
     protected $fillable = [
         'id_order',
         'id_baked_goods',
+        'price_per_good',
         'qty',
     ];
 

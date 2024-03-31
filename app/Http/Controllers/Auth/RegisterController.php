@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Buyer;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 
 class RegisterController extends Controller
 {
@@ -65,6 +67,9 @@ class RegisterController extends Controller
             'id_user' => $user->id,
         ]);
 
-        return redirect()->back()->with('success', 'Profile updated successfully.');
+        // Authenticate the user after registration
+        Auth::login($user);
+
+        return redirect()->route('home')->with('success', 'Account registered successfully.');
     }
 }

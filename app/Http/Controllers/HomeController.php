@@ -27,10 +27,15 @@ class HomeController extends Controller
         $bakedGoods = BakedGood::all();
         return view('welcome', compact('bakedGoods'));
     }
-    public function home()
+    public function home(Request $request)
     {
-        $bakedGoods = BakedGood::all();
-        return view('home', compact('bakedGoods'));
+        // Check if user is authenticated
+        if ($request->user()) {
+            $bakedGoods = BakedGood::all();
+            return view('home', compact('bakedGoods'));
+        } else {
+            return redirect()->route('login')->with('error', 'You must be authenticated to access this page.'); // Redirect to login page
+        }
     }
 
 }

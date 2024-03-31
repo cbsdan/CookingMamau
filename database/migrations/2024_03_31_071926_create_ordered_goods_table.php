@@ -16,6 +16,7 @@ class CreateOrderedGoodsTable extends Migration
         Schema::create('ordered_goods', function (Blueprint $table) {
             $table->unsignedBigInteger('id_order');
             $table->unsignedBigInteger('id_baked_goods');
+            $table->decimal('price_per_good', 12, 2);
             $table->integer('qty');
             $table->timestamps();
 
@@ -35,6 +36,6 @@ class CreateOrderedGoodsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ordered_meals');
+        Schema::dropIfExists('ordered_goods');
     }
 }

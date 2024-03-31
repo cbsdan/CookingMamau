@@ -18,13 +18,13 @@ class AdminMiddleware
         // Check if user is authenticated
         if (!auth()->check()) {
             // Redirect the unauthenticated user to the login page
-            return redirect()->route('login');
+            return redirect()->route('login')->with('error', "Login first!");
         }
 
         // Check if the authenticated user is an admin
         if (!auth()->user()->is_admin) {
             // Redirect the non-admin user to a different route or display an error message
-            return redirect()->route('home');
+            return redirect()->route('home')->with('error', "You are not authorized to access the page!");
         }
 
         // Proceed to the next middleware or the requested route

@@ -1,23 +1,28 @@
 <?php
 
+use App\Models\BakedGood;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\BakedGoodsController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\AvailableScheduleController;
-use App\Http\Controllers\CartController;
 
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', function() {
+    $bakedGoods = BakedGood::all();
+    return view('welcome', compact('bakedGoods'));
+});
 
 Auth::routes();
 
-Route::get('/home', [HomeController::class, 'home'])->name('home');
+Route::get('/home', [HomeController::class, 'home'])->name('home')->middleware(['auth']);
 
 Route::middleware(['auth'])->group(function() {
     Route::get('/profile', [ProfileController::class, 'index'])->name('user.profile');
@@ -48,6 +53,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
 // Discounts 
 Route::get('discounts', [DiscountController::class, 'index'])->name('discounts.index');
+Route::get('check-discount', [DiscountController::class, 'checkDiscount'])->name('check.discount');
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('discounts/create', [DiscountController::class, 'create'])->name('discounts.create');
     Route::post('discounts', [DiscountController::class, 'store'])->name('discounts.store');
@@ -96,7 +102,14 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
 
 // Define routes for cart-related actions
-Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
-// Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
-// Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::prefix('cart')->group(function () {
+    Route::post('/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/{id}/update', [CartController::class, 'updateCart'])->name('cart.update');
+    // Route::get('/', [CartController::class, 'viewCart'])->name('cart.view');
+});
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->middleware(['auth']);
+
+// User Orders
+Route::get('orders/store', [OrderController::class, 'store'])->name('user.orders.create')->middleware('auth');
+Route::get('orders', [OrderController::class, 'userOrders'])->name('user.orders')->middleware('auth');

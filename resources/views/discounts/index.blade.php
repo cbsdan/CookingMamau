@@ -7,6 +7,11 @@
             {{ session('success') }}
         </div>
     @endif
+    @if(session('error'))
+        <div class="alert alert-warning">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <div class="mb-3">
         <form action="{{ route('discounts.index') }}" method="GET">

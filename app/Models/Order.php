@@ -9,14 +9,15 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id_order';
     public $timestamps = true;
 
     protected $fillable = [
         'order_status',
+        'buyer_name',
         'buyer_note',
         'delivery_address',
         'email_address',
+        'shipping_cost',
         'discount_code',
         'id_schedule',
         'id_buyer',
@@ -38,9 +39,9 @@ class Order extends Model
         return $this->belongsTo(Discount::class, 'discount_code', 'discount_code');
     }
 
-    public function orderedMeals()
+    public function orderedGoods()
     {
-        return $this->hasMany(OrderedMeal::class, 'id_order');
+        return $this->hasMany(OrderedGood::class, 'id_order');
     }
 
     public function reviews()

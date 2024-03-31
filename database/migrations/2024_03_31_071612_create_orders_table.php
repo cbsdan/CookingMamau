@@ -17,8 +17,10 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->string('order_status');
             $table->string('buyer_note')->nullable();
+            $table->string('buyer_name');
             $table->string('delivery_address');
             $table->string('email_address');
+            $table->decimal('shipping_cost', 12, 2)->default(50);
             $table->string('discount_code')->nullable();
             $table->unsignedBigInteger('id_schedule');
             $table->unsignedBigInteger('id_buyer');

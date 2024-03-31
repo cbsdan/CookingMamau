@@ -29,6 +29,7 @@ class BakedGood extends Model
     {
         return $this->belongsTo(BakedGoodImage::class, 'thumbnail_image_id');
     }
+   
     /**
      * Get the ingredients for the baked good.
      */

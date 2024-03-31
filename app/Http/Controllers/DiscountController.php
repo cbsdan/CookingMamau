@@ -96,4 +96,15 @@ class DiscountController extends Controller
 
         return redirect()->route('discounts.index')->with('success', 'Discount deleted successfully.');
     }
+
+    public function checkDiscount(Request $request)
+    {
+        $discountCode = $request->input('discountCode');
+        
+        // Check if the discount code exists
+        $discount = Discount::where('discount_code', $discountCode)->first();
+        
+        // Return JSON response with discount details
+        return response()->json($discount);
+    }
 }
