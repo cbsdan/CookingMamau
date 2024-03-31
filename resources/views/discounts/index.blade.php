@@ -41,7 +41,9 @@
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Availability</th>
-                <th>Actions</th>
+                @if (auth()->check() && auth()->user()->is_admin)
+                    <th>Actions</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -63,12 +65,14 @@
                     <td>{{ $discount->discount_end }}</td>
                     <td>Available</td>
                     <td>
-                        <a href="{{ route('discounts.edit', $discount->discount_code) }}" class="btn btn-sm btn-secondary">Edit</a>
-                        <form action="{{ route('discounts.destroy', $discount->discount_code) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this discount?')">Delete</button>
-                        </form>
+                        @if (auth()->check() && auth()->user()->is_admin)
+                            <a href="{{ route('discounts.edit', $discount->discount_code) }}" class="btn btn-sm btn-secondary">Edit</a>
+                            <form action="{{ route('discounts.destroy', $discount->discount_code) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this discount?')">Delete</button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach

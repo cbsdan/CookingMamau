@@ -95,6 +95,11 @@
                                         </a>
                                     @endif  
                                     @if (auth()->user())
+                                        <a class="dropdown-item" href="{{ route('order_reviews.index') }}">
+                                            {{ __('Order Reviews') }}
+                                        </a>
+                                    @endif  
+                                    @if (auth()->user())
                                         <a class="dropdown-item" href="{{ route('discounts.index') }}">
                                             {{ __('Discounts') }}
                                         </a>

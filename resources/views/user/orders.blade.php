@@ -49,7 +49,21 @@
                             @endif
                         </div>
                         <div class="card-footer">
-                            Order Status: {{ $order->order_status }}
+                            <div>
+                                Order Status: {{ $order->order_status }}
+                            </div>
+                            <div>
+                                @if ($order->order_status == "Delivered" && !$order->reviews)
+                                    <a class="btn btn-primary" href="{{route('order_reviews.create', $order->id)}}">
+                                        Add a review
+                                    </a>
+                                @elseif ($order->reviews)
+                                    @php $orderReview =  $order->reviews;@endphp
+                                    <a class="btn btn-primary" href="{{route('order_reviews.show', $orderReview->id)}}">
+                                        View my review
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                         
                     </div>

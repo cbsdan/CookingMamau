@@ -9,7 +9,6 @@ class OrderReview extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id_review';
     public $timestamps = true;
 
     protected $fillable = [
@@ -22,5 +21,9 @@ class OrderReview extends Model
     public function order()
     {
         return $this->belongsTo(Order::class, 'id_order');
+    }
+    public function reviewImages()
+    {
+        return $this->hasMany(ReviewImage::class, 'id_review');
     }
 }

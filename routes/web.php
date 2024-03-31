@@ -12,6 +12,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\BakedGoodsController;
 use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\OrderReviewController;
 use App\Http\Controllers\AvailableScheduleController;
 
 
@@ -113,3 +114,15 @@ Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->
 // User Orders
 Route::get('orders/store', [OrderController::class, 'store'])->name('user.orders.create')->middleware('auth');
 Route::get('orders', [OrderController::class, 'userOrders'])->name('user.orders')->middleware('auth');
+
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/order_reviews', [OrderReviewController::class, 'index'])->name('order_reviews.index');
+    Route::get('/order_reviews/{order}/create', [OrderReviewController::class, 'create'])->name('order_reviews.create');
+    Route::get('/order_reviews/{orderReview}', [OrderReviewController::class, 'show'])->name('order_reviews.show');
+    Route::post('/order_reviews', [OrderReviewController::class, 'store'])->name('order_reviews.store');
+    Route::get('/order_reviews/{orderReview}/edit', [OrderReviewController::class, 'edit'])->name('order_reviews.edit');
+    Route::put('/order_reviews/{orderReview}', [OrderReviewController::class, 'update'])->name('order_reviews.update');    
+    Route::delete('/order_reviews/{orderReview}', [OrderReviewController::class, 'destroy'])->name('order_reviews.destroy');
+    Route::delete('/review_images/{image}', [OrderReviewController::class, 'destroyReviewImage'])->name('review_images.destroy');
+});

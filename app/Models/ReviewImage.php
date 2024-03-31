@@ -9,7 +9,6 @@ class ReviewImage extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id_review_image';
     public $timestamps = true;
 
     protected $fillable = [
