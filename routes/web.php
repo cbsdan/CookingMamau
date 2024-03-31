@@ -19,7 +19,7 @@ use App\Http\Controllers\AvailableScheduleController;
 Route::get('/', function() {
     $bakedGoods = BakedGood::all();
     return view('welcome', compact('bakedGoods'));
-});
+})->name('welcome');
 
 Auth::routes();
 
@@ -114,6 +114,7 @@ Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->
 // User Orders
 Route::get('orders/store', [OrderController::class, 'store'])->name('user.orders.create')->middleware('auth');
 Route::get('orders', [OrderController::class, 'userOrders'])->name('user.orders')->middleware('auth');
+Route::get('orders/{order}', [OrderController::class, 'show'])->name('user.order.show')->middleware('auth');
 
 
 Route::group(['middleware' => 'auth'], function () {

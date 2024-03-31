@@ -79,6 +79,11 @@
                                             {{ __('Baked Goods Ingredients') }}
                                         </a>
                                     @endif  
+                                    @if (!auth()->user()->is_admin)
+                                        <a class="dropdown-item" href="{{ route('welcome') }}">
+                                            {{ __('Baked Goods') }}
+                                        </a>
+                                    @endif  
                                     @if (auth()->user()->is_admin)
                                         <a class="dropdown-item" href="{{ route('baked_goods.index') }}">
                                             {{ __('Baked Goods') }}
@@ -137,12 +142,14 @@
             @php
                 $cartItems = session()->get('cart', []);
                 $grandTotal = 0;
+                $cartItemNumber = 0;
             @endphp
             <div class="cart flex-column justify-content-between" style="display:none;" >
                 <div id="cartItems">
                     <h2>My Cart</h2>
                     @foreach ($cartItems as $id => $details)
                         @php 
+                            $cartItemNumber++;
                             $bakedGood = BakedGood::where('id', $id)->first();
 
                             $total = $details['quantity'] * $details['price']; 
@@ -172,7 +179,7 @@
                             <form action="{{route('cart.remove')}}" method="POST" class=" d-flex align-items-center col-1 px-1 text-center">
                                 @csrf
                                 <input type="hidden" name='id' value='{{$id}}'>
-                                <button type="submit" name='submit' class="btn mb-0 p-0 text-start ">{{"D"}}</button>
+                                <button type="submit" name='submit' class="btn mb-0 p-0 text-start ">{{"R"}}</button>
                             </form>
                         </div>
 
@@ -182,18 +189,22 @@
                     <div class="cart-total text-end">
                         Total: P<span class='grand-total'>{{$grandTotal}}</span> 
                     </div>
-                    <form action="{{route('checkout')}}" method="GET">
-                        @csrf
-                        <button type='submit' class="btn btn-success checkout-btn">Checkout</button>
-                    </form>
+                    @if ($cartItems)
+                        <form action="{{route('checkout')}}" method="GET">
+                            @csrf
+                            <button type='submit' class="btn btn-success checkout-btn">Checkout</button>
+                        </form>
+                    @else
+                        <a href='{{route('welcome')}}' class="btn btn-success checkout-btn">Go to Baked Goods</a>
+
+                    @endif
                 </div>
                 <!-- Open button -->
             </div>
-            <button class="btn btn-primary open-btn cart-toggle-visibility">Open Cart</button>
+            <button class="btn btn-primary open-btn cart-toggle-visibility">Open Cart <span class='dot-label'>{{$cartItemNumber}}</span></button>
             <!-- Close button -->
-            <button class="btn btn-danger close-btn cart-toggle-visibility" style="display: none;">Close Cart</button>
+            <button class="btn btn-danger close-btn cart-toggle-visibility" style="display: none;">Close Cart <span class='dot-label'>{{$cartItemNumber}}</span></button>
         @endif
-
     </div>
 </body>
 </html>

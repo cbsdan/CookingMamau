@@ -18,6 +18,7 @@
                     <th>Rating</th>
                     <th>Comment</th>
                     <th>Review Images</th>
+                    <th>Order</th>
                     <th>Actions</th>
                 </tr>
             </thead>

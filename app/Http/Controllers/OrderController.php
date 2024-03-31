@@ -78,11 +78,14 @@ class OrderController extends Controller
             $orderedGood->save();
         }
         
-        session()->forget('cartItems');
+        session()->forget('cart');
 
         // Return success response
         return redirect()->route('user.orders')->with('success', 'Ordered successfully.');
 
+    }
+    public function show(Order $order) {
+        return view('order.show', compact('order'));
     }
     public function userOrders()
     {

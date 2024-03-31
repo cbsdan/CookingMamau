@@ -29,7 +29,9 @@
                                 $thumbnail = $bakedGood->thumbnailImage;
                                 $image_path = $thumbnail ? $thumbnail->image_path : "uploaded_files/default-profile.png";
                             @endphp
-                            <img src="{{asset($image_path)}}" alt="{{$bakedGood->name}}" class="product-image" style='max-height: 200px; height: 200px; width: 100%;'>
+                            <a href="{{route('baked_goods.show', $bakedGood->id)}}">
+                                <img src="{{asset($image_path)}}" alt="{{$bakedGood->name}}" class="product-image" style='max-height: 200px; height: 200px; width: 100%;'>
+                            </a>
                             <h5 class="mt-2">{{$bakedGood->name}}</h5>
                             <p class='mb-1'>Price: P{{$bakedGood->price}}</p>
                             <p class='mb-1'>Weight: {{$bakedGood->weight_gram}} gram</p>
@@ -52,6 +54,7 @@
 
                         </div>
                     </form>
+                </a>
                 @endforeach
             @else
                 <h3>No Baked Goods Available</h3>

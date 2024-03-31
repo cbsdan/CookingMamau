@@ -13,25 +13,6 @@
                             Order ID: {{ $order->id }}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title fw-bold">Order Details</h5>
-                            <p class="card-text mb-0"><span class='fw-bold'>Buyer Name: </span> {{ $order->buyer_name }}</p>
-                            <p class="card-text mb-0"><span class='fw-bold'>Email Address: </span> {{ $order->email_address }}</p>
-                            <p class="card-text mb-0"><span class='fw-bold'>Delivery Address: </span> {{ $order->delivery_address }}</p>
-                            <p class="card-text mb-0"><span class='fw-bold'>Buyer Note: </span> {{ $order->buyer_note ? $order->buyer_note : 'N/A' }}</p>
-                            <p class="card-text mb-0"><span class='fw-bold'>Shipping Cost: </span> {{ $order->shipping_cost }}</p>
-                            <p class="card-text mb-0"><span class='fw-bold'>Order Date: </span> {{ $order->created_at->format('Y-m-d H:i:s') }}</p>
-                            <!-- Add more order details as needed -->
-                            
-
-                            <h5 class="card-title mt-2 fw-bold">Payment Details</h5>
-                            @if($order->payment)
-                                <p class="card-text mb-0"><span class='fw-bold'>Payment Mode: </span> {{ $order->payment->mode }}</p>
-                                <p class="card-text mb-0"><span class='fw-bold'>Payment Amount: </span> {{ $order->payment->amount }}</p>
-                                <!-- Add more payment details as needed -->
-                            @else
-                                <p class="card-text mb-0">Payment details not available.</p>
-                            @endif
-
                             <!-- Add display for ordered goods and discounts if needed -->
 
                             <h5 class="card-title py-2 fw-bold">Ordered Goods</h5>
@@ -47,22 +28,27 @@
                             @else
                                 <p>No items ordered.</p>
                             @endif
+
+                            
+
+                            <h5 class="card-title mt-2 fw-bold">Payment Details</h5>
+                            @if($order->payment)
+                                <p class="card-text mb-0"><span class='fw-bold'>Payment Mode: </span> {{ $order->payment->mode }}</p>
+                                <p class="card-text mb-0"><span class='fw-bold'>Payment Amount: </span> {{ $order->payment->amount }}</p>
+                                <!-- Add more payment details as needed -->
+                            @else
+                                <p class="card-text mb-0">Payment details not available.</p>
+                            @endif
+
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer d-flex flex-row justify-content-between align-items-center">
                             <div>
                                 Order Status: {{ $order->order_status }}
                             </div>
                             <div>
-                                @if ($order->order_status == "Delivered" && !$order->reviews)
-                                    <a class="btn btn-primary" href="{{route('order_reviews.create', $order->id)}}">
-                                        Add a review
-                                    </a>
-                                @elseif ($order->reviews)
-                                    @php $orderReview =  $order->reviews;@endphp
-                                    <a class="btn btn-primary" href="{{route('order_reviews.show', $orderReview->id)}}">
-                                        View my review
-                                    </a>
-                                @endif
+                                <a class="btn btn-primary" href="{{route('user.order.show', $order->id)}}">
+                                    View Details
+                                </a>
                             </div>
                         </div>
                         

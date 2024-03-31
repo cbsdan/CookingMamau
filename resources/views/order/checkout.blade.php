@@ -39,8 +39,10 @@
         <!-- Discount Code -->
         <div class="form-group">
             <label for="discountCode">Discount Code</label>
-            <input type="text" class="form-control" id="discountCode" name="discount_code">
-            <button type="button" class="btn btn-primary" id="checkDiscountBtn">Check</button>
+            <div class='d-flex flex-row align-items-center'>
+                <input type="text" class="form-control" id="discountCode" >
+                <button type="button" class="btn btn-primary" id="checkDiscountBtn">Apply</button>
+            </div>
             <div id="discountDetails"></div> <!-- Display discount details here -->
         </div>
         
@@ -54,9 +56,9 @@
                 @endforeach
             </select>
         </div>
-
+        <hr>
         <div id="checkoutItems" class='d-flex flex-column gap-1 mb-3'>
-            <h5 class='bg-primary text-light p-2 mt-4'>Ordered Baked Goods</h5>
+            <h5 class='bg-primary text-light p-2'>Ordered Baked Goods</h5>
             @php $total=0; $grandTotal = 0; $shippingCost = 50; $discountPercent = 0; $off = 0; $amount = 0;@endphp
             @foreach($cartItems as $id => $item)
                 <div class='d-flex flex-row justify-content-between gap-2 align-items-center border-1 c-white p-2'>
@@ -164,11 +166,16 @@
                                 $('#totalAmount').html('P' + amount);
                                 $('#paymentAmount').html('P' + amount);
                                 $('#amount').attr('min', amount);
+                                $('#discountCode').attr('name', 'discount_code');
                             } else {
                                 $('#discountDetails').html('<p>Invalid</p>');
+                                $('#discountCode').attr('name', ''); //unset the name of discount code input to not read after submission
+
                             }
                         } else {
                             $('#discountDetails').html('<p>Invalid</p>');
+                            $('#discountCode').attr('name', ''); //unset the name of discount code input to not read after submission
+
                         }
                     },
                     error: function() {
@@ -176,8 +183,9 @@
                     }
                 });
             });
+            const cartToggle = document.querySelector('.cart-toggle-visibility');
+            cartToggle.style.display = 'none';
         });
-
 
     </script>
 @endsection

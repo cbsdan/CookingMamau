@@ -29,7 +29,11 @@ class BakedGood extends Model
     {
         return $this->belongsTo(BakedGoodImage::class, 'thumbnail_image_id');
     }
-   
+    public function orderedGood()
+    {
+        return $this->hasMany(OrderedGood::class, 'id_baked_goods');
+    }
+    
     /**
      * Get the ingredients for the baked good.
      */

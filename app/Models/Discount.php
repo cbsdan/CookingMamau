@@ -24,4 +24,9 @@ class Discount extends Model
         'image_path',
         'max_discount_amount',
     ];
+
+    public function order()
+    {
+        return $this->hasMany(Order::class, 'discount_code', 'discount_code');
+    }
 }
