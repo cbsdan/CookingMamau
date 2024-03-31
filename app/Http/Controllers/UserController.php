@@ -155,4 +155,9 @@ class UserController extends Controller
         $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
+    public function deactivate(User $user)
+    {
+        $user->update(['is_activated' => false]);
+        return redirect()->route('admin.users.index')->with('success', 'User deactivated successfully.');
+    }
 }

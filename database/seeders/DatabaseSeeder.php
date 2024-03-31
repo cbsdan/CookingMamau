@@ -1,9 +1,14 @@
 <?php
 
-namespace Database\Seeders;
-
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
+use App\Models\Buyer;
+use App\Models\Discount;
+use App\Models\BakedGood;
+use App\Models\Ingredient;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
+use App\Models\AvailableSchedule;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +17,78 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $faker = Faker::create(); // Create Faker instance
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        //BakedGoods
+        BakedGood::factory()->count(10)->create();
+        $bakedGoods = BakedGood::all();
+        
+        //Ingredients
+        foreach ($bakedGoods as $bakedGood) {
+            $numIngredients = rand(1, 5);
+
+            for ($i = 0; $i < $numIngredients; $i++) {
+                Ingredient::create([
+                    'name' => $faker->word,
+                    'qty' => $faker->randomFloat(2, 0, 100),
+                    'unit' => $faker->randomElement(['g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup']),
+                    'image_path' => null, // Set image path to null for now
+                    'id_baked_goods' => $bakedGood->id,
+                ]);
+            }
+        }
+
+        //Discount
+        Discount::factory()->count(10)->create();
+
+        //Available Schedule
+        $schedules = [
+            '2024-03-01 08:00:00',
+            '2024-03-04 08:00:00',
+            '2024-03-08 08:00:00',
+            '2024-03-15 08:00:00',
+            '2024-03-26 08:00:00',
+            '2024-04-01 08:00:00',
+            '2024-04-05 09:30:00',
+            '2024-04-06 11:00:00',
+            '2024-04-08 11:00:00',
+        ];
+
+        foreach ($schedules as $schedule) {
+            AvailableSchedule::create([
+                'schedule' => $schedule,
+            ]);
+        }
+        
+         // Check if the admin user already exists
+         $adminExists = User::where('email', 'admin@gmail.com')->exists();
+
+         if (!$adminExists) {
+             User::create([
+                 'email' => 'admin@gmail.com',
+                 'password' => Hash::make('12345678'),
+                 'is_admin' => true,
+             ]);
+        }
+
+        // User and Buyer
+        for ($i = 0; $i < 9; $i++) {
+            $user = User::create([
+                'email' => $faker->unique()->safeEmail,
+                'password' => Hash::make('password'),
+                'is_admin' => false,
+            ]);
+
+            Buyer::create([
+                'fname' => $faker->firstName,
+                'lname' => $faker->lastName,
+                'contact' => $faker->phoneNumber,
+                'address' => $faker->streetName,
+                'barangay' => $faker->streetName,
+                'city' => $faker->city,
+                'landmark' => $faker->word,
+                'id_user' => $user->id,
+            ]);
+        }
     }
 }

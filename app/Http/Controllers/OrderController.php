@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
-
 class OrderController extends Controller
 {
     public function store(Request $request)
@@ -106,6 +105,6 @@ class OrderController extends Controller
         }
 
 
-        return view('user.orders', compact('userOrders'));
+        return view('order.index', compact('userOrders'));
     }
 }

@@ -13,17 +13,19 @@
         </div>
     @endif
 
-    <div class="mb-3">
-        <form action="{{ route('discounts.index') }}" method="GET">
-            <div class="input-group">
-                <input type="text" class="form-control" name="search" placeholder="Search by Discount Code" value="{{ request()->input('search') }}">
-                <button class="btn btn-outline-secondary" type="submit">Search</button>
-            </div>
-        </form>
-    </div>
+    @if(auth()->check() && auth()->user()->is_admin)
+        <div class="mb-3">
+            <form action="{{ route('discounts.index') }}" method="GET">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Search by Discount Code" value="{{ request()->input('search') }}">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+    @endif
 
     <div class="mb-3">
-        @if(auth()->user()->is_admin)
+        @if(auth()->check() && auth()->user()->is_admin)
             <a href="{{ route('discounts.create') }}" class="btn btn-primary">Create New Discount</a>
         @endif
     </div>

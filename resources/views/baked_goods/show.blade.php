@@ -4,7 +4,7 @@
 <div class="container">
     <!-- Back button -->
     <div class="mb-3">
-        <a href="{{ route('baked_goods.index') }}" class="btn btn-primary">Back</a>
+        <a href="{{ (auth()->check() && auth()->user()->is_admin) ? route('baked_goods.index') : route('welcome')}}" class="btn btn-primary">Back</a>
     </div>
     <h1>Baked Good Details</h1>
 
@@ -30,7 +30,7 @@
     
 
         <h2>{{ $bakedGood->name }}</h2>
-        <p><strong>Price:</strong> ${{ $bakedGood->price }}</p>
+        <p><strong>Price:</strong> P{{ $bakedGood->price }}</p>
         <p><strong>Availability:</strong> {{ $bakedGood->is_available ? 'Available' : 'Not Available' }}</p>
         <p><strong>Description:</strong> {{ $bakedGood->description ?: 'N/A' }}</p>
         <p><strong>Weight (grams):</strong> {{ $bakedGood->weight_gram ?: 'N/A' }}</p>
@@ -79,8 +79,14 @@
             <div class="row">
                 @foreach($bakedGood->orderedGood as $orderedGood)
                         @if ($orderedGood->order && $orderedGood->order->reviews)
-                            <div class="col-md-6">
-                                <div class="review mb-3 border-bottom pb-2">
+                            <div class="col-md-6 review d-flex align-items-start border-bottom gap-2 py-2">
+                                <div class="image-user pr-2" style='min-width: 70px; min-height: 70px;'>
+                                    @php
+                                        $image_path = $orderedGood->order->buyer->user->profile_image_path ?? 'uploaded_files/default-profile.png';
+                                    @endphp
+                                    <img src="{{asset($image_path)}}" alt="user" class='img-thumbnail' style='width: 50px; height: 50px;'>
+                                </div>
+                                <div class="mb-3 pb-2">
                                     <p class="mb-0">Name: {{$orderedGood->order->buyer->fname . " " . $orderedGood->order->buyer->lname}}</p>
                                     {{-- Assuming $orderedGood->order->reviews is a collection --}}
                                     <p class="mb-0">Rating: <span>{{$orderedGood->order->reviews->rating}} / 5</span></p>

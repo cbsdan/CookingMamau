@@ -48,6 +48,16 @@
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
                         @guest
+                            <li class='nav-item'>
+                                <a class="nav-link" href="{{ route('welcome') }}">
+                                    {{ __('Home') }}
+                                </a>
+                            </li>
+                            <li class='nav-item'>
+                                <a class="nav-link" href="{{ route('discounts.index') }}">
+                                    {{ __('Discounts') }}
+                                </a>
+                            </li>
                             @if (Route::has('login'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -59,7 +69,33 @@
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
+
                         @else
+                            @if (!auth()->user()->is_activated)
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                                <script>
+                                    alert("Your account is deactivated. Please contact the administrator.");
+                            
+                                    // Create a form element
+                                    var form = document.createElement('form');
+                                    form.method = 'POST';
+                                    form.action = "{{ route('logout') }}";
+                                    document.body.appendChild(form);
+                            
+                                    // Create a hidden input field for the CSRF token
+                                    var csrfToken = document.createElement('input');
+                                    csrfToken.type = 'hidden';
+                                    csrfToken.name = '_token';
+                                    csrfToken.value = "{{ csrf_token() }}";
+                                    form.appendChild(csrfToken);
+                            
+                                    // Submit the form
+                                    form.submit();
+                                </script>
+                        
+                            @endif
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     @if (auth()->user()->is_admin)

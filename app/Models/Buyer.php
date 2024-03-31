@@ -23,7 +23,7 @@ class Buyer extends Model
     ];
 
     // Relationships
-    public function account()
+    public function user()
     {
         return $this->belongsTo(User::class, 'id_user');
     }

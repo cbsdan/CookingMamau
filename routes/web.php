@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\BakedGood;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
@@ -24,13 +25,24 @@ Route::get('/', function() {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'home'])->name('home')->middleware(['auth']);
+Route::get('/search', function(Request $request){
+    $query = $request->input('query');
+    if ($query) {
+        $bakedGoods = BakedGood::where('name', 'like', "%$query%")->get();
+    } else {
+        $bakedGoods = BakedGood::all();
+    }
+    return view('welcome', compact('bakedGoods'));
+})->name('search');
 
+//Acount
 Route::middleware(['auth'])->group(function() {
     Route::get('/profile', [ProfileController::class, 'index'])->name('user.profile');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('user.update.profile');
     Route::put('/profile/password/update', [ProfileController::class, 'updatePassword'])->name('user.update.password');
 });
 
+//Admin
 Route::middleware(['admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
@@ -46,10 +58,9 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/users', [UserController::class, 'store'])->name('admin.users.store');
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::put('/users/{user}/deactivate', [UserController::class, 'deactivate'])->name('admin.users.deactivate');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 });
-
-
 
 
 // Discounts 

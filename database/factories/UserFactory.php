@@ -1,40 +1,71 @@
 <?php
-
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
 class UserFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected $model = User::class;
+
+    public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'remember_token' => Str::random(10),
+            'email' => $this->faker->unique()->safeEmail,
+            'password' => bcrypt('12345678'), // Set default password
+            'is_admin' => false, // Default to regular user
+            'is_activated' => true, // Activate all users by default
+            // Add other fields as needed
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     *
-     * @return $this
-     */
-    public function unverified(): static
+    public function configure()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->afterCreating(function (User $user) {
+            // Make the user with the specified email an admin
+            if ($user->email === 'admin@gmail.com') {
+                $user->update(['is_admin' => true]);
+            }
+        });
     }
 }
+
+// namespace Database\Factories;
+
+// use Illuminate\Database\Eloquent\Factories\Factory;
+// use Illuminate\Support\Str;
+
+// /**
+//  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+//  */
+// class UserFactory extends Factory
+// {
+//     /**
+//      * Define the model's default state.
+//      *
+//      * @return array<string, mixed>
+//      */
+//     public function definition(): array
+//     {
+//         return [
+//             'name' => fake()->name(),
+//             'email' => fake()->unique()->safeEmail(),
+//             'email_verified_at' => now(),
+//             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+//             'remember_token' => Str::random(10),
+//         ];
+//     }
+
+//     /**
+//      * Indicate that the model's email address should be unverified.
+//      *
+//      * @return $this
+//      */
+//     public function unverified(): static
+//     {
+//         return $this->state(fn (array $attributes) => [
+//             'email_verified_at' => null,
+//         ]);
+//     }
+// }

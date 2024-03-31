@@ -18,9 +18,17 @@
         @endif
     </h1>
     <div class="container">
+        <form action="{{ route('search') }}" method="GET">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Search products..." name="query">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </div>
+        </form>
         <div class="row">
             <!-- Product Cards -->
-            @if (isset($bakedGoods))
+            @if ($bakedGoods)
                 @foreach($bakedGoods as $bakedGood) 
                     <form class="col-3 mb-4" action='{{route('cart.add', $bakedGood->id)}}' method='POST'>
                         @csrf

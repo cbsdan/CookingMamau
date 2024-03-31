@@ -4,6 +4,13 @@
     <a class="btn btn-primary" href="{{route('order_reviews.show', $orderReview->id)}}">Back</a>
     <h1 class='mt-2'>Edit Order Review</h1>
     <hr>
+    @if($errors->any())
+    <div class="alert alert-danger">
+        @foreach ($errors->all() as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    </div>
+    @endif
     <form action="{{ route('order_reviews.update', $orderReview->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')

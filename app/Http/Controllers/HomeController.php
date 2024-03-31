@@ -22,9 +22,18 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $bakedGoods = BakedGood::all();
+        $query = $request->input('query');
+        
+        // Perform search if query is provided
+        if ($query) {
+            $bakedGoods = BakedGood::where('name', 'like', "%$query%")->get();
+        } else {
+            // Fetch all baked goods if no query is provided
+            $bakedGoods = BakedGood::all();
+        }
+
         return view('welcome', compact('bakedGoods'));
     }
     public function home(Request $request)
