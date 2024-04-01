@@ -107,4 +107,20 @@ class OrderController extends Controller
 
         return view('order.index', compact('userOrders'));
     }
+    public function updateStatus(Request $request, Order $order)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'order_status' => 'required|in:Pending,Canceled,Preparing,Out for Delivery,Delivered',
+        ]);
+    
+        // Update the order status
+        $order->update([
+            'order_status' => $validatedData['order_status'],
+        ]);
+    
+        // Redirect back with success message
+        return redirect()->back()->with('success', 'Order status updated successfully.');
+    }
+    
 }

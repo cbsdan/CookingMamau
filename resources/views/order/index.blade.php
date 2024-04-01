@@ -19,7 +19,7 @@
                             @if($order->orderedGoods->isNotEmpty())
                                     @foreach($order->orderedGoods as $orderedGood)
                                         <div class='d-flex flex-row gap-2 px-3 py-1 align-items-center'>
-                                            <img src="{{ asset($orderedGood->meal->thumbnailImage->image_path) ?? asset('uploaded_files/default-profile.png')}}" alt='{{ $orderedGood->meal->name }}' style='width: 50px; height: 50px'>
+                                            <img src="{{ asset($orderedGood->meal->thumbnailImage->image_path ?? 'uploaded_files/default-profile.png')}}" alt='{{ $orderedGood->meal->name }}' style='width: 50px; height: 50px'>
                                             
                                             {{ $orderedGood->meal->name }} - Price: {{ $orderedGood->price_per_good }}, Quantity: {{ $orderedGood->qty }}
                                         </div>

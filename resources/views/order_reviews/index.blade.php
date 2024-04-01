@@ -30,9 +30,10 @@
                         <td>{{ $orderReview->comment }}</td>
                         <td>
                             @foreach ($orderReview->reviewImages as $image)
-                                <img src="{{ asset($image->image_path) }}" alt="Review Image" style="max-width: 100px;">
+                            <img src="{{ asset($image->image_path) }}" alt="Review Image" style="max-width: 100px;">
                             @endforeach
                         </td>
+                        <td><a class='btn btn-primary' href="{{ route('user.order.show', $orderReview->id_order) }}">Order Details</href></td>
                         <td>
                             <a href="{{ route('order_reviews.edit', $orderReview->id) }}" class="btn btn-primary">Edit</a>
                             <form action="{{ route('order_reviews.destroy', $orderReview->id) }}" method="POST" style="display: inline;">

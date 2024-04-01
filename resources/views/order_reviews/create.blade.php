@@ -11,7 +11,7 @@
     @endif
     <form action="{{ route('order_reviews.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name='id_order ' value="{{$order->id}}">
+        <input type="hidden" name='id_order' value="{{$order->id}}">
         <div class="form-group">
             <label for="rating">Rating:</label>
             <input type="number" class="form-control" id="rating" name="rating" min="1" max="5" >

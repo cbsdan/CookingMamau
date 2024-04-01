@@ -1,6 +1,8 @@
 const togglePassword = document.getElementById('togglePassword');
 const passwordInput = document.getElementById('password');
 
+let table = new DataTable('#myDataTable');
+
 if (togglePassword) {
     togglePassword.addEventListener('click', function() {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';

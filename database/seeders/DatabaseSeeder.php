@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
         for ($i = 0; $i < 9; $i++) {
             $user = User::create([
                 'email' => $faker->unique()->safeEmail,
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'is_admin' => false,
             ]);
 

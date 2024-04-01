@@ -16,7 +16,7 @@
                 @if($order->orderedGoods->isNotEmpty())
                     @foreach($order->orderedGoods as $orderedGood)
                         <div class='d-flex flex-row gap-2 px-3 py-1 align-items-center'>
-                            <img src="{{ asset($orderedGood->meal->thumbnailImage->image_path) ?? asset('uploaded_files/default-profile.png')}}" alt='{{ $orderedGood->meal->name }}' style='width: 50px; height: 50px'>
+                            <img src="{{ asset($orderedGood->meal->thumbnailImage->image_path ?? 'uploaded_files/default-profile.png')}}" alt='{{ $orderedGood->meal->name }}' style='width: 50px; height: 50px'>
                             
                             {{ $orderedGood->meal->name }} - Price: {{ $orderedGood->price_per_good }}, Quantity: {{ $orderedGood->qty }}
                             @php $grandTotal += $orderedGood->price_per_good * $orderedGood->qty; @endphp
@@ -62,11 +62,29 @@
 
             </div>
             <div class="card-footer d-flex flex-row justify-content-between align-items-center">
+                @if (auth()->check() && auth()->user()->is_admin )
+                <form action="{{ route('order.updateStatus', ['order' => $order->id]) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                
+                    <label for="order_status">Update Order Status:</label>
+                    <select name="order_status" id="order_status" class='py-1'>
+                        <option value="Pending" {{ $order->order_status === 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="Canceled" {{ $order->order_status === 'Canceled' ? 'selected' : '' }}>Canceled</option>
+                        <option value="Preparing" {{ $order->order_status === 'Preparing' ? 'selected' : '' }}>Preparing</option>
+                        <option value="Out for Delivery" {{ $order->order_status === 'Out for Delivery' ? 'selected' : '' }}>Out for Delivery</option>
+                        <option value="Delivered" {{ $order->order_status === 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                    </select>
+                
+                    <button type="submit" class='btn btn-primary py-1'>Update</button>
+                </form>
+                @else
                 <div>
                     Order Status: {{ $order->order_status }}
                 </div>
+                @endif
                 <div>
-                    @if ($order->order_status == "Delivered" && !$order->reviews)
+                    @if ($order->order_status == "Delivered" && !$order->reviews && !auth()->user()->is_admin)
                         <a class="btn btn-primary" href="{{route('order_reviews.create', $order->id)}}">
                             Add a review
                         </a>

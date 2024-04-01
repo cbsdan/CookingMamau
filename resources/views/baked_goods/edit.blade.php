@@ -2,6 +2,9 @@
 
 @section('content')
 <div class="container">
+    <div class="mb-3">
+        <a href="{{ (auth()->check() && auth()->user()->is_admin) ? route('baked_goods.index') : route('welcome')}}" class="btn btn-primary">Back</a>
+    </div>
     <h1>Edit Baked Good</h1>
     <hr>
     <!-- Display validation errors if any -->

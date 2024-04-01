@@ -7,21 +7,13 @@
             {{ session('success') }}
         </div>
     @endif
-
-    <div class="mb-3">
-        <form action="{{ route('admin.users.index') }}" method="GET">
-            <div class="input-group">
-                <input type="text" class="form-control" name="search" placeholder="Search by ID or Email" value="{{ request()->input('search') }}">
-                <button class="btn btn-outline-secondary" type="submit">Search</button>
-            </div>
-        </form>
-    </div>
-
+    <h1>Users</h1>
+    <hr>
     <div class="mb-3">
         <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Create New User</a>
     </div>
 
-    <table class="table">
+    <table class="table" id="myDataTable">
         <thead>
             <tr>
                 <th>ID</th>
@@ -31,6 +23,7 @@
                 <th>Last Name</th>
                 <th>Activation Status</th>
                 <th>Contact</th>
+                <th>Updated At</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -50,14 +43,15 @@
                         <td>{{ $user->buyer->lname }}</td>
                         <td>{{ ($user->is_activated ? "Activated" : "Deactivated") }}</td>
                         <td>{{ $user->buyer->contact }}</td>
-                        <td>
+                        <td>{{ $user->updated_at }}</td>
+                        <td class=''>
                             <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary">Edit</a>
                             <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
                             </form>
-                            <form action="{{ route('admin.users.deactivate', $user->id) }}" method="POST" class="d-inline">
+                            <form action="{{ route('admin.users.deactivate', $user->id) }}" method="POST" class="mt-2">
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to deactivate this user?')">Deactivate</button>

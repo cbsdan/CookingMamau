@@ -4,20 +4,13 @@
 <div class="container">
     <h1>Ingredients</h1>
     
-    <!-- Search form -->
-    <form action="{{ route('ingredients.index') }}" method="GET" class="mb-3">
-        <div class="input-group">
-            <input type="text" class="form-control" name="search" placeholder="Search by name of baked good" value="{{ request()->input('search') }}">
-            <button class="btn btn-outline-secondary" type="submit">Search</button>
-        </div>
-    </form>
     @if(auth()->check() && auth()->user()->is_admin)
         <div class="mt-3">
             <a href="{{ route('ingredients.create') }}" class="btn btn-primary mb-3">Create New Baked Good Ingredient</a>
         </div>
     @endif
     <!-- Table to display ingredients -->
-    <table class="table">
+    <table class="table" id="myDataTable">
         <thead>
             <tr>
                 <th>Name</th>

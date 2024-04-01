@@ -10,13 +10,6 @@
         </div>
     @endif
 
-    <!-- Search form -->
-    <form action="{{ route('baked_goods.index') }}" method="GET" class="mb-3">
-        <div class="input-group">
-            <input type="text" class="form-control" name="search" placeholder="Search by ID or Name" value="{{ request()->input('search') }}">
-            <button class="btn btn-outline-secondary" type="submit">Search</button>
-        </div>
-    </form>
     @if(auth()->check() && auth()->user()->is_admin)
         <div class="mt-3">
             <a href="{{ route('baked_goods.create') }}" class="btn btn-primary mb-3">Create New Baked Good</a>
@@ -24,7 +17,7 @@
     @endif
 
     <!-- Table to display baked goods -->
-    <table class="table">
+    <table class="table" id="myDataTable">
         <thead>
             <tr>
                 <th>ID</th>
@@ -33,6 +26,7 @@
                 <th>Price</th>
                 <th>Weight</th>
                 <th>Available</th>
+                <th>Updated At</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -50,6 +44,7 @@
                 <td>{{ $bakedGood->price }}</td>
                 <td>{{ $bakedGood->weight_gram . "g" }}</td>
                 <td>{{ $bakedGood->is_available ? 'Yes' : 'No' }}</td>
+                <td>{{ $bakedGood->updated_at}}</td>
                 <td>
                     <!-- View action -->
                     <a href="{{ route('baked_goods.show', $bakedGood->id) }}" class="btn btn-sm btn-primary">View</a>

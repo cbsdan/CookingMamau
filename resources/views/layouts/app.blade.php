@@ -16,6 +16,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link href="//cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css" rel="stylesheet">
     <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
 
     
@@ -23,6 +24,7 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" defer></script>
+    <script src="//cdn.datatables.net/2.0.3/js/dataTables.min.js" defer></script>
 
     <script src="{{ asset('js/script.js') }}" defer></script>
 
