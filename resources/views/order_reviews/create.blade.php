@@ -9,7 +9,7 @@
             @endforeach
         </div>
     @endif
-    <form action="{{ route('order_reviews.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('order_reviews.store', $order->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name='id_order' value="{{$order->id}}">
         <div class="form-group">

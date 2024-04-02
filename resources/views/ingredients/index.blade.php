@@ -3,7 +3,11 @@
 @section('content')
 <div class="container">
     <h1>Ingredients</h1>
-    
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     @if(auth()->check() && auth()->user()->is_admin)
         <div class="mt-3">
             <a href="{{ route('ingredients.create') }}" class="btn btn-primary mb-3">Create New Baked Good Ingredient</a>

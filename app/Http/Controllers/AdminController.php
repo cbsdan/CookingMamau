@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 class AdminController extends Controller
 {
     public function index() {
-        return view('admin.dashboard');
+        return view('dashboard');
     }
     public function profile() {
         return view('admin.profile');

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController;
@@ -58,7 +59,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/users', [UserController::class, 'store'])->name('admin.users.store');
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
-    Route::put('/users/{user}/deactivate', [UserController::class, 'deactivate'])->name('admin.users.deactivate');
+    Route::put('/users/{user}/activation', [UserController::class, 'updateUserActivation'])->name('admin.users.activation');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 });
 
@@ -139,3 +140,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/order_reviews/{orderReview}', [OrderReviewController::class, 'destroy'])->name('order_reviews.destroy');
     Route::delete('/review_images/{image}', [OrderReviewController::class, 'destroyReviewImage'])->name('review_images.destroy');
 });
+
+
+Route::get('/sendmail/{order}', [MailController::class, 'sendOrderReceipt'])->name('email.sent.receipt')->middleware(['auth', 'admin']);

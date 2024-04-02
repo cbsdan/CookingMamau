@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+:root {
+    --body-color: #FFFFFF;
+    --sidebar-color: #FEF8DD;
+    --primary-color: #ead660;
+    --primary-light-color: #ffefa1; /* Renamed the variable */
+    --toggle-color: #FFFFFF;
+    --text-color: #000000;
+    --header-color: #DCDCDC; 
+
+    --trans-02: all 0.2s ease; /* Corrected the syntax for transition */
+    --trans-03: all 0.3s ease;
+    --trans-04: all 0.4s ease;
+    --trans-05: all 0.5s ease;
+}
+
+
+body{
+    height: 100vh;
+    background: var(--body-color);
+}
+
+
+/* ====Sidebar===== */
+
+.sidebar-content {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 305px;
+    padding: 10px 14px;
+    background-color:var(--sidebar-color);
+    transition: var(--trans-05);
+    z-index: 100;
+    opacity: 1;
+}
+
+.sidebar-content.close{
+    width: 88px;
+    opacity: 1;
+}
+
+
+/* ====Reusable Css==== */
+.sidebar-content .text{
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+    transition: var(--trans-04);
+    white-space: nowrap;
+    opacity: 1;
+}
+
+.sidebar-content.close .text{
+  opacity: 0;
+}
+.image img {
+    border-radius: 6px;
+    width: 58px;
+    height: 55px;
+    margin-right: 10px;
+    opacity: 1;
+
+}
+
+
+.sidebar-content li .icon{
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    min-width: 60px;
+    justify-content: center;
+}
+
+
+ .sidebar-content .image{
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center ;
+} 
+
+.sidebar-content li{
+    height: 50px;
+    background: var(--sidebar-color);
+    margin-top: 10px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    transition: var(--trans-04);
+}
+
+
+.sidebar-content li .text,
+.sidebar-content li .icon{
+    color: var(--text-color);
+    transition: var(--trans-02);
+    opacity: 1;
+}
+
+.sidebar-content header {
+    padding-top: 10px;
+    /* padding: 5px; */
+    display: flex;
+    align-items: center;
+    position: relative;
+    opacity: 1;
+
+}
+
+.text .name {
+    color: var(--text-color);
+    font-size: 1.5em;
+    opacity: 1;
+
+}
+
+.sidebar-content header .image-text{
+    display: flex;
+    align-items: center;
+    opacity: 1;
+
+    
+}
+
+header .image-text .header-text{
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+
+}
+
+.header-text .name{
+    font-weight: 600;
+    opacity: 1;
+
+}
+
+.header-text .title{
+   margin-top: -2px;
+   opacity: 1;
+
+}
+
+.sidebar-content header .toggle {
+    position: absolute;
+    top: 50%;
+    right: -25px;
+    transform: translateY(-50%) rotate(180deg);
+    height: 30px;
+    width: 30px;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--toggle-color);
+    font-size: 22px;
+    transition: var(--trans-03);
+    opacity: 1;
+
+}
+
+.sidebar-content.close header .toggle {
+    transform: translateY(-50%) rotate(0deg); /* Rotating it back to 0 degrees */
+    transition: var(--trans-05);
+    opacity: 1;
+
+}
+
+
+.sidebar-content .menu{
+    margin-top: 35px;
+    opacity: 1;
+
+}
+
+.sidebar-content li a{
+    text-decoration: none;
+    height: 100%;
+    width: 100%;
+    display:flex ;
+    align-items: center;
+    border-radius: 6px;
+    transition: var(--trans-04);
+    opacity: 1;
+
+}
+
+.sidebar-content li a:hover{
+    background: var(--primary-color);
+    opacity: 1;
+}
+
+.sidebar-content li a:hover .icon
+.sidebar-content li a:hover .text{
+    color: var(--sidebar-color);
+    opacity: 1;
+
+}
+
+.bottom-content {
+    position: absolute;
+    bottom: 0; /* Position at the bottom of the sidebar */
+    left: 0; /* Align to the left side of the sidebar */
+    width: 100%; /* Occupy full width of the sidebar */
+    padding: 10px; /* Add some padding for spacing */
+    opacity: 1;
+
+}

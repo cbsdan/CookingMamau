@@ -12,7 +12,11 @@
         @endforeach
     </div>
     @endif
-
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <!-- Form for editing the ingredient -->
     <form action="{{ route('ingredients.update', $ingredient->id) }}" method="POST" enctype="multipart/form-data">
         @csrf

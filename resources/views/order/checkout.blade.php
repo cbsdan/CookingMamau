@@ -168,13 +168,23 @@
                                 $('#amount').attr('min', amount);
                                 $('#discountCode').attr('name', 'discount_code');
                             } else {
+                                var amount = {{$grandTotal}} + {{$shippingCost}};
                                 $('#discountDetails').html('<p>Invalid</p>');
-                                $('#discountCode').attr('name', ''); //unset the name of discount code input to not read after submission
-
+                                $('#discountCode').attr('name', ''); // Unset the name of discount code input to prevent submission
+                                $('#discountOff').html('-P0');
+                                $('#totalAmount').html('P' + amount);
+                                $('#paymentAmount').html('P' + amount);
+                                $('#amount').attr('min', amount);
+                                
                             }
                         } else {
+                            var amount = {{$grandTotal}} + {{$shippingCost}};
                             $('#discountDetails').html('<p>Invalid</p>');
-                            $('#discountCode').attr('name', ''); //unset the name of discount code input to not read after submission
+                            $('#discountCode').attr('name', ''); // Unset the name of discount code input to prevent submission
+                            $('#discountOff').html('-P0');
+                            $('#totalAmount').html('P' + amount);
+                            $('#paymentAmount').html('P' + amount);
+                            $('#amount').attr('min', amount);
 
                         }
                     },

@@ -2,6 +2,11 @@
 
 @section('content')
     <h1>{{(auth()->check() && auth()->user()->is_admin) ? "Orders" : "My Orders"}}</h1>
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     @if($userOrders->isEmpty())
         <p>No orders found.</p>
     @else

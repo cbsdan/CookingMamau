@@ -118,7 +118,10 @@ class OrderController extends Controller
         $order->update([
             'order_status' => $validatedData['order_status'],
         ]);
-    
+        
+        if ($order->order_status == "Delivered") {
+            return redirect()->route('email.sent.receipt', $order->id);
+        }
         // Redirect back with success message
         return redirect()->back()->with('success', 'Order status updated successfully.');
     }

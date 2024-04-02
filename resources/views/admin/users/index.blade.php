@@ -51,10 +51,13 @@
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
                             </form>
-                            <form action="{{ route('admin.users.deactivate', $user->id) }}" method="POST" class="mt-2">
+                            <form action="{{ route('admin.users.activation', $user->id) }}" method="POST" class="mt-2">
+                                @php
+                                    $updateTo = $user->is_activated ? "Deactivate" : "Activate";
+                                @endphp
                                 @csrf
                                 @method('PUT')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to deactivate this user?')">Deactivate</button>
+                                <button type="submit" class="btn btn-sm {{$user->is_activated ? 'btn-danger' : 'btn-success'}}" onclick="return confirm('Are you sure you want to {{$updateTo}} this user?')">{{$user->is_activated ? "Deactivate" : "Activate"}}</button>
                             </form>
                         </td>
                     </tr>

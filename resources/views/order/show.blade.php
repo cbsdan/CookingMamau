@@ -4,6 +4,11 @@
     <div class="container">
         <a href="{{route('user.orders')}}" class="btn btn-primary">Back</a>
         <h1>Order Details</h1>
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
         <div class="card">
             <div class="card-header">
                 Order ID: {{ $order->id }}

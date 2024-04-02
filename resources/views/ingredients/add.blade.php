@@ -12,7 +12,11 @@
         @endforeach
     </div>
     @endif
-
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <!-- Form for creating a new ingredient -->
     <form action="{{ route('ingredients.store') }}" method="POST" enctype="multipart/form-data">
         @csrf

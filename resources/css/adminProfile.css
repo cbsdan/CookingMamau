@@ -1,0 +1,78 @@
+body {
+    background: #f5f5f5;
+    margin-top: 20px;
+}
+
+:root {
+    --body-color: #FFFFFF;
+    --sidebar-color: #FFFFFF;
+    --dark-primary-color: #bda117;
+    --primary-color: #ead660;
+    --primary-light-color: #ffefa1; /* Renamed the variable */
+    --toggle-color: #FFFFFF;
+    --text-color: #000000;
+    --header-color: #DCDCDC; 
+    --purple-accent-lighter: rgb(199, 177, 239);
+
+    --trans-02: all 0.2s ease; /* Corrected the syntax for transition */
+    --trans-03: all 0.3s ease;
+    --trans-04: all 0.4s ease;
+    --trans-05: all 0.5s ease;
+}
+
+.btn {
+    /* Set the button colors according to the theme */
+    background-color: var(--dark-primary-color);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+
+label.btn {
+    margin-bottom: 0;
+}
+
+
+
+.btn {
+    cursor: pointer;
+}
+
+.text-light {
+    color: #111213 !important;
+}
+
+
+
+
+.account-settings-fileinput {
+    position  : absolute;
+    visibility: hidden;
+    width     : 1px;
+    height    : 1px;
+    opacity   : 0;
+}
+
+.account-settings-links .list-group-item.active {
+    font-weight: bold !important;
+}
+
+html:not(.dark-style) .account-settings-links .list-group-item.active {
+    background: var(--primary-light-color) !important;
+}
+
+.account-settings-multiselect~.select2-container {
+    width: 100% !important;
+}
+
+.light-style .account-settings-links .list-group-item.active {
+    color: #000000 !important;
+}
+.light-style .account-settings-links .list-group-item{
+    background-color: var(--purple-accent);
+}
+
+.light-style .account-settings-links .list-group-item {
+    padding     : 0.85rem 1.5rem;
+    border-color: rgba(24, 28, 33, 0.03) !important;
+}
