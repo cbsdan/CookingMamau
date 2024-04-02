@@ -15,7 +15,13 @@
             <a href="{{ route('baked_goods.create') }}" class="btn btn-primary mb-3">Create New Baked Good</a>
         </div>
     @endif
-
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        @foreach ($errors->all() as $error)
+        <p>{{ $error }}</p>
+        @endforeach
+    </div>
+    @endif
     <!-- Table to display baked goods -->
     <table class="table" id="myDataTable">
         <thead>

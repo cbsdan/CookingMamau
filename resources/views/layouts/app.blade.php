@@ -28,6 +28,7 @@
     <script src="//cdn.datatables.net/2.0.3/js/dataTables.min.js" defer></script>
     <script src="{{ asset('js/script.js') }}" defer></script>
 
+    @vite(['resources/css/adminDashboard.css', 'resources/js/adminDashboard.js'])
     @vite(['resources/css/adminNavPanel.css', 'resources/js/adminNavPanel.js'])
     @vite(['resources/css/adminProfile.css'])
 
@@ -35,11 +36,11 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm" style="background: #F5F5DC;">
+        <nav class="navbar navbar-expand-md navbar-light shadow-sm" style="background: beige;">
             <div class="container">
                 <img src="{{ asset('uploaded_files/e.jpg') }}" alt="Logo" width="40" height="40" style="border-radius: 50%;">
 
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand ml-3" href="{{ auth()->check() ? url('/home') : route('welcome') }}">
                     {{ config('app.name', 'Cooking Mamau') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -58,7 +59,7 @@
                         @guest
                             <li class='nav-item'>
                                 <a class="nav-link" href="{{ route('welcome') }}">
-                                    {{ __('Home') }}
+                                    {{ __('Baked Goods') }}
                                 </a>
                             </li>
                             <li class='nav-item'>
@@ -104,6 +105,16 @@
                                 </script>
                         
                             @endif
+                            <li class='nav-item'>
+                                <a class="nav-link" href="{{ route('welcome') }}">
+                                    {{ __('Baked Goods') }}
+                                </a>
+                            </li>
+                            <li class='nav-item'>
+                                <a class="nav-link" href="{{ route('discounts.index') }}">
+                                    {{ __('Discounts') }}
+                                </a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     @if (auth()->user()->is_admin)
@@ -204,31 +215,30 @@
                             $total = $details['quantity'] * $details['price']; 
                             $grandTotal += $total;
                         @endphp
-                        <div class='cartItem d-flex flex-row ailgn-items-center p-1 mb-1' style="background: rgb(230, 255, 250);">
+                        <div class='cartItem d-flex flex-row ailgn-items-center p-1 mb-1' style="background: rgb(141, 244, 223);">
                             <input type='hidden' name='bakedGoodId' value={{$id}} class='bakedGoodId'>
                             <div class="col-3 px-1">
-                                <img src="{{$details['image_path']}}" alt="{{$details['name']}}" class="img-thumbnail" style='height: 70px; width: 70px;'>
+                                <img src="{{asset($bakedGood->thumbnailImage->image_path ?? 'uploaded_files/default-profile.png')}}" alt="{{$details['name']}}" class="img-thumbnail" style='height: 70px; width: 70px;'>
                             </div>
                             <div class="col-3 px-1 d-flex flex-column ailgn-items-center justify-content-center">
                                 <p class='mb-0'>{{$details['name']}}<p>
                                 <p class='mb-0'>P<span class='price'>{{$details['price']}}</span><p>
                             </div>
                             
-                            <div class=" d-flex align-items-center col-3 px-1 text-center">
-                                <form action="{{route('cart.update', $id)}}" method="POST">
-                                    @csrf
-                                    <div class="quantity-toggler btn p-1 minus">-</div>
-                                    <input type="text" name='qty' class="quantity-input border-0 d-flex align-items-center justify-content-center" style="width:30px; background: transparent;" min=1 value="{{$bakedGood->is_available ? $details['quantity'] : 0}}" {{$bakedGood->is_available ? "" : "readonly"}}>
-                                    <div class="quantity-toggler btn p-1 add">+</div>
-                                </form>
-                            </div>
+                            <form action="{{route('cart.update', $id)}}" method="POST" class="d-flex align-items-center px-1 text-center flex-1">
+                                @csrf
+                                <div class="quantity-toggler btn minus">-</div>
+                                <input type="text" name='qty' class="quantity-input border-0 m-0 d-flex align-items-center justify-content-center" style="width:30px; background: transparent;" min=1 value="{{$bakedGood->is_available ? $details['quantity'] : 0}}" {{$bakedGood->is_available ? "" : "readonly"}}>
+                                <div class="quantity-toggler btn add">+</div>
+                            </form>
+
                             <div class=" d-flex align-items-center col-2 px-1 text-start">
                                 <p class="mb-0 w-100 text-start total">P{{$total}}</p>
                             </div>
-                            <form action="{{route('cart.remove')}}" method="POST" class=" d-flex align-items-center col-1 px-1 text-center">
+                            <form action="{{route('cart.remove')}}" method="POST" class=" d-flex align-items-center col-1 px-1 text-center" style='position: relative;'>
                                 @csrf
                                 <input type="hidden" name='id' value='{{$id}}'>
-                                <button type="submit" name='submit' class="btn mb-0 p-0 text-start ">{{"R"}}</button>
+                                <button type="submit" name='submit' class="btn btn-danger mb-0 p-1 text-start delete-cart-item" style='position: absolute; top: -20px; right: 5px; z-index: 100;'>{{"Delete"}}</button>
                             </form>
                         </div>
 
@@ -241,18 +251,18 @@
                     @if ($cartItems)
                         <form action="{{route('checkout')}}" method="GET">
                             @csrf
-                            <button type='submit' class="btn btn-success checkout-btn">Checkout</button>
+                            <button type='submit' class="btn btn-success checkout-btn" style="background:#ead660; color: black">Checkout</button>
                         </form>
                     @else
-                        <a href='{{route('welcome')}}' class="btn btn-success checkout-btn">Go to Baked Goods</a>
+                        <a href='{{route('welcome')}}' class="btn btn-success checkout-btn" style="background:#ead660; color: black">Go to Baked Goods</a>
 
                     @endif
                 </div>
                 <!-- Open button -->
             </div>
-            <button class="btn btn-primary open-btn cart-toggle-visibility">Open Cart <span class='dot-label'>{{$cartItemNumber}}</span></button>
+            <button class="btn open-btn p-2 cart-toggle-visibility" style="background:#ead660"><img src='{{asset('images/cart-icon.png')}}' alt="Cart" style="width: 50px; height: 50px; border-radius: 50% !important; "><span class='dot-label'>{{$cartItemNumber}}</span></button>
             <!-- Close button -->
-            <button class="btn btn-danger close-btn cart-toggle-visibility" style="display: none;">Close Cart <span class='dot-label'>{{$cartItemNumber}}</span></button>
+            <button class="btn close-btn p-2 cart-toggle-visibility" style="display: none; background:#ead660"><img src='{{asset('images/cart-icon.png')}}' alt="Cart" style="width: 50px; height: 50px; border-radius: 50% !important;"><span class='dot-label'>{{$cartItemNumber}}</span></button>
         @endif
     </div>
 </body>

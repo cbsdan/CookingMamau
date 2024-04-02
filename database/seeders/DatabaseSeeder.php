@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Buyer;
 use App\Models\Discount;
@@ -61,13 +62,14 @@ class DatabaseSeeder extends Seeder
         }
         
          // Check if the admin user already exists
-         $adminExists = User::where('email', 'admin@gmail.com')->exists();
+         $adminExists = User::where('email', 'cookingmamau@gmail.com')->exists();
 
          if (!$adminExists) {
              User::create([
-                 'email' => 'admin@gmail.com',
+                 'email' => 'cookingmamau@gmail.com',
                  'password' => Hash::make('12345678'),
                  'is_admin' => true,
+                 'email_verified_at' => Carbon::now() // Set email_verified_at to current datetime
              ]);
         }
 
@@ -77,6 +79,7 @@ class DatabaseSeeder extends Seeder
                 'email' => $faker->unique()->safeEmail,
                 'password' => Hash::make('12345678'),
                 'is_admin' => false,
+                'email_verified_at' => Carbon::now() // Set email_verified_at to current datetime
             ]);
 
             Buyer::create([

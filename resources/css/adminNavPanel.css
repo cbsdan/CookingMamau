@@ -184,7 +184,9 @@ header .image-text .header-text{
     opacity: 1;
 
 }
-
+.menu-link {
+    padding-left: 1rem;
+}
 .sidebar-content li a{
     text-decoration: none;
     height: 100%;

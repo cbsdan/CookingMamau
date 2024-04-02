@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
@@ -19,32 +18,34 @@ use App\Http\Controllers\AvailableScheduleController;
 
 
 Route::get('/', function() {
-    $bakedGoods = BakedGood::all();
+    $bakedGoods = BakedGood::orderBy('is_available', 'DESC')->get();
     return view('welcome', compact('bakedGoods'));
 })->name('welcome');
+Route::get('/home', function() {
+    return view('home');
+})->name('home')->middleware(['auth', 'verified']);
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
-Route::get('/home', [HomeController::class, 'home'])->name('home')->middleware(['auth']);
 Route::get('/search', function(Request $request){
     $query = $request->input('query');
     if ($query) {
         $bakedGoods = BakedGood::where('name', 'like', "%$query%")->get();
     } else {
-        $bakedGoods = BakedGood::all();
+        $bakedGoods = BakedGood::orderBy('is_available', 'DESC')->get();
     }
     return view('welcome', compact('bakedGoods'));
 })->name('search');
 
 //Acount
-Route::middleware(['auth'])->group(function() {
+Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/profile', [ProfileController::class, 'index'])->name('user.profile');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('user.update.profile');
     Route::put('/profile/password/update', [ProfileController::class, 'updatePassword'])->name('user.update.password');
 });
 
 //Admin
-Route::middleware(['admin'])->group(function () {
+Route::middleware(['verified', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
     Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.update.profile');
@@ -75,8 +76,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('discounts/{discount}', [DiscountController::class, 'destroy'])->name('discounts.destroy');
 });
 
-
-
 // Available Schedule
 Route::get('available_schedules', [AvailableScheduleController::class, 'index'])->name('available_schedules.index');
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -86,8 +85,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('available_schedules/{available_schedule}', [AvailableScheduleController::class, 'update'])->name('available_schedules.update');
     Route::delete('available_schedules/{available_schedule}', [AvailableScheduleController::class, 'destroy'])->name('available_schedules.destroy');
 });
-
-
 
 //Baked Goods
 Route::get('/baked_goods', [BakedGoodsController::class, 'index'])->name('baked_goods.index');
@@ -103,7 +100,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 });
 
 //Ingredients
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/ingredients', [IngredientController::class, 'index'])->name('ingredients.index');
     Route::get('/ingredients/create', [IngredientController::class, 'create'])->name('ingredients.create');
     Route::get('/ingredients/add/{bakedGood}', [IngredientController::class, 'add'])->name('ingredients.add');
@@ -113,7 +110,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::delete('/ingredients/{ingredient}', [IngredientController::class, 'destroy'])->name('ingredients.destroy');
 });
 
-
 // Define routes for cart-related actions
 Route::prefix('cart')->group(function () {
     Route::post('/add', [CartController::class, 'addToCart'])->name('cart.add');
@@ -121,16 +117,15 @@ Route::prefix('cart')->group(function () {
     Route::post('/{id}/update', [CartController::class, 'updateCart'])->name('cart.update');
     // Route::get('/', [CartController::class, 'viewCart'])->name('cart.view');
 });
-Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->middleware(['auth']);
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->middleware(['auth', 'verified']);
 
 // User Orders
-Route::get('orders/store', [OrderController::class, 'store'])->name('user.orders.create')->middleware('auth');
-Route::get('orders', [OrderController::class, 'userOrders'])->name('user.orders')->middleware('auth');
-Route::get('orders/{order}', [OrderController::class, 'show'])->name('user.order.show')->middleware('auth');
-Route::put('orders/{order}', [OrderController::class, 'updateStatus'])->name('order.updateStatus')->middleware(['auth', 'admin']);
+Route::post('orders/store', [OrderController::class, 'store'])->name('user.orders.create')->middleware(['auth', 'verified']);
+Route::get('orders', [OrderController::class, 'userOrders'])->name('user.orders')->middleware(['auth', 'verified']);
+Route::get('orders/{order}', [OrderController::class, 'show'])->name('user.order.show')->middleware('auth', 'verified');
+Route::put('orders/{order}', [OrderController::class, 'updateStatus'])->name('order.updateStatus')->middleware(['auth', 'verified', 'admin']);
 
-
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/order_reviews', [OrderReviewController::class, 'index'])->name('order_reviews.index');
     Route::get('/order_reviews/{order}/create', [OrderReviewController::class, 'create'])->name('order_reviews.create');
     Route::get('/order_reviews/{orderReview}', [OrderReviewController::class, 'show'])->name('order_reviews.show');
@@ -140,6 +135,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/order_reviews/{orderReview}', [OrderReviewController::class, 'destroy'])->name('order_reviews.destroy');
     Route::delete('/review_images/{image}', [OrderReviewController::class, 'destroyReviewImage'])->name('review_images.destroy');
 });
-
 
 Route::get('/sendmail/{order}', [MailController::class, 'sendOrderReceipt'])->name('email.sent.receipt')->middleware(['auth', 'admin']);

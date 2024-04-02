@@ -2,14 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Models\AvailableSchedule;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
     public function index() {
-        return view('admin.dashboard');
+        $users = User::all();
+        $orders = Order::all();
+
+        //Chart
+        $schedules = AvailableSchedule::where('schedule', '<', Carbon::now())
+        ->orderBy('schedule', 'asc')
+        ->take(7)
+        ->with('orders')
+        ->get();
+
+        $revenueData = [];
+
+        foreach ($schedules as $schedule) {
+            $scheduleRevenue = 0;
+
+            foreach ($schedule->orders as $order) {
+                $scheduleRevenue += $order->payment->amount;
+            }
+            $carbonDate = Carbon::parse($schedule->schedule);
+            $schedule = $carbonDate->format('Y-m-d');
+
+            $revenueData[] = [
+                'schedule' => $schedule, 
+                'revenue' => $scheduleRevenue,
+            ];
+        }
+        return view('admin.dashboard', compact('users', 'orders', 'revenueData'));
     }
     public function profile() {
         return view('admin.profile');

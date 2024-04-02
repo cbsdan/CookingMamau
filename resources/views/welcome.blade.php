@@ -16,17 +16,17 @@
         }
 
         .bg-video-wrapper {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 85vw; /* Full viewport width */
-    height: 90vh; /* Full viewport height */
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: -10px; /* Adjust the margin on the left side */
-}
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 85vw; /* Full viewport width */
+            height: 90vh; /* Full viewport height */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: -10px; /* Adjust the margin on the left side */
+        }
 
 
         .bg-video {
@@ -80,11 +80,11 @@
         }
 
         .text-lg {
-    font-size: 1.5rem; /* Keep the font size */
-    line-height: 2; /* Keep the line height */
-    margin-top: 300px; /* Adjust the margin-top as needed */
-    font-family: Arial, sans-serif; /* Keep the font family */
-}
+            font-size: 1.5rem; /* Keep the font size */
+            line-height: 2; /* Keep the line height */
+            margin-top: 300px; /* Adjust the margin-top as needed */
+            font-family: Arial, sans-serif; /* Keep the font family */
+        }
 
 
         .font-bold {
@@ -131,15 +131,15 @@
         }
 
         .welcome-message {
-    position: absolute;
-    top: 170px; /* Adjust distance from the top as needed */
-    left: 13%; /* Adjust distance from the right as needed */
-    font-weight: bold;
-    font-size: 4rem; /* Adjust font size as needed */
-    color: #333; /* Adjust color as needed */
-    z-index: 1; /* Ensure5the message appears above other elements */
-    /* Add any other styling you want */
-}
+            position: absolute;
+            top: 170px; /* Adjust distance from the top as needed */
+            left: 13%; /* Adjust distance from the right as needed */
+            font-weight: bold;
+            font-size: 4rem; /* Adjust font size as needed */
+            color: #333; /* Adjust color as needed */
+            z-index: 1; /* Ensure5the message appears above other elements */
+            /* Add any other styling you want */
+        }
 
         .product-image {
             max-height: 200px;
@@ -148,7 +148,7 @@
         }
 
         .counter {
-            margin-bottom: 15px;
+            margin-top: 15px;
         }
 
         .quantity-toggler {
@@ -187,30 +187,8 @@
 
     </style>
 
-    <div class="bg-video-wrapper">
-        <video autoplay muted loop class="bg-video">
-            <source src="uploaded_files/cover.mp4" type="video/mp4">
-        </video>
-
-        <div class="ml-20 text-black mt-48 max-w-xl absolute top-0 left-0">
-            <p class="text-lg">Indulge in the heavenly delights of our pastry goods,<br> where each bite is a celebration of flavor, texture, and artistry.</p>
-            <div class="mt-10">
-                <a href="#" class="bg-yellow-300 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-300 hover:text-white duration-300 hover border border-transparent">Order Now</a>
-            </div>
-        </div>
-    </div>
-
-    <h1 class="welcome-message">Welcome 
-        @if (auth()->check())
-            @if (auth()->user()->is_admin)
-                Admin
-            @else
-                to Cooking <br>Mamau Shop
-            @endif
-        @else
-            to Cooking <br> Mamau Shop
-        @endif
-    </h1>
+    <h1>Our Baked Products</h1>
+    <hr>
 
      <!-- Main Content -->
      <div class="container mt-4">
@@ -229,7 +207,7 @@
                 @foreach($bakedGoods as $bakedGood) 
                     <form class="col-3" action='{{route('cart.add', $bakedGood->id)}}' method='POST'>
                         @csrf
-                        <div class="product-card">
+                        <div class="product-card" style="position: relative;">
                             @php
                                 $thumbnail = $bakedGood->thumbnailImage;
                                 $image_path = $thumbnail ? $thumbnail->image_path : "uploaded_files/default-profile.png";
@@ -237,10 +215,10 @@
                             <a href="{{route('baked_goods.show', $bakedGood->id)}}">
                                 <img src="{{asset($image_path)}}" alt="{{$bakedGood->name}}" class="product-image">
                             </a>
-                            <h5 class="mt-2">{{$bakedGood->name}}</h5>
-                            <p class='mb-1'>Price: P{{$bakedGood->price}}</p>
-                            <p class='mb-1'>Weight: {{$bakedGood->weight_gram}} gram</p>
-                            <p class='mb-1'>Availability: {{$bakedGood->is_available ? "Available" : "Not Available"}}</p>
+                            <h5 class="mt-2">{{ucwords($bakedGood->name)}}</h5>
+                            <p class='mb-1'><span class='fw-semibold'>Price:</span> P{{$bakedGood->price}}</p>
+                            <p class='mb-1'><span class='fw-semibold'>Weight:</span> {{$bakedGood->weight_gram}} gram</p>
+                            <p class="mb-1 {{$bakedGood->is_available ? 'bg-success' : 'bg-danger'}}" style="position: absolute; top: 0; left: 0; padding: 5px 10px; color: white; border-bottom-right-radius: 10px; border-top-left-radius: 5px;">{{$bakedGood->is_available ? "Available" : "Not Available"}} </p>
                             <input type='hidden' name='id' value='{{$bakedGood->id}}'>
                             <input type='hidden' name='name' value='{{$bakedGood->name}}'>
                             <input type='hidden' name='price' value='{{$bakedGood->price}}'>
@@ -252,7 +230,7 @@
                                         <input type="number" name='qty' class="form-control border-0 quantity-input" min=1 value="{{$bakedGood->is_available ? 1 : 0}}" {{$bakedGood->is_available ? "" : "readonly"}}>
                                         <div class="btn btn-primary quantity-toggler" {{$bakedGood->is_available ? "" : "disabled"}}>+</div>
                                     </div>
-                                    <button type='submit' class="btn btn-success mt-2" {{$bakedGood->is_available ? "" : "disabled"}} data-product-id="{{$bakedGood->id}}" data-product-name="{{$bakedGood->name}}" data-product-price="{{$bakedGood->price}}">Add to Cart</button>
+                                    <button type='submit' class="btn {{$bakedGood->is_available ? "btn-success" : "btn-danger"}} mt-2" style="width: 100%" {{$bakedGood->is_available ? "" : "disabled"}} data-product-id="{{$bakedGood->id}}" data-product-name="{{$bakedGood->name}}" data-product-price="{{$bakedGood->price}}">{{$bakedGood->is_available ? "Add to Cart" : "Unavailable"}}</button>
                                 </div>
                             @endif
 

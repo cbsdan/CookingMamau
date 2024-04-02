@@ -36,7 +36,7 @@
         </div>
         <div class="mb-2">
             <label for="max_discount_amount" class="form-label">{{ __('Max Discount Amount (Optional)') }}</label>
-            <input type="number" step="0.01" class="form-control @error('max_discount_amount') is-invalid @enderror" id="max_discount_amount" name="max_discount_amount" value="{{ old('max_discount_amount') }}">
+            <input type="number" step="0.01" class="form-control @error('max_discount_amount') is-invalid @enderror" id="max_discount_amount" name="max_discount_amount" value="{{ old('max_discount_amount', $discount->max_discount_amount) }}">
         </div>
         <div class="mb-3">
             <label for="is_one_time_use" class="form-label">{{ __('Is One Time Use') }}</label>

@@ -42,6 +42,7 @@ class MailController extends Controller
                     "<tr><td>Order ID</td><td>" . $order->id . "</td></tr>" .
                     "<tr><td>Order Status</td><td>" . $order->order_status . "</td></tr>" .
                     "<tr><td>Buyer Name</td><td>" . $order->buyer_name . "</td></tr>" .
+                    "<tr><td>Email</td><td>" . $order->email_address . "</td></tr>" .
                     "<tr><td>Delivery Address</td><td>" . $order->delivery_address . "</td></tr>" .
                     "<tr><td>Ordered Goods</td><td><ul style='list-style:none; padding: 0; margin: 0'>" . $this->formatOrderedGoods($orderedGoods) . "</ul></td></tr>" .
                     "<tr><td>Total Price</td><td>₱" . $totalPrice . "</td></tr>" .
@@ -49,9 +50,9 @@ class MailController extends Controller
                     "<tr><td>Discount Percentage</td><td>" . ($order->discount ? $order->discount->percent . "%" : "N/A") . "</td></tr>" .
                     "<tr><td>Discount Amount</td><td>₱" . number_format($discountAmount, 2) . "</td></tr>" .
                     "<tr><td>Shipping Cost</td><td>₱" . $order->shipping_cost . "</td></tr>" .
+                    "<tr><td>Grand Total</td><td>₱" . number_format($grandTotal, 2) . "</td></tr>" .
                     "<tr><td>Payment Mode</td><td>" . ($payment ? $payment->mode : "N/A") . "</td></tr>" .
                     "<tr><td>Amount Paid</td><td>₱" . ($payment ? $payment->amount : "N/A") . "</td></tr>" .
-                    "<tr><td>Grand Total</td><td>₱" . number_format($grandTotal, 2) . "</td></tr>" .
                     "</table>"
         ];
 

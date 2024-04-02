@@ -14,12 +14,12 @@
             <p class="fw-bold">Images:</p>
             <div class="row">
                 <div class="col-md-3 mb-3">
-                    <img src="{{ asset($bakedGood->thumbnailImage->image_path) }}" alt="Thumbnail" class="img-fluid img-thumbnail">
+                    <img src="{{ asset($bakedGood->thumbnailImage->image_path) }}" alt="Thumbnail" class="img-fluid img-thumbnail" style="max-height: 200px;">
                 </div>
                 @foreach($bakedGood->images as $image)
                     @if ($image->id != $bakedGood->thumbnailImage->id)
                         <div class="col-md-3 mb-3">
-                            <img src="{{ asset($image->image_path) }}" alt="Baked Good Image" class="img-fluid img-thumbnail">
+                            <img src="{{ asset($image->image_path) }}" alt="Baked Good Image" class="img-fluid img-thumbnail" style="max-height: 200px;">
                         </div>
                     @endif
                 @endforeach
@@ -28,8 +28,12 @@
     @endif
     
     
-
-        <h2>{{ $bakedGood->name }}</h2>
+        <div class='d-flex flex-row gap-3'>
+            <h2>{{ $bakedGood->name }}</h2>
+            @if (auth()->check() && auth()->user()->is_admin)
+                <a class='btn border border-success p-1' href="{{route('baked_goods.edit', $bakedGood->id)}}" style='width: 30px; height: 30px'><img src="{{asset('images/edit-icon.png')}}"></a>
+            @endif
+        </div>
         <p><strong>Price:</strong> P{{ $bakedGood->price }}</p>
         <p><strong>Availability:</strong> {{ $bakedGood->is_available ? 'Available' : 'Not Available' }}</p>
         <p><strong>Description:</strong> {{ $bakedGood->description ?: 'N/A' }}</p>
@@ -42,7 +46,7 @@
                 <ol class="p-2">
                     @foreach($bakedGood->ingredients as $ingredient)
                         <li class='mx-4'>
-                            {{$ingredient->qty . $ingredient->unit . " " . $ingredient->name}}
+                            {{$ingredient->qty . " " . $ingredient->unit . " " . $ingredient->name}}
                         </li>
                     @endforeach
                 </ul>

@@ -132,8 +132,7 @@ class BakedGoodsController extends Controller
             'is_available' => 'required|boolean',
             'description' => 'nullable|string',
             'weight_gram' => 'nullable|integer',
-            'thumbnail_image_id' => 'nullable|exists:baked_good_images,id,id_baked_goods,' . $bakedGood->id,
-            // Add validation for other fields if needed
+            'thumbnail_image_id' => 'nullable|exists:baked_good_images,id',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validation for images
         ]);
     
