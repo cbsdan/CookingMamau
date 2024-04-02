@@ -19,7 +19,7 @@
         @endif
     </div>
 
-    <table class="table" id='myDataTable'>
+    <table class="table" id='{{auth()->check() && auth()->user()->is_admin ? 'myDataTable' : '' }}'>
         <thead>
             <tr>
                 <th>Discount Code</th>

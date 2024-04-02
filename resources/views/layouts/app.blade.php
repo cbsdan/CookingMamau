@@ -35,8 +35,10 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm" style="background: #F5F5DC;">
             <div class="container">
+                <img src="{{ asset('uploaded_files/e.jpg') }}" alt="Logo" width="40" height="40" style="border-radius: 50%;">
+
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Cooking Mamau') }}
                 </a>
@@ -111,6 +113,11 @@
                                     @endif                                
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    @if (auth()->user()->is_admin)
+                                        <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                            {{ __('Dashboard') }}
+                                        </a>
+                                    @endif  
                                     @if (auth()->user()->is_admin)
                                         <a class="dropdown-item" href="{{ route('admin.users.index') }}">
                                             {{ __('Users') }}
