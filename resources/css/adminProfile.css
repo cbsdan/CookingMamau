@@ -22,8 +22,8 @@ body {
 
 .btn {
     /* Set the button colors according to the theme */
-    background-color: var(--dark-primary-color);
-    color: var(--primary-color);
+    background-color: var(--primary-light-color);
+    color: var(--text-color);
     border-color: var(--primary-color);
 }
 

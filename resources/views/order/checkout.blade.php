@@ -11,54 +11,45 @@
             @endforeach
         </div>
     @endif
-    <form id="checkoutForm" action='{{route('user.orders.create')}}' action="POST">
+    <form id="checkoutForm" action="{{ route('user.orders.create') }}" method="POST">
+    <div class="grid grid-cols-2 gap-10 p-10">
         @csrf
-        <h5>Order Form</h5>
-        <hr>        
-        <input type='hidden' name='order_status' value='Pending'>
-        <input type='hidden' name='id_buyer' value='{{Auth::user()->id}}'>
-        <div class="form-group">
-            <label for="buyerName">Buyer Name</label>
-            <input type="text" class="form-control" id="buyerName" name="buyer_name" value='{{$user->buyer->fname . " " . $user->buyer->lname}}'>
-        </div>
-        <div class="form-group">
-            <label for="emailAddress">Email Address</label>
-            <input type="email" class="form-control" id="emailAddress" name="email_address" value='{{$user->email}}'>
-        </div>
-        <!-- Delivery Address -->
-        <div class="form-group">
-            <label for="deliveryAddress">Delivery Address</label>
-            <input type="text" class="form-control" id="deliveryAddress" name="delivery_address" value='{{$user->buyer->address . " " . $user->buyer->barangay . " " . $user->buyer->city}}'>
-        </div>
-        <!-- Note for Admin -->
-        <div class="form-group">
-            <label for="buyer_note">Note (Optional)</label>
-            <textarea class="form-control" id="buyer_note" name="buyer_note" rows="3"></textarea>
-        </div>
-        
-        <!-- Discount Code -->
-        <div class="form-group">
-            <label for="discountCode">Discount Code</label>
-            <div class='d-flex flex-row align-items-center'>
-                <input type="text" class="form-control" id="discountCode" >
-                <button type="button" class="btn btn-primary" id="checkDiscountBtn">Apply</button>
+        <div>
+            <h3>Order Form</h3>
+            <hr>
+            <div class="form-group mt-8">
+                <label for="buyerName">Buyer Name</label>
+                <input type="text" class="form-control" id="buyerName" name="buyer_name" value="{{ $user->buyer->fname . ' ' . $user->buyer->lname }}">
             </div>
-            <div id="discountDetails"></div> <!-- Display discount details here -->
+            <div class="form-group mt-8">
+                <label for="emailAddress">Email Address</label>
+                <input type="email" class="form-control" id="emailAddress" name="email_address" value="{{ $user->email }}">
+            </div>
+            <!-- Delivery Address -->
+            <div class="form-group mt-8">
+                <label for="deliveryAddress">Delivery Address</label>
+                <input type="text" class="form-control" id="deliveryAddress" name="delivery_address" value="{{ $user->buyer->address . ' ' . $user->buyer->barangay . ' ' . $user->buyer->city }}">
+            </div>
+            <!-- Note for Admin -->
+            <div class="form-group mt-8">
+                <label for="buyer_note">Note (Optional)</label>
+                <textarea class="form-control" id="buyer_note" name="buyer_note" rows="3"></textarea>
+            </div>
+            <!-- Delivery Date Time Picker -->
+            <div class="form-group mt-8">
+                <label for="deliveryDateTime">Delivery Date and Time</label>
+                <select class="form-control" id="deliveryDateTime" name="id_schedule">
+                    <option value="">Select date schedule</option>
+                    @foreach($availableSchedules as $availableSchedule)
+                    <option value="{{ $availableSchedule->id }}">{{ date('l, Y-m-d H:i', strtotime($availableSchedule->schedule)) }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
-        
-        <!-- Delivery Date Time Picker -->
-        <div class="form-group">
-            <label for="deliveryDateTime">Delivery Date and Time</label>
-            <select class="form-control" id="deliveryDateTime" name="id_schedule">
-                <option value="">Select date schedule</option>
-                @foreach($availableSchedules as $availableSchedule)
-                    <option value="{{ $availableSchedule->id }}">{{  date('l, Y-m-d H:i', strtotime($availableSchedule->schedule)) }}</option>
-                @endforeach
-            </select>
-        </div>
-        <hr>
+        <div>
+        <div class="grid grid-rows-2 gap-4">
         <div id="checkoutItems" class='d-flex flex-column gap-1 mb-3'>
-            <h5 class='bg-primary text-light p-2'>Ordered Baked Goods</h5>
+            <h3 class='bg-primary text-light p-2'>Ordered Baked Goods</h3>
             @php $total=0; $grandTotal = 0; $shippingCost = 50; $discountPercent = 0; $off = 0; $amount = 0;@endphp
             @foreach($cartItems as $id => $item)
                 <div class='d-flex flex-row justify-content-between gap-2 align-items-center border-1 c-white p-2'>
@@ -78,26 +69,26 @@
                     @endphp
                 </div>
             @endforeach
-            <h5 class=' p-2 d-flex justify-content-between mb-0'>
+            <h5 class=' p-2 d-flex justify-content-between mb-0 mt-8'>
                 <span>Total:</span>
                 <span id="grandTotal">P{{$grandTotal}}</span>
             </h5>
-            <h5 class='p-2 d-flex justify-content-between mb-0'>
+            <h5 class='p-2 d-flex justify-content-between mb-0 mt-8'>
                 <span>Shipping Cost: </span>
                 <span id='shippingCost'>P{{$shippingCost}}</span>
             </h5>
-            <h5 class='p-2 d-flex justify-content-between mb-0'>
+            <h5 class='p-2 d-flex justify-content-between mb-0 mt-8'>
                 <span>Discount: </span>
                 <span id='discountOff'>-P{{$off}}</span>
             </h5>
-            <h5 class='bg-danger text-light p-2 d-flex justify-content-between mb-0'>
-                <span>Grand Total: </span>
+            <h3 class='bg-danger text-light p-2 d-flex justify-content-between mb-0 mt-8'>
+                <span> Grand Total:</span>
                 <span id='totalAmount'>P{{$amount = $grandTotal - $off + $shippingCost}}</span>
-            </h5>
+            </h3>
         </div>
         
         <!-- Payment Method -->
-        <div class="form-group">
+        <div class="form-group ">
             <label for="paymentMethod">Payment Method</label>
             <select class="form-control" id="paymentMethod" name="mode">
                 <option value="GCash">GCash</option>
@@ -110,7 +101,7 @@
             <span>Please Pay amount of <strong id='paymentAmount'>{{$amount}}</strong></span>
         </div>
         <!-- Submit Button -->
-        <button type="button" class="btn btn-primary" id="placeOrderBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal">Place Order</button>
+        <button type="button" class="bg-yellow-300 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-300 hover:text-black duration-300 hover border border-transparent" id="placeOrderBtn" data-bs-toggle="modal" data-bs-target="#confirmationModal">Place Order</button>
         <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
            <div class="modal-dialog">
              <div class="modal-content">
@@ -128,7 +119,9 @@
              </div>
            </div>
          </div>
+         </div>
     </form>
+
      <!-- Modal -->
     <script>
         // Add this script to your view or a separate JavaScript file
