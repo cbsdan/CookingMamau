@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\BakedGood;
+use App\Models\OrderedGood;
 use Illuminate\Http\Request;
 use App\Models\AvailableSchedule;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -17,11 +20,11 @@ class AdminController extends Controller
 
         //Chart
         $schedules = AvailableSchedule::where('schedule', '<', Carbon::now())
-        ->orderBy('schedule', 'asc')
+        ->orderBy('schedule', 'desc')
         ->take(7)
         ->with('orders')
         ->get();
-
+        $schedules = $schedules->sortBy('schedule');
         $revenueData = [];
 
         foreach ($schedules as $schedule) {
@@ -38,7 +41,35 @@ class AdminController extends Controller
                 'revenue' => $scheduleRevenue,
             ];
         }
-        return view('admin.dashboard', compact('users', 'orders', 'revenueData'));
+
+        // Retrieve the IDs of successfully delivered orders
+        $deliveredOrderIds = OrderedGood::whereHas('order', function ($query) {
+            $query->where('order_status', 'Delivered');
+        })->pluck('id_baked_goods')->toArray();
+        $productCounts = OrderedGood::whereIn('id_baked_goods', $deliveredOrderIds)
+            ->select('id_baked_goods', DB::raw('sum(qty) as count'))
+            ->groupBy('id_baked_goods')
+            ->orderByDesc('count')
+            ->take(10) 
+            ->get();
+        $topProducts = [];
+        foreach ($productCounts as $productCount) {
+            $product = BakedGood::find($productCount->id_baked_goods); 
+
+            if ($product) {
+                $topProducts[] = [
+                    'name' => $product->name,
+                    'qty' => $productCount->count,
+                ];
+            }
+        }
+        // Prepare data for the chart
+        $chartData = [
+            'labels' => collect($topProducts)->pluck('name'),
+            'data' => collect($topProducts)->pluck('qty'),
+        ];
+
+        return view('admin.dashboard', compact('users', 'orders', 'revenueData', 'chartData'));
     }
     public function profile() {
         return view('admin.profile');

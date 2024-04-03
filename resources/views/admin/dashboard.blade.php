@@ -54,14 +54,25 @@
         
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const chartData = @json($chartData);
+            console.log(chartData)
+            // Convert collections to arrays
+            const bakedGoods = chartData.labels;
+            const quantity = chartData.data;
+
+
+            // Debugging
+            console.log(chartData);
+
+            // Rendering the chart using Chart.js
             var ctx = document.getElementById('pie').getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                    labels: bakedGoods,
                     datasets: [{
                         label: 'Sales',
-                        data: [40, 59, 80, 81, 56, 55, 40],
+                        data: quantity,
                         backgroundColor: 'rgba(187, 165, 230)',
                         borderColor: 'rgba(116, 82, 168)',
                         borderWidth: 1
@@ -75,6 +86,7 @@
                     }
                 }
             });
+
         });
     </script>
     </div>
@@ -84,14 +96,19 @@
         
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const chartData = @json($chartData);
+
+            const bakedGoods = chartData.map(data => data.name);
+            const quantity = chartData.map(data => data.qty);
+
             var ctx = document.getElementById('bar').getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                    labels: bakedGoods,
                     datasets: [{
-                        label: 'Sales',
-                        data: [65, 59, 80, 81, 56, 55, 40],
+                        label: 'Baked Products',
+                        data: quantity,
                         backgroundColor: 'rgba(187, 165, 230)',
                         borderColor: 'rgba(116, 82, 168)',
                         borderWidth: 1
