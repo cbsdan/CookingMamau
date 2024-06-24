@@ -17,8 +17,8 @@ class CreateOrderReviewsTable extends Migration
             $table->id();
             $table->integer('rating')->unsigned();
             $table->text('comment')->nullable();
-            $table->unsignedBigInteger('id_order')->nullable();
-            $table->unsignedBigInteger('id_baked_goods')->nullable();
+            $table->unsignedBigInteger('id_order');
+            $table->unsignedBigInteger('id_baked_goods');
             $table->timestamps();
 
             // Foreign key constraints
