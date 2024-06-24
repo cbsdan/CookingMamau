@@ -16,14 +16,10 @@ class CreateIngredientsTable extends Migration
         Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('qty');
             $table->string('unit')->nullable();
             $table->string('image_path')->nullable();
             $table->unsignedBigInteger('id_baked_goods');
             $table->timestamps();
-
-            // Foreign key constraint
-            $table->foreign('id_baked_goods')->references('id')->on('baked_goods')->onDelete('cascade');
 
             // Index
             $table->index('id_baked_goods');

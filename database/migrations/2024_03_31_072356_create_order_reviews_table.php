@@ -15,16 +15,17 @@ class CreateOrderReviewsTable extends Migration
     {
         Schema::create('order_reviews', function (Blueprint $table) {
             $table->id();
-            $table->integer('rating');
-            $table->string('comment')->nullable();
-            $table->unsignedBigInteger('id_order');
+            $table->integer('rating')->unsigned();
+            $table->text('comment')->nullable();
+            $table->unsignedBigInteger('id_order')->nullable();
+            $table->unsignedBigInteger('id_baked_goods')->nullable();
             $table->timestamps();
 
-            // Foreign key constraint
-            $table->foreign('id_order')->references('id')->on('orders')->onDelete('cascade');
-
-            // Index
-            $table->index('id_order');
+            // Foreign key constraints
+            $table->foreign(['id_order', 'id_baked_goods'])
+                  ->references(['id_order', 'id_baked_goods'])
+                  ->on('ordered_goods')
+                  ->onDelete('cascade');
         });
     }
 

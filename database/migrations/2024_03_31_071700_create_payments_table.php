@@ -17,16 +17,12 @@ class CreatePaymentsTable extends Migration
             $table->id();
             $table->string('mode');
             $table->decimal('amount', 12, 2);
-            $table->unsignedBigInteger('id_buyer');
             $table->unsignedBigInteger('id_order');
             $table->timestamps();
 
-            // Foreign key constraints
-            $table->foreign('id_buyer')->references('id')->on('buyers')->onDelete('cascade');
             $table->foreign('id_order')->references('id')->on('orders')->onDelete('cascade');
 
             // Indexes
-            $table->index('id_buyer');
             $table->index('id_order');
         });
     }

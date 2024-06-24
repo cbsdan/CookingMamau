@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('baked_good_images', function (Blueprint $table) {
             $table->id();
             $table->string('image_path');
+            $table->boolean('is_thumbnail')->default(false);
             $table->unsignedBigInteger('id_baked_goods');
             $table->timestamps();
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('profile_image_path')->nullable();
             $table->tinyInteger('is_admin')->default(0);
             $table->tinyInteger('is_activated')->default(1);
-            $table->rememberToken();
+            $table->string('remember_token', 100)->nullable();
             $table->timestamps();
         });
 

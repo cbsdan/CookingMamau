@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('price', 12, 2);
             $table->tinyInteger('is_available')->default(1);
-            $table->unsignedBigInteger('thumbnail_image_id')->nullable();
             $table->string('description')->nullable();
             $table->integer('weight_gram')->nullable();
             $table->timestamps();
