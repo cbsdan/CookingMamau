@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         //BakedGoods
         BakedGood::factory()->count(10)->create();
         $bakedGoods = BakedGood::all();
-        
+
         //Ingredients
         foreach ($bakedGoods as $bakedGood) {
             $numIngredients = rand(1, 5);
@@ -31,7 +31,6 @@ class DatabaseSeeder extends Seeder
             for ($i = 0; $i < $numIngredients; $i++) {
                 Ingredient::create([
                     'name' => $faker->word,
-                    'qty' => $faker->randomFloat(2, 0, 100),
                     'unit' => $faker->randomElement(['g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup']),
                     'image_path' => null, // Set image path to null for now
                     'id_baked_goods' => $bakedGood->id,
@@ -60,7 +59,7 @@ class DatabaseSeeder extends Seeder
                 'schedule' => $schedule,
             ]);
         }
-        
+
          // Check if the admin user already exists
          $adminExists = User::where('email', 'cookingmamau@gmail.com')->exists();
 
