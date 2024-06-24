@@ -50,6 +50,6 @@ class User extends Authenticatable implements MustVerifyEmail
     // Relationships
     public function buyer()
     {
-        return $this->hasOne(Buyer::class, 'id_user');
+        return $this->hasMany(Buyer::class, 'id_user');
     }
 }

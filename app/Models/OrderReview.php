@@ -22,6 +22,10 @@ class OrderReview extends Model
     {
         return $this->belongsTo(Order::class, 'id_order');
     }
+    public function orderedGoods()
+    {
+        return $this->order->orderedGoods();
+    }
     public function reviewImages()
     {
         return $this->hasMany(ReviewImage::class, 'id_review');

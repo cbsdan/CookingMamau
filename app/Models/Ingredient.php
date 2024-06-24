@@ -9,19 +9,18 @@ class Ingredient extends Model
 {
     use HasFactory;
 
+    public $timestamps = true;
+
     protected $fillable = [
         'name',
-        'qty',
         'unit',
         'image_path',
-        'id_baked_goods',
     ];
 
-    /**
-     * Get the baked good that owns the ingredient.
-     */
-    public function bakedGood()
+    public function bakedGoods()
     {
-        return $this->belongsTo(BakedGood::class, 'id_baked_goods');
+        return $this->belongsToMany(BakedGood::class, 'baked_good_ingredients', 'id_ingredients', 'id_baked_goods')
+            ->withPivot('qty')
+            ->withTimestamps();
     }
 }

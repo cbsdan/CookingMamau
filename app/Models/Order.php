@@ -41,16 +41,13 @@ class Order extends Model
 
     public function orderedGoods()
     {
-        return $this->hasMany(OrderedGood::class, 'id_order');
+        return $this->belongsToMany(BakedGood::class, 'ordered_goods', 'id_order', 'id_baked_good')
+                    ->withPivot('price_per_good', 'qty')
+                    ->withTimestamps();
     }
 
-    public function reviews()
+    public function payments()
     {
-        return $this->hasOne(OrderReview::class, 'id_order');
-    }
-
-    public function payment()
-    {
-        return $this->hasOne(Payment::class, 'id_order');
+        return $this->hasMany(Payment::class, 'id_order');
     }
 }

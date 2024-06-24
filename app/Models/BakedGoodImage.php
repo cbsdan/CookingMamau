@@ -9,9 +9,12 @@ class BakedGoodImage extends Model
 {
     use HasFactory;
 
+    public $timestamps = true;
+
     protected $fillable = [
         'image_path',
         'id_baked_goods',
+        'is_thumbnail'
     ];
 
     /**

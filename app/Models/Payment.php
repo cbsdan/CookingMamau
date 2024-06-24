@@ -14,15 +14,8 @@ class Payment extends Model
     protected $fillable = [
         'mode',
         'amount',
-        'id_buyer',
         'id_order',
     ];
-
-    // Relationships
-    public function buyer()
-    {
-        return $this->belongsTo(Buyer::class, 'id_buyer');
-    }
 
     public function order()
     {
