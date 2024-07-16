@@ -33,7 +33,6 @@ class DatabaseSeeder extends Seeder
                     'name' => $faker->word,
                     'unit' => $faker->randomElement(['g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup']),
                     'image_path' => null, // Set image path to null for now
-                    'id_baked_goods' => $bakedGood->id,
                 ]);
             }
         }

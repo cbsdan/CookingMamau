@@ -18,11 +18,7 @@ class CreateIngredientsTable extends Migration
             $table->string('name');
             $table->string('unit')->nullable();
             $table->string('image_path')->nullable();
-            $table->unsignedBigInteger('id_baked_goods');
             $table->timestamps();
-
-            // Index
-            $table->index('id_baked_goods');
         });
     }
 
