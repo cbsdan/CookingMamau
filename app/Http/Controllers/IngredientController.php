@@ -106,7 +106,7 @@ class IngredientController extends Controller
     // }
 
     public function show($id){
-        $ingredient = Ingredient::find($id);
+        $ingredient = Ingredient::with('bakedGoods')->find($id);
         return response()->json($ingredient);
     }
 

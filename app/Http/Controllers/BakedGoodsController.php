@@ -36,10 +36,25 @@ class BakedGoodsController extends Controller
             'description' => 'nullable|string',
             'weight_gram' => 'nullable|integer',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validation for images
+            'ids_ingredients.*' => 'exists:ingredients,id', // Validation for ingredient IDs
+            'qtys_ingredient.*' => 'numeric|min:1', // Validation for ingredient quantities
+
         ]);
 
         // Create baked good
         $bakedGood = BakedGood::create($request->except('images'));
+
+        // Attach ingredients to the pivot table with quantities
+        if ($request->has('ids_ingredient')) {
+            $ingredients = [];
+            foreach ($request->ids_ingredient as $index => $ingredientId) {
+                $qty = $request->qtys_ingredient[$index] ?? 1; // Default quantity is 1 if not provided
+
+                // Prepare data to attach with extra fields (like qty)
+                $ingredients[$ingredientId] = ['qty' => $qty];
+            }
+            $bakedGood->ingredients()->attach($ingredients);
+        }
 
         // Upload and attach images
         if ($request->hasFile('images')) {
@@ -65,11 +80,12 @@ class BakedGoodsController extends Controller
             }
             $bakedGood->images()->saveMany($bakedGoodImages);
 
+
         }
         // Save the baked good after all images are processed
         $bakedGood->save();
 
-        return response()->json(['success' => 'Baked Good created successfully.', 'bakedgood' => $bakedGood, 'status' => 200]);
+        return response()->json(['success' => 'Baked Good created successfully.', 'bakedgood' => $bakedGood, 'ingredients'=> $request->ids_ingredient, 'status' => 200]);
     }
 
 
@@ -81,7 +97,7 @@ class BakedGoodsController extends Controller
      */
     public function show($id)
     {
-        $bakedGood = BakedGood::with('images')->find($id);
+        $bakedGood = BakedGood::with(['images', 'ingredients'])->find($id);
         return response()->json($bakedGood);
     }
 
@@ -102,10 +118,26 @@ class BakedGoodsController extends Controller
             'description' => 'nullable|string',
             'weight_gram' => 'nullable|integer',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validation for images
+            'ids_ingredients.*' => 'exists:ingredients,id', // Validation for ingredient IDs
+            'qtys_ingredient.*' => 'numeric|min:1', // Validation for ingredient quantities
+
         ]);
 
         // Update baked good
         $bakedGood->update($request->except('images'));
+
+        // Sync ingredients in the pivot table with quantities
+        if ($request->has('ids_ingredient')) {
+            $ingredients = [];
+            foreach ($request->ids_ingredient as $index => $ingredientId) {
+                $qty = $request->qtys_ingredient[$index] ?? 1; // Default quantity is 1 if not provided
+
+                // Prepare data to sync with extra fields (like qty)
+                $ingredients[$ingredientId] = ['qty' => $qty];
+            }
+            $bakedGood->ingredients()->sync($ingredients);
+        }
+
         // Upload and attach images
         if ($request->hasFile('images')) {
             $bakedGoodImages = [];
@@ -132,7 +164,7 @@ class BakedGoodsController extends Controller
             $bakedGood->images = $bakedGoodImages;
         }
 
-        return response()->json(['success' => 'Baked Good updated successfully.', 'bakedGood' => $bakedGood, 'status' => 200]);
+        return response()->json(['success' => 'Baked Good updated successfully.', 'bakedGood' => $bakedGood, 'ingredients'=> $request->ids_ingredient, 'status' => 200]);
     }
 
     /**
