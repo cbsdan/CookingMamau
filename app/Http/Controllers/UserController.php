@@ -2,165 +2,153 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Buyer;
 use Illuminate\Http\Request;
-
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    // Show all users
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->input('search');
-
-        $users = User::query();
-
-        if ($search) {
-            $users->where('id', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%");
-        }
-
-        $users = $users->get();
-
-        return view('admin.users.index', compact('users'));
+        return view('auth.login');
     }
 
-    // Show the form for creating a new user
-    public function create()
+    public function register()
     {
-        return view('admin.users.create');
+        return view('auth.register');
     }
 
-    // Store a newly created user in storage
-    public function store(Request $request)
+    public function registerUser(Request $request)
     {
-        // Validate the request data
-        $userData = $request->validate([
-            'email' => ['required', 'email', 'unique:users'],
-            'password' => ['required', 'min:8'],
-            'fname' => ['required', 'string', 'max:255'],
-            'lname' => ['required', 'string', 'max:255'],
-            'contact' => ['required', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'barangay' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'landmark' => ['nullable', 'string', 'max:255'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'is_admin' => ['required', 'boolean'],
-            'is_activated' => ['required', 'boolean'],
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users',
+            'fname' => 'required|string|max:255',
+            'lname' => 'required|string|max:255',
+            'contact' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'barangay' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'landmark' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'password' => 'required|min:8',
+            'cpassword' => 'required|min:8|same:password',
+        ], [
+            'cpassword.same' => 'Password did not match!',
+            'cpassword.required' => 'Confirm password is required!',
         ]);
 
-        // Create the user
-        $user = User::create([
-            'email' => $userData['email'],
-            'password' => Hash::make($userData['password']),
-            'is_admin' => $userData['is_admin'],
-            'is_activated' => $userData['is_activated'],
-        ]);
-
-        if (isset($userData['image'])){
-            $file = $userData['image'];
-            $extension = $file -> getClientOriginalExtension();
-            $filename = time() . "." . $extension;
-        
-            $path = "uploaded_files/";
-            $file->move($path, $filename);
-            $user->profile_image_path = $path . $filename;
-            $user->save();
-        }
-
-        // Create buyer information
-        $user->buyer()->create([
-            'fname' => $userData['fname'],
-            'lname' => $userData['lname'],
-            'contact' => $userData['contact'],
-            'address' => $userData['address'],
-            'barangay' => $userData['barangay'],
-            'city' => $userData['city'],
-            'landmark' => $userData['landmark'],
-        ]);
-
-        // Redirect after user creation
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
-    }
-
-
-    // Show the form for editing the specified user
-    public function edit(User $user)
-    {
-        return view('admin.users.edit', compact('user'));
-    }
-
-    // Update the specified user in storage
-    public function update(Request $request, User $user)
-    {
-        // Validate the request data
-        $userData = $request->validate([
-            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => ['nullable', 'min:8'],
-            'fname' => ['required', 'string', 'max:255'],
-            'lname' => ['required', 'string', 'max:255'],
-            'contact' => ['required', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'barangay' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'landmark' => ['nullable', 'string', 'max:255'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-            'is_admin' => ['required', 'boolean'],
-            'is_activated' => ['required', 'boolean'],
-        ]);
-
-        // Update the user
-        $user->update([
-            'email' => $userData['email'],
-            'password' => Hash::make($userData['password']),
-            'profile_image_path' => $request->file('image') ? $request->file('image')->store('uploaded_files') : $user->profile_image_path,
-            'is_admin' => $userData['is_admin'],
-            'is_activated' => $userData['is_activated'],
-        ]);
-        
-        if (isset($userData['image'])){
-            $file = $userData['image'];
-            $extension = $file -> getClientOriginalExtension();
-            $filename = time() . "." . $extension;
-        
-            $path = "uploaded_files/";
-            $file->move($path, $filename);
-            $user->profile_image_path = $path . $filename;
-            $user->save();
-        }
-
-        // Update buyer information if available
-        if ($user->buyer) {
-            $user->buyer->update([
-                'fname' => $userData['fname'],
-                'lname' => $userData['lname'],
-                'contact' => $userData['contact'],
-                'address' => $userData['address'],
-                'barangay' => $userData['barangay'],
-                'city' => $userData['city'],
-                'landmark' => $userData['landmark'],
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'message' => $validator->errors()
             ]);
+        } else {
+            DB::beginTransaction();
+            try {
+                $profileImagePath = null;
+                if ($request->hasFile('image')) {
+                    $profileImagePath = $request->file('image')->store('profile_images', 'public');
+                }
+
+                $user = $this->createUser($request, $profileImagePath);
+                $buyer = $this->createBuyer($request, $user->id);
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'User successfully registered!'
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Error creating user: '.$e->getMessage());
+                return response()->json([
+                    'status' => 500,
+                    'message' => 'Internal Server Error'
+                ]);
+            }
         }
-
-        // Redirect after updating user
-        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
-    // Remove the specified user from storage
-    public function destroy(User $user)
+    private function createUser($request, $profileImagePath)
     {
-        $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+        return User::create([
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'profile_image_path' => $profileImagePath,
+            'is_admin' => 0,
+            'is_activated' => 1,
+        ]);
     }
-    public function updateUserActivation(User $user)
+
+    private function createBuyer($request, $userId)
     {
-        $currentStatus = $user->is_activated;
-        $user->update(['is_activated' => !$currentStatus]);
-        $status = $user->is_activated ? "Activated" : "Deactivated";
-        return redirect()->route('admin.users.index')->with('success', "User $status successfully.");
+        return Buyer::create([
+            'fname' => $request->fname,
+            'lname' => $request->lname,
+            'contact' => $request->contact,
+            'address' => $request->address,
+            'barangay' => $request->barangay,
+            'city' => $request->city,
+            'landmark' => $request->landmark,
+            'id_user' => $userId,
+        ]);
     }
+
+    public function loginUser(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:8'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 422,
+                'message' => $validator->errors()
+            ]);
+        } else {
+            $user = User::where('email', $request->email)->first();
+            if ($user) {
+                if (Hash::check($request->password, $user->password)) {
+                    $token = $user->createToken('authToken')->plainTextToken;
+                    return response()->json([
+                        'status' => 200,
+                        'message' => 'Login Successful',
+                        'token' => $token
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 401,
+                        'message' => 'Invalid Password'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Invalid Email'
+                ]);
+            }
+        }
+    }
+
+    public function profile()
+    {
+        return view('auth.profile');
+    }
+
+    public function logout(Request $request)
+    {
+        // Revoke the token that was used to authenticate the current request
+        $request->user()->tokens()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully.'
+        ]);
+    }
+
 }

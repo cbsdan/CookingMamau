@@ -45,7 +45,8 @@
             <div class="row">
                 <ol class="p-2">
                     @foreach($bakedGood->ingredients as $ingredient)
-                        <li class='mx-4'>
+                        <li class='mx-4 d-flex align-items-center gap-2'>
+                            <img src="{{asset($ingredient->image_path ?? "uploaded_files/default-profile.png")}}" style="width: 30px; height: 30px;">
                             {{$ingredient->qty . " " . $ingredient->unit . " " . $ingredient->name}}
                         </li>
                     @endforeach

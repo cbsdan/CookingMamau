@@ -10,21 +10,17 @@ class DiscountController extends Controller
 {
     public function index(Request $request)
     {
-        $discounts = Discount::query();
+        $discounts = Discount::orderBy('created_at', 'DESC')->get();
+        return response()->json($discounts);
 
         // Search for discount code
-        if ($request->has('search')) {
-            $discounts->where('discount_code', 'like', '%' . $request->input('search') . '%');
-        }
+        // if ($request->has('search')) {
+        //     $discounts->where('discount_code', 'like', '%' . $request->input('search') . '%');
+        // }
 
-        $discounts = $discounts->paginate(10);
+        // $discounts = $discounts->paginate(10);
 
-        return view('discounts.index', compact('discounts'));
-    }
-
-    public function create()
-    {
-        return view('discounts.create');
+        // return view('discounts.index', compact('discounts'));
     }
 
     public function store(Request $request)
@@ -40,7 +36,7 @@ class DiscountController extends Controller
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'max_discount_amount' => ['nullable', 'numeric', 'min:0'],
         ]);
-    
+
         // Handle image upload if provided
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -50,15 +46,15 @@ class DiscountController extends Controller
             $file->move($path, $filename);
             $request->merge(['image_path' =>  $path . $filename]);
         }
-    
-        Discount::create($request->all());
-    
-        return redirect()->route('discounts.index')->with('success', 'Discount created successfully.');
+
+        $discount = Discount::create($request->all());
+
+        return response()->json(['success' => 'Discount created successfully.', 'discount' => $discount, 'status' => 200]);
     }
 
-    public function edit(Discount $discount)
-    {
-        return view('discounts.edit', compact('discount'));
+    public function show($id){
+        $discount = Discount::find($id);
+        return response()->json($discount);
     }
 
     public function update(Request $request, Discount $discount)
@@ -74,7 +70,7 @@ class DiscountController extends Controller
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'max_discount_amount' => ['nullable', 'numeric', 'min:0'],
         ]);
-    
+
         // Handle image update if provided
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -84,26 +80,26 @@ class DiscountController extends Controller
             $file->move($path, $filename);
             $request->merge(['image_path' =>  $path . $filename]);
         }
-    
+
         $discount->update($request->all());
-    
-        return redirect()->route('discounts.index')->with('success', 'Discount updated successfully.');
+
+        return response()->json(['success' => 'Discount updated successfully.', 'discount' => $discount, 'status' => 200]);
     }
 
     public function destroy(Discount $discount)
     {
         $discount->delete();
 
-        return redirect()->route('discounts.index')->with('success', 'Discount deleted successfully.');
+        return response()->json(['success' => 'Discount deleted successfully.', 'status' => 200]);
     }
 
     public function checkDiscount(Request $request)
     {
         $discountCode = $request->input('discountCode');
-        
+
         // Check if the discount code exists
         $discount = Discount::where('discount_code', $discountCode)->first();
-        
+
         // Return JSON response with discount details
         return response()->json($discount);
     }

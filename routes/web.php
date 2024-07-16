@@ -65,7 +65,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 });
 
 
-// Discounts 
+// Discounts
 Route::get('discounts', [DiscountController::class, 'index'])->name('discounts.index');
 Route::get('check-discount', [DiscountController::class, 'checkDiscount'])->name('check.discount');
 Route::middleware(['auth', 'admin'])->group(function () {
@@ -90,8 +90,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::get('/baked_goods', [BakedGoodsController::class, 'index'])->name('baked_goods.index');
 Route::get('/baked_goods/{bakedGood}', [BakedGoodsController::class, 'show'])->name('baked_goods.show');
 
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+// Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::prefix('admin')->group(function () {
     Route::get('/baked_goods/create', [BakedGoodsController::class, 'create'])->name('baked_goods.create');
+    Route::get('/baked_goods/all', [BakedGoodsController::class, 'fetchAll'])->name('baked_goods.fetchAll');
     Route::post('/baked_goods', [BakedGoodsController::class, 'store'])->name('baked_goods.store');
     Route::get('/baked_goods/{bakedGood}/edit', [BakedGoodsController::class, 'edit'])->name('baked_goods.edit');
     Route::put('/baked_goods/{bakedGood}', [BakedGoodsController::class, 'update'])->name('baked_goods.update');
@@ -131,7 +133,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/order_reviews/{orderReview}', [OrderReviewController::class, 'show'])->name('order_reviews.show');
     Route::post('/order_reviews/{order}', [OrderReviewController::class, 'store'])->name('order_reviews.store');
     Route::get('/order_reviews/{orderReview}/edit', [OrderReviewController::class, 'edit'])->name('order_reviews.edit');
-    Route::put('/order_reviews/{orderReview}', [OrderReviewController::class, 'update'])->name('order_reviews.update');    
+    Route::put('/order_reviews/{orderReview}', [OrderReviewController::class, 'update'])->name('order_reviews.update');
     Route::delete('/order_reviews/{orderReview}', [OrderReviewController::class, 'destroy'])->name('order_reviews.destroy');
     Route::delete('/review_images/{image}', [OrderReviewController::class, 'destroyReviewImage'])->name('review_images.destroy');
 });

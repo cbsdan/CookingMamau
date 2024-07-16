@@ -14,23 +14,27 @@ class IngredientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index() //Request $request
     {
-        $query = Ingredient::query();
-        
-        // Check if search query is provided
-        if ($request->has('search')) {
-            $searchTerm = $request->input('search');
-            // Search by name of baked goods
-            $query->whereHas('bakedGood', function ($query) use ($searchTerm) {
-                $query->where('name', 'like', '%' . $searchTerm . '%');
-            });
-        }
-        
-        // Include the baked goods related to the ingredients
-        $ingredients = $query->with('bakedGood')->get();
-        
-        return view('ingredients.index', compact('ingredients'));
+        $ingredients = Ingredient::orderBy('id', 'DESC')->get();
+
+        return response()->json($ingredients);
+
+        // $query = Ingredient::query();
+
+        // // Check if search query is provided
+        // if ($request->has('search')) {
+        //     $searchTerm = $request->input('search');
+        //     // Search by name of baked goods
+        //     $query->whereHas('bakedGood', function ($query) use ($searchTerm) {
+        //         $query->where('name', 'like', '%' . $searchTerm . '%');
+        //     });
+        // }
+
+        // // Include the baked goods related to the ingredients
+        // $ingredients = $query->with('bakedGood')->get();
+
+        // return view('ingredients.index', compact('ingredients'));
     }
 
     /**
@@ -38,15 +42,15 @@ class IngredientController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function add(BakedGood $bakedGood) 
-    {
-        return view('ingredients.add', compact('bakedGood'));
-    }
-    public function create()
-    {
-        $bakedGoods = BakedGood::all(); // Fetch all baked goods
-        return view('ingredients.create', compact('bakedGoods'));
-    }
+    // public function add(BakedGood $bakedGood)
+    // {
+    //     return view('ingredients.add', compact('bakedGood'));
+    // }
+    // public function create()
+    // {
+    //     $bakedGoods = BakedGood::all(); // Fetch all baked goods
+    //     return view('ingredients.create', compact('bakedGoods'));
+    // }
 
     /**
      * Store a newly created ingredient in storage.
@@ -58,12 +62,10 @@ class IngredientController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'qty' => 'required|integer',
             'unit' => 'nullable|string|max:255',
-            'id_baked_goods' => 'required|exists:baked_goods,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation for image file
         ]);
-    
+
         // Store the image file
         $imagePath = null;
 
@@ -76,19 +78,19 @@ class IngredientController extends Controller
             $file->move($path, $filename);
             $imagePath = $path . $filename;
         }
-    
+
         // Create the ingredient
         $ingredient = new Ingredient([
             'name' => $request->name,
-            'qty' => $request->qty,
             'unit' => $request->unit,
-            'id_baked_goods' => $request->id_baked_goods,
             'image_path' => $imagePath,
         ]);
         $ingredient->save();
-    
-        return redirect()->route('ingredients.index')
-            ->with('success', 'Ingredient created successfully.');
+
+        return response()->json(["success" => "Ingredient created successfully.", "ingredient" => $ingredient, "status" => 200]);
+
+        // return redirect()->route('ingredients.index')
+        //     ->with('success', 'Ingredient created successfully.');
     }
 
     /**
@@ -97,10 +99,15 @@ class IngredientController extends Controller
      * @param  \App\Models\Ingredient  $ingredient
      * @return \Illuminate\Http\Response
      */
-    public function edit(Ingredient $ingredient)
-    {
-        $bakedGoods = BakedGood::all(); // Fetch all baked goods
-        return view('ingredients.edit', compact('ingredient', 'bakedGoods'));
+    // public function edit(Ingredient $ingredient)
+    // {
+    //     $bakedGoods = BakedGood::all(); // Fetch all baked goods
+    //     return view('ingredients.edit', compact('ingredient', 'bakedGoods'));
+    // }
+
+    public function show($id){
+        $ingredient = Ingredient::find($id);
+        return response()->json($ingredient);
     }
 
     /**
@@ -114,17 +121,13 @@ class IngredientController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'qty' => 'required|integer',
             'unit' => 'nullable|string|max:255',
-            'id_baked_goods' => 'required|exists:baked_goods,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation for image file
         ]);
 
         // Update the ingredient attributes
         $ingredient->name = $request->name;
         $ingredient->unit = $request->unit;
-        $ingredient->id_baked_goods = $request->id_baked_goods;
-        $ingredient->qty = $request->qty;
 
         // Store the image file
         $imagePath = null;
@@ -142,8 +145,7 @@ class IngredientController extends Controller
 
         $ingredient->save();
 
-        return redirect()->route('ingredients.index')
-            ->with('success', 'Ingredient updated successfully.');
+        return response()->json(["success" => "Ingredient updated successfully.", "ingredient" => $ingredient, "status" => 200]);
     }
 
     /**
@@ -156,7 +158,7 @@ class IngredientController extends Controller
     {
         $ingredient->delete();
 
-        return redirect()->route('ingredients.index')
-            ->with('success', 'Ingredient deleted successfully.');
+        $data = array('success' => 'deleted','code'=>200);
+        return response()->json($data);
     }
 }
