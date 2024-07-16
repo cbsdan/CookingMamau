@@ -1,5 +1,6 @@
 $(document).ready(function () {
     // Initialize DataTable
+
     $('#bakedGoodsTable').DataTable({
         ajax: {
             url: "/api/baked_goods",
@@ -16,6 +17,31 @@ $(document).ready(function () {
                 text: 'Add Baked Good',
                 className: 'btn btn-primary',
                 action: function (e, dt, node, config) {
+                    $('#added-ingredient-container').html("");
+                    $("#ingredientsList").html("");
+                    $("#ingredientsList").append(`<option value='false'>Select an Ingredient</option>`)
+
+                    $.ajax({
+                        type: "GET",
+                        url: `/api/ingredients/`,
+                        dataType: "json",
+                        success: function (ingredients) {
+                            const $ingredientsList = $('#ingredientsList');
+
+                            if (ingredients && ingredients.length > 0) {
+                                ingredients.forEach(function(ingredient) {
+                                    const option = $('<option></option>')
+                                        .attr('value', ingredient.id)
+                                        .text(ingredient.name);
+                                    $ingredientsList.append(option);
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error)
+                        }
+                    })
+
                     $("#bakedGoodForm").trigger("reset");
                     $('#bakedGoodModal').modal('show');
                     $('#bakedGoodUpdate').hide();
@@ -75,6 +101,7 @@ $(document).ready(function () {
         e.preventDefault();
         var data = $('#bakedGoodForm')[0];
         let formData = new FormData(data);
+        console.log(data);
         $.ajax({
             type: "POST",
             url: "/api/baked_goods",
@@ -85,6 +112,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data);
+
                 $("#bakedGoodModal").modal("hide");
                 var $bakedGoodsTable = $('#bakedGoodsTable').DataTable();
                 $bakedGoodsTable.ajax.reload();
@@ -98,6 +126,10 @@ $(document).ready(function () {
     // Edit baked good
     $('#bakedGoodsTable tbody').on('click', 'a.editBtn', function (e) {
         e.preventDefault();
+        $("#ingredientsList").html("");
+        $("#ingredientsList").append(`<option value='false'>Select an Ingredient</option>`)
+
+        $('#added-ingredient-container').html("");
         $('#bakedGoodImage').remove();
         $('#bakedGoodId').remove();
         $("#bakedGoodForm").trigger("reset");
@@ -136,6 +168,51 @@ $(document).ready(function () {
                     $("#bakedGoodForm").append(`<img src='/uploaded_files/default-product.png' width='200px' height='200px' id="bakedGoodImage" />`);
                 }
 
+                if (data.ingredients !== null && data.ingredients.length > 0) {
+                    data.ingredients.forEach(function(ingredient){
+                        $('#added-ingredient-container').append(
+                            `<div class='ingredient-container my-1'><img src='${ingredient.image_path ? ingredient.image_path : '/uploaded_files/default-product.png'}' width=40px height=40px alt="img">
+                                <p class='w-100 px-2'>${ingredient.pivot.qty} ${ingredient.unit} ${ingredient.name}</p>
+                                <button type="button" class="btn btn-danger deleteIngredient">Delete</button>
+                                <input name="ids_ingredient[]" type='hidden' value="${ingredient.id}">
+                                <input name="qtys_ingredient[]" type='hidden' value="${ingredient.pivot.qty}">
+                            </div>`
+                        )
+                    })
+                }
+
+                $.ajax({
+                    type: "GET",
+                    url: `/api/ingredients/`,
+                    dataType: "json",
+                    success: function (ingredients) {
+                        const $ingredientsList = $('#ingredientsList');
+                        if (ingredients && ingredients.length > 0) {
+                            ingredients.forEach(function(ingredient) {
+                                // Check if the ingredient is not already in bakedGoodIngredient
+                                let isInBakedGood = false;
+                                data.ingredients.forEach(function(bakedGoodIngredient) {
+                                    if (ingredient.id === bakedGoodIngredient.id) {
+                                        isInBakedGood = true;
+                                    }
+                                });
+
+                                // If ingredient is not in bakedGoodIngredient, add it to $ingredientsList
+                                if (!isInBakedGood) {
+                                    const option = $('<option></option>')
+                                        .attr('value', ingredient.id)
+                                        .text(ingredient.name);
+                                    $ingredientsList.append(option);
+                                }
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error)
+                    }
+                })
+
+
             },
             error: function (error) {
                 console.log(error);
@@ -162,6 +239,7 @@ $(document).ready(function () {
         });
     });
 
+    //Set the thumbnail image of the baked good
     $(document).on('click', '.setImageBtn', function () {
         var imageId = $(this).data('id');
         var index = $(this).data('index');
@@ -173,7 +251,16 @@ $(document).ready(function () {
             url: `/api/baked_goods/images/${imageId}/set-thumbnail`,
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function (response) {
-                console.log(response);
+                bootbox.alert({
+                    message: "Thumbnail set successfully.",
+                    buttons: {
+                        ok: {
+                            label: 'OK',
+                            className: 'btn-primary'
+                        }
+                    },
+                    className: 'bootbox-centered'
+                });
                 // Reset all other image containers
                 $('.image-container').each(function () {
                     var btn = $(this).find('.setImageBtn');
@@ -209,7 +296,17 @@ $(document).ready(function () {
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function (data) {
-                console.log(data);
+                bootbox.alert({
+                    message: "Baked Good updated successfully.",
+                    buttons: {
+                        ok: {
+                            label: 'OK',
+                            className: 'btn-primary'
+                        }
+                    },
+                    className: 'bootbox-centered'
+                });
+
                 $('#bakedGoodModal').modal("hide");
                 table.ajax.reload();
             },
@@ -261,8 +358,14 @@ $(document).ready(function () {
         });
     });
 
-    $('#addNewIngredient').click(function () {
+    $('#addNewIngredientBtn').click(function () {
         $('#ingredientModal').modal('show');
+    });
+
+    $(document).on('click', '.deleteIngredient', function() {
+        // Remove the parent element of the delete button
+        console.log('delete ingredien');
+        $(this).parent('.ingredient-container').remove();
     });
 });
 

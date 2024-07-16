@@ -65,9 +65,16 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data);
+                $('#name').val("")
+                $('#unit').val("")
+                if (window.location.pathname == "/bakedgood-all") {
+                    $('#ingredientsList option:eq(0)').after(`<option value='${data.ingredient.id}'>${data.ingredient.name}</option>`)
+                }
+
                 $("#ingredientModal").modal("hide");
                 var $ingredientTable = $('#ingredientTable').DataTable();
                 $ingredientTable.ajax.reload();
+
             },
             error: function (error) {
                 console.log(error);
