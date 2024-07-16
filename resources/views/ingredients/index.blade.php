@@ -38,12 +38,6 @@
                 </div>
                 <div class="modal-body">
                     <form id="ingredientForm" method="POST" action="#" enctype="multipart/form-data">
-
-                        <div class="form-group">
-                            <label for="ingredientId" class="control-label">Ingredient ID</label>
-                            <input type="text" class="form-control" id="ingredientId" name="id" readonly>
-                        </div>
-
                         <div class="form-group">
                             <label for="name" class="control-label">Name</label>
                             <input type="text" class="form-control " id="name" name="name">

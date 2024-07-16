@@ -1,6 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
+    <style>
+        .added-ingredient-container {
+            display: flex;
+            align-items: center;
+        }
+        #ingredientsList, #qtyIngredient {
+            border: 1px solid black;
+
+        }
+        .ingredient-container {
+            display: flex;
+            align-items: center;
+        }
+    </style>
     <div class="container">
         <h1>Baked Goods</h1>
         <hr>
@@ -37,19 +51,23 @@
                                 <label for="description" class="form-label">Description</label>
                                 <textarea class="form-control" id="description" name="description"></textarea>
                             </div>
+                            <div id=""></div>
+                            <label for="ingredientsList">Ingredients</label>
+                            <div id='added-ingredient-container'>
+                            </div>
+                            <div id="add-ingredient-container" class='row px-3 gap-2'>
+                                <select name="ingredientsList" id="ingredientsList" class='p-2 col-5'>
+                                    <option value='false'>Select an Ingredient</option>
+                                </select>
+                                <input type='number' name='qty' id="qtyIngredient" class='p-2 col-2' placeholder="qty">
+                                <input type='text' placeholder="unit" class='p-2 col-2' id='unitIngredient' disabled>
+                                <button type="button" class="btn btn-success col-2" id="addIngredientBtn" disabled>Add</button>
+                            </div>
+                            <button type="button" class="btn btn-secondary mt-2" id="addNewIngredientBtn">Add New Ingredient</button>
                             <div class="mb-3">
                                 <label for="images" class="form-label">Images</label>
                                 <input type="file" class="form-control" id="images" name="images[]" multiple>
                             </div>
-                            <div id=""></div>
-                            <label for="ingredientsList">Ingredients</label>
-                            <div id="">
-                                <select name="ingredientsList" id="ingredientsList">
-                                    <option value='1'>Polvoron</option>
-                                </select>
-
-                            </div>
-                            <button type="button" class="btn btn-secondary" id="addNewIngredient">Add New Ingredient</button>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -69,15 +87,9 @@
                     </div>
                     <div class="modal-body">
                         <form id="ingredientForm" method="POST" action="#" enctype="multipart/form-data">
-
-                            <div class="form-group">
-                                <label for="ingredientId" class="control-label">Ingredient ID</label>
-                                <input type="text" class="form-control" id="ingredientId" name="id" readonly>
-                            </div>
-
                             <div class="form-group">
                                 <label for="name" class="control-label">Name</label>
-                                <input type="text" class="form-control " id="name" name="name">
+                                <input type="text" class="form-control ingredient_name" id="name" name="name">
                             </div>
                             <div class="form-group">
                                 <label for="unit" class="control-label">Unit</label>
@@ -92,8 +104,7 @@
                     </div>
                     <div class="modal-footer" id="footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button id="bakedGoodSubmit" type="submit" class="btn btn-primary">Save</button>
-                        <button id="bakedGoodUpdate" type="submit" class="btn btn-primary">update</button>
+                        <button id="ingredientSubmit" type="submit" class="btn btn-primary">Save</button>
                     </div>
 
                 </div>
@@ -121,44 +132,76 @@
         </div>
     </div>
 
+    <script>
+        $('#editIngredientBtn').click(function () {
+            $('#ingredientModal').modal('show');
+
+        });
+
+        $('#ingredientsList').change(function() {
+            var selectedValue = $(this).val();
+            console.log(selectedValue);
+            var $submitButton = $('#addIngredientBtn');
+            $.ajax({
+                type: "GET",
+                url: `/api/ingredients/${selectedValue}`,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "json",
+                success: function (ingredient) {
+                    $('#unitIngredient').val(ingredient.unit)
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            })
+
+            if (selectedValue !== 'false') {
+                $submitButton.prop('disabled', false);
+            } else {
+                $submitButton.prop('disabled', true);
+            }
+        });
+
+        $('#addIngredientBtn').on('click', function(){
+            $('.ingredient_name').val(""); //ingredient name on form
+            $('#unit').val(""); //ingredient unit on form
+
+            var selectedValue = $('#ingredientsList').val();
+            var qtyIngredient = $('#qtyIngredient').val();
+
+            console.log(qtyIngredient);
+            if ($.trim(qtyIngredient) !== '') {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/ingredients/${selectedValue}`,
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    dataType: "json",
+                    success: function (ingredient) {
+                        console.log(ingredient)
+
+                        $('#ingredientsList option[value="' + selectedValue + '"]').remove();
+                        $('#ingredientsList').val('false')
+                        $('#addIngredientBtn').prop('disabled', true)
+                        $('#qtyIngredient').val('');
+                        $('#unitIngredient').val('')
+
+                        $('#added-ingredient-container')
+                            .append(`<div class='ingredient-container my-1'><img src='${ingredient.image_path ? ingredient.image_path : '/uploaded_files/default-product.png'}' width=40px height=40px alt="img">
+                                        <p class='w-100 px-2'>${qtyIngredient} ${ingredient.unit} ${ingredient.name}</p>
+                                        <button type="button" class="btn btn-danger deleteIngredient">Delete</button>
+                                        <input name="ids_ingredient[]" type='hidden' value="${ingredient.id}">
+                                        <input name="qtys_ingredient[]" type='hidden' value="${qtyIngredient}">
+                                    </div>`)
+                    },
+                    error: function(error) {
+                        alert(error)
+                    }
+                })
+
+            } else {
+                alert('Please input a qty first');
+            }
+        })
+
+    </script>
 @endsection
-
-<script>
-
-</script>
-{{-- @foreach ($bakedGoods as $bakedGood)
-    <tr>
-        <td>{{ $bakedGood->id }}</td>
-        <td class='col-1'>
-            @php
-                $thumbnail_path =
-                    $bakedGood->thumbnailImage->image_path ?? 'uploaded_files/default-profile.png';
-            @endphp
-            <img src="{{ asset($thumbnail_path) }}" class="img-thumbnail" alt="Profile">
-        </td>
-        <td>{{ $bakedGood->name }}</td>
-        <td>{{ $bakedGood->price }}</td>
-        <td>{{ $bakedGood->weight_gram . 'g' }}</td>
-        <td>{{ $bakedGood->is_available ? 'Yes' : 'No' }}</td>
-        <td>{{ $bakedGood->updated_at }}</td>
-        <td>
-            <!-- View action -->
-            <a href="{{ route('baked_goods.show', $bakedGood->id) }}"
-                class="btn btn-sm btn-primary">View</a>
-
-            @if (auth()->check() && auth()->user()->is_admin)
-                <a href="{{ route('baked_goods.edit', $bakedGood->id) }}"
-                    class="btn btn-sm btn-secondary">Edit</a>
-
-                <!-- Delete action -->
-                <form action="{{ route('baked_goods.destroy', $bakedGood->id) }}" method="POST"
-                    class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger"
-                        onclick="return confirm('Are you sure you want to delete this baked good?')">Delete</button>
-                </form>
-            @endif
-        </td>
-    </tr>
-@endforeach --}}
