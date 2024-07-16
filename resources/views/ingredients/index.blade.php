@@ -1,61 +1,73 @@
 @extends('layouts.app')
-
 @section('content')
-<div class="container">
-    <h1>Ingredients</h1>
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+    <h1 class='ps-3 pe-3'>Ingredients</h1>
+    <hr>
+    <div id="ingredients" class="container">
+        {{-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ingredientModal">add<span
+                class="glyphicon glyphicon-plus" aria-hidden="true"></span></button> --}}
+        {{-- @include('layouts.flash-messages') --}}
+        {{-- <a class="btn btn-primary" href="{{ route('items.create') }}" role="button">add</a> --}}
+        {{-- <form method="POST" enctype="multipart/form-data" action="{{ route('item-import') }}">
+            {{ csrf_field() }}
+            <input type="file" id="ingredientName" name="ingredientUpload" required>
+            <button type="submit" class="btn btn-info btn-primary ">Import Excel File</button>
+
+        </form> --}}
+        <div class="table-responsive">
+            <table id="ingredientTable" class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Ingredients ID</th>
+                        <th>Name</th>
+                        <th>Unit</th>
+                        <th>Image</th>
+
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ingredientBody"></tbody>
+            </table>
         </div>
-    @endif
-    @if(auth()->check() && auth()->user()->is_admin)
-        <div class="mt-3">
-            <a href="{{ route('ingredients.create') }}" class="btn btn-primary mb-3">Create New Baked Good Ingredient</a>
+    </div>
+    <div class="modal fade" id="ingredientModal" role="dialog" style="">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Create new ingredient</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="ingredientForm" method="POST" action="#" enctype="multipart/form-data">
+
+                        <div class="form-group">
+                            <label for="ingredientId" class="control-label">Ingredient ID</label>
+                            <input type="text" class="form-control" id="ingredientId" name="id" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name" class="control-label">Name</label>
+                            <input type="text" class="form-control " id="name" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="unit" class="control-label">Unit</label>
+                            <input type="text" class="form-control " id="unit" name="unit">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="image" class="control-label">Image</label>
+                            <input type="file" class="form-control" id="img" name="image" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" id="footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button id="ingredientSubmit" type="submit" class="btn btn-primary">Save</button>
+                    <button id="ingredientUpdate" type="submit" class="btn btn-primary">update</button>
+                </div>
+
+            </div>
         </div>
-    @endif
-    <!-- Table to display ingredients -->
-    <table class="table" id="myDataTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Image</th>
-                <th>Quantity</th>
-                <th>Baked Good</th>
-                <th>Added on</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($ingredients as $ingredient)
-            <tr>
-                <td>{{ $ingredient->name }}</td>
-                <td class='col-1'>
-                    @php
-                        $thumbnail_path = $ingredient->image_path ?? 'uploaded_files/default-profile.png';
-                    @endphp
-                    <img src="{{ asset($thumbnail_path) }}" class="img-thumbnail" alt="Ingredient" >   
-                <td>{{ $ingredient->qty . $ingredient->unit}}</td>
-                <td>
-                    @if($ingredient->bakedGood)
-                    <a href="{{ route('baked_goods.edit', $ingredient->bakedGood->id) }}">{{ $ingredient->bakedGood->name }}</a>
-                    @else
-                    N/A
-                    @endif
-                    <td>{{ $ingredient->created_at }}</td>
-                </td>
-                <td>
-                    @if(auth()->check() && auth()->user()->is_admin)
-                        <a href="{{ route('ingredients.edit', $ingredient->id) }}" class="btn btn-primary">Edit</a>
-                        <form action="{{ route('ingredients.destroy', $ingredient->id) }}" method="POST" style="display: inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    @endif
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
+    </div>
 @endsection
+
+<script></script>

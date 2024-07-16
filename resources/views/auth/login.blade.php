@@ -1,101 +1,41 @@
 @extends('layouts.app')
+@section('title', 'Login')
 
 @section('content')
-<style>
-    .container {
-        background-color: transparent; /* Set container background to transparent */
-    }
-
-    .gif-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: -1;
-    }
-
-    .gif-img {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        min-width: 100%;
-        min-height: 100%;
-        width: auto;
-        height: auto;
-        transform: translate(-50%, -50%);
-    }
-
-    .login-form {
-        position: relative; /* Ensure the form is positioned above the gif */
-        z-index: 1;
-    }
-
-    .card {
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.5); /* Darker glowing effect */
-    }
-
-    .card:hover {
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.5); /* Darker glowing effect */
-    }
-
-    .card-header {
-        background-color: beige;/* Beige color for the card header */
-    }
-
-    .card-body {
-        background-color: #E6E6FA; /* Lavender color inside the card body */
-    }
-</style>
-
-<div class="gif-container">
-    <img class="gif-img" src="uploaded_files/bg2.gif" alt="GIF">
-</div>
-
-<div class="container login-form">
-    <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header text-center" style="font-size: 24px; font-weight: bold;">{{ __('LOGIN') }}</div>
-
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+<div class="container-fluid">
+    <div class="row d-flex justify-content-center align-items-center min-vh-100">
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h2 class="fw-bold text-secondary">Login</h2>
+                </div>
+                <div class="card-body p-5">
+                    <div id="login_alert"></div>
+                    <form action="" method="POST" id="login_form">
                         @csrf
-
                         <div class="mb-3">
-                            <label for="email" class="form-label">{{ __('Email Address') }}</label>
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            <input type="email" name="email" id="email" class="form-control rounded-0"
+                                placeholder="E-mail">
+                            <div class="invalid-feedback"></div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="password" class="form-label">{{ __('Password') }}</label>
-                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-                            @error('password')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            <input type="password" name="password" id="password" class="form-control rounded-0"
+                                placeholder="Password">
+                            <div class="invalid-feedback"></div>
                         </div>
 
-                        <div class="mb-3 form-check">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="remember">{{ __('Remember Me') }}</label>
+                        <div class="mb-3">
+                            <a class="text-decoration-none" href="/forgot">Forgot Password</a>
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">{{ __('Login') }}</button>
+                        <div class="mb-3 d-grid">
+                            <button type="submit" class="btn btn-dark rounded-0" id="login_btn">Login</button>
                         </div>
 
-                        <div class="mt-3 text-center">
-                            @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" class="text-muted">{{ __('Forgot Your Password?') }}</a>
-                            @endif
+                        <div class="text-center text-secondary">
+                            <div>Don't have an account? <a href="{{ route('page.register') }}"
+                                    class="text-decoration-none">Register Here</a></div>
                         </div>
                     </form>
                 </div>
@@ -103,5 +43,48 @@
         </div>
     </div>
 </div>
+@endsection
 
+@section('script')
+<script>
+    $(function () {
+        $('#login_form').submit(function (e) {
+            e.preventDefault();
+            $("#login_btn").val('Please Wait...');
+
+            $.ajax({
+                url: '{{ route('auth.login') }}',
+                method: 'post',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function (res) {
+                    if (res.status == 400) {
+                        showError('email', res.message.email);
+                        showError('password', res.message.password);
+                        $("#login_btn").val('Login');
+                    } else if (res.status == 401) {
+                        $("#login_alert").html(showMessage('danger', res.message));
+                        $("#login_btn").val('Login');
+                    } else {
+                        window.location = '{{ route('profile') }}';
+                    }
+                }
+            });
+        });
+
+        // Function to show error message for form fields
+        function showError(field, errors) {
+            $('#' + field).addClass('is-invalid');
+            $('#' + field).siblings('.invalid-feedback').html(errors);
+        }
+
+        // Function to show alert message
+        function showMessage(type, message) {
+            return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
+                message +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                '</div>';
+        }
+    });
+</script>
 @endsection
