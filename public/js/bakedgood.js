@@ -436,6 +436,37 @@ $(document).ready(function () {
             alert('Please input a qty first');
         }
     })
+
+    // Submit new ingredient
+    $("#ingredientSubmit").on('click', function (e) {
+        e.preventDefault();
+        var data = $('#ingredientForm')[0];
+        let formData = new FormData(data);
+        $.ajax({
+            type: "POST",
+            url: "/api/ingredients",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                $('#unit').val("")
+                if (window.location.pathname == "/bakedgood-all") {
+                    $('#ingredientsList option:eq(0)').after(`<option value='${data.ingredient.id}'>${data.ingredient.name}</option>`)
+                }
+
+                $("#ingredientModal").modal("hide");
+                var $ingredientTable = $('#ingredientTable').DataTable();
+                $ingredientTable.ajax.reload();
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
 });
 
 $('#bakedGoodImportForm').on('submit', function(event) {
