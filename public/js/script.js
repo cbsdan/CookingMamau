@@ -1,8 +1,6 @@
 const togglePassword = document.getElementById('togglePassword');
 const passwordInput = document.getElementById('password');
 
-let table = new DataTable('#myDataTable');
-
 if (togglePassword) {
     togglePassword.addEventListener('click', function() {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -125,7 +123,7 @@ cartItems.forEach((cartItem)=>{
         updateGrandTotal(); // Update grand total after each quantity change
         updateCartQuantity(bakedGoodId, quantity);
     });
-    
+
     minusToggler.addEventListener('click', ()=>{
         if(quantity > 1) { // Ensure quantity doesn't go negative
             quantityInput.value = --quantity; // Corrected decrementing
@@ -135,7 +133,7 @@ cartItems.forEach((cartItem)=>{
             updateCartQuantity(bakedGoodId, quantity);
         }
     });
-    
+
     // Function to update grand total
     function updateGrandTotal() {
         grandTotal = 0; // Reset grand total

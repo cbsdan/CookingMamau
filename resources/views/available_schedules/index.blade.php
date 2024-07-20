@@ -1,67 +1,71 @@
+
+
+
 @extends('layouts.app')
 
 @section('content')
 <div class="container">
     <h1>Available Schedules</h1>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <!-- Link to create a new available schedule -->
-    <div class="mb-3">
-        <a href="{{ route('available_schedules.create') }}" class="btn btn-primary">Create New Schedule</a>
-    </div>
-
+    <hr>
     <!-- Display upcoming schedules -->
     <h2>Upcoming Schedules</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Schedule Date</th>
-                <th>Actions</th> <!-- Add a new column for actions -->
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($upcomingSchedules as $schedule)
-            <tr>
-                <td>{{ $schedule->id }}</td>
-                <td>{{ $schedule->schedule }}</td>
-                <td>
-                    <!-- Edit action -->
-                    <a href="{{ route('available_schedules.edit', $schedule->id) }}" class="btn btn-sm btn-primary">Edit</a>
-                    <!-- Delete action -->
-                    <form action="{{ route('available_schedules.destroy', $schedule->id) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this schedule?')">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
+    <div class="table-responsive">
+        <table id="upcomingScheduleTable" class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Schedule Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="upcomingScheduleBody">
+                <!-- Schedules will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    <hr>
     <!-- Display past schedules -->
     <h2>Past Schedules</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Schedule Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($pastSchedules as $schedule)
-            <tr>
-                <td>{{ $schedule->id }}</td>
-                <td>{{ $schedule->schedule }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table id="pastScheduleTable" class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Schedule Date</th>
+                </tr>
+            </thead>
+            <tbody id="pastSchedulesBody">
+                <!-- Schedules will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<!-- Schedule Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scheduleModalLabel">Create New Schedule</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="scheduleForm">
+                    <div class="form-group">
+                        <label for="scheduleDate" class="control-label">Schedule Date</label>
+                        <input type="datetime-local" class="form-control" id="scheduleDate" name="schedule_date">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="scheduleSubmit" type="button" class="btn btn-primary">Save</button>
+                <button id="scheduleUpdate" type="button" class="btn btn-primary" style="display: none;">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src='{{ asset('js/scheduleCrud.js') }}'></script>
+
 @endsection

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\BakedGood;
 use App\Models\Ingredient;
 use Illuminate\Http\Request;
+use App\Imports\IngredientsImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 
 class IngredientController extends Controller
@@ -160,5 +162,30 @@ class IngredientController extends Controller
 
         $data = array('success' => 'deleted','code'=>200);
         return response()->json($data);
+    }
+
+    public function ingredientImport(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'item_upload' => 'required|file|mimes:xlsx,xls,csv', // Ensure the file type is correct
+        ]);
+
+        try {
+            // Import the file
+            Excel::import(new IngredientsImport, $request->file('item_upload'));
+
+            // Return a success response
+            return response()->json([
+                'success' => true,
+                'message' => 'File imported successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            // Return an error response if the import fails
+            return response()->json([
+                'success' => false,
+                'message' => 'Error importing file: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\BakedGood;
 use Illuminate\Http\Request;
 use App\Models\BakedGoodImage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\BakedGoodsImport;
 
 class BakedGoodsController extends Controller
 {
@@ -219,5 +221,30 @@ class BakedGoodsController extends Controller
         $image->save();
 
         return response()->json(['message' => 'Thumbnail updated successfully']);
+    }
+
+    public function bakedgoodsImport(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'item_upload' => 'required|file|mimes:xlsx,xls,csv', // Ensure the file type is correct
+        ]);
+
+        try {
+            // Import the file
+            Excel::import(new BakedGoodsImport, $request->file('item_upload'));
+
+            // Return a success response
+            return response()->json([
+                'success' => true,
+                'message' => 'File imported successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            // Return an error response if the import fails
+            return response()->json([
+                'success' => false,
+                'message' => 'Error importing file: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

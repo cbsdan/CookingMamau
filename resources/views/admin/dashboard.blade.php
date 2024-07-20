@@ -1,7 +1,35 @@
-<?php
-    use App\Models\Order;
-    use App\Models\User;
-    use App\Models\BakedGood;
+@extends('layouts.app')
+
+@section('title', 'Admin Dashboard')
+
+@section('content')
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <!-- Logout Button -->
+        <form id="logoutForm" action="{{ route('logout') }}" method="POST">
+            @csrf <!-- Include CSRF token -->
+            <button type="submit" class="btn btn-link">Logout</button>
+        </form>
+        <!-- Example: Display a list of users -->
+        <div class="card">
+            <div class="card-header">
+                Users List
+            </div>
+            <div class="card-body">
+                <ul id="userList">
+                    @foreach($users as $user)
+                        <li>{{ $user->email }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+@endsection
+
+{{-- <?php
+    // use App\Models\Order;
+    // use App\Models\User;
+    // use App\Models\BakedGood;
 ?>
 @extends ('layouts.app')
 
@@ -51,7 +79,7 @@
 <div class="grid grid-cols-2 gap-10 p-10">
     <div class="chart-container">
         <canvas id="pie"></canvas>
-        
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const chartData = @json($chartData);
@@ -93,7 +121,7 @@
     <div class="grid grid-rows-2 gap-4">
     <div class="chart-container ">
         <canvas id="bar"></canvas>
-        
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const chartData = @json($chartData);
@@ -157,7 +185,7 @@
 </div>
 </div>
 </div>
-    
+
 
 
             <!-- ================ Order Details List ================= -->
@@ -179,12 +207,12 @@
                                 <td>View</td>
                             </tr>
                         </thead>
-                        
+
                         <tbody>
                             @if ($latestOrders)
                                 @foreach ($latestOrders as $order)
                                     @php $orderedGoods = $order->orderedGoods; $t @endphp
-                                    
+
                                     <tr>
                                         <td>{{$order->id}}</td>
                                         <td>
@@ -200,7 +228,7 @@
                                         <td><a href="{{route('user.order.show', $order->id)}}">View</a></td>
                                     </tr>
                                 @endforeach
-                            @endif                            
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -237,4 +265,4 @@
     </div>
 
 
-@endsection
+@endsection --}}

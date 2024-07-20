@@ -1,7 +1,21 @@
 @extends('layouts.app')
 @section('content')
+<div id="video-background-container">
+    {{-- <video autoplay muted loop id="bgVideo">
+        <source src="{{ asset('uploaded_files/crud_bg.mp4') }}" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video> --}}
     <h1 class='ps-3 pe-3'>Ingredients</h1>
     <hr>
+    <form id="ingredientImportForm" enctype="multipart/form-data" class='row g-3 mb-3'>
+        @csrf
+        <div class="col-9">
+            <input type="file" name="item_upload" class="form-control w-100" required/>
+        </div>
+        <div class="col-3">
+            <button type="submit" class="btn btn-primary w-100">Import Excel File</button>
+        </div>
+    </form>
     <div id="ingredients" class="container">
         {{-- <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#ingredientModal">add<span
                 class="glyphicon glyphicon-plus" aria-hidden="true"></span></button> --}}
@@ -31,9 +45,9 @@
     </div>
     <div class="modal fade" id="ingredientModal" role="dialog" style="">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Create new ingredient</h4>
+            <div class="modal-content" style="background-color: #fae6f9;">
+                <div class="modal-header" style="background-color: #d8bfd8; color: white; border-bottom: 1px solid #d8bfd8;">
+                    <h4 class="modal-title" style="font-family: cursive; font-weight: bold;">Create new ingredient</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -53,15 +67,19 @@
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer" id="footer">
+                <div class="modal-footer" id="footer" style="background-color: #d8bfd8; border-top: 1px solid #d8bfd8;">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button id="ingredientSubmit" type="submit" class="btn btn-primary">Save</button>
-                    <button id="ingredientUpdate" type="submit" class="btn btn-primary">update</button>
+                    <button id="ingredientSubmit" type="submit" class="btn btn-primary" style="background-color: #dda0dd; border-color: #dda0dd;" >Save</button>
+                    <button id="ingredientUpdate" type="submit" class="btn btn-primary" style="background-color: #dda0dd; border-color: #dda0dd;">update</button>
                 </div>
 
             </div>
         </div>
     </div>
+
 @endsection
 
-<script></script>
+@section('head')
+    {{-- <link rel="stylesheet" href="{{ asset('css/ingredient.css') }}"> --}}
+    <script src="{{ asset('js/ingredients.js') }}"></script>
+@endsection

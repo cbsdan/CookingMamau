@@ -1,47 +1,41 @@
-// $("#addModalBtn").on('click', function () {
-//     console.log('clicked');
-//     $('#ingredientModal').modal('show');
-// })
 $(document).ready(function () {
-    // Initialize DataTable
+    function convertObjectToArray(obj) {
+        return Object.keys(obj).map(key => obj[key]);
+    }
 
-    $('#ingredientTable').DataTable({
+    // Initialize DataTable for upcoming schedules
+    let upcomingTable = $('#upcomingScheduleTable').DataTable({
         ajax: {
-            url: "/api/ingredients",
-            dataSrc: ""
+            url: "/api/available_schedules",
+            dataSrc: function (json) {
+                console.log("Raw upcomingSchedules response:", json.upcomingSchedules);
+                return convertObjectToArray(json.upcomingSchedules);
+            }
         },
         dom: 'Bfrtip',
         buttons: [
             'pdf',
             'excel',
             {
-                text: 'Add Ingredient',
+                text: 'Add Available Schedule',
                 className: 'btn btn-primary',
                 action: function (e, dt, node, config) {
-                    $("#ingredientForm").trigger("reset");
-                    $('#ingredientModal').modal('show');
-                    $('#ingredientUpdate').hide();
-                    $('#ingredientSubmit').show();
-                    $('#ingredientImage').remove();
+                    $("#scheduleForm").trigger("reset");
+                    $('#scheduleModal').modal('show');
+                    $('#scheduleUpdate').hide();
+                    $('#scheduleSubmit').show();
                 }
             }
         ],
         columns: [
             { data: 'id' },
-            {
-                data: null,
-                render: function (data, type, row) {
-                    return `<img src="${data.image_path ? data.image_path : '/uploaded_files/default-product.png'}" width="50" height="60">`;
-                }
-            },
-            { data: 'name' },
-            { data: 'unit' },
+            { data: 'schedule' },
             {
                 data: null,
                 render: function (data, type, row) {
                     return `
-                        <a href='#' class='editBtn' data-id=${data.id}><i class='fas fa-edit' aria-hidden='true' style='font-size:24px'></i></a>
-                        <a href='#' class='deleteBtn' data-id=${data.id}><i class='fas fa-trash-alt' style='font-size:24px; color:red'></i></a>
+                        <button class='editBtn' data-id=${data.id}><i class='fas fa-edit' aria-hidden='true' style='font-size:24px'></i></button>
+                        <button class='deleteBtn' data-id=${data.id}><i class='fas fa-trash-alt' style='font-size:24px; color:red'></i></button>
                     `;
                 }
             }
@@ -50,14 +44,27 @@ $(document).ready(function () {
 
     });
 
-    // Submit new ingredient
-    $("#ingredientSubmit").on('click', function (e) {
+    let pastTable = $('#pastScheduleTable').DataTable({
+        ajax: {
+            url: "/api/available_schedules",
+            dataSrc: "pastSchedules"
+        },
+        columns: [
+            { data: 'id' },
+            { data: 'schedule' }
+        ],
+        order: [[0, "desc"]]
+    });
+
+
+    // Submit new schedule
+    $("#scheduleSubmit").on('click', function (e) {
         e.preventDefault();
-        var data = $('#ingredientForm')[0];
+        var data = $('#scheduleForm')[0];
         let formData = new FormData(data);
         $.ajax({
             type: "POST",
-            url: "/api/ingredients",
+            url: "/api/available_schedules",
             data: formData,
             contentType: false,
             processData: false,
@@ -65,15 +72,11 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data);
-                $('#name').val("")
-                $('#unit').val("")
-                if (window.location.pathname == "/bakedgood-all") {
-                    $('#ingredientsList option:eq(0)').after(`<option value='${data.ingredient.id}'>${data.ingredient.name}</option>`)
-                }
+                $('#schedule').val("")
 
-                $("#ingredientModal").modal("hide");
-                var $ingredientTable = $('#ingredientTable').DataTable();
-                $ingredientTable.ajax.reload();
+                $("#scheduleModal").modal("hide");
+                var $availableScheduleTable = $('#upcomingScheduleTable').DataTable();
+                $availableScheduleTable.ajax.reload();
 
             },
             error: function (error) {
@@ -81,48 +84,44 @@ $(document).ready(function () {
             }
         });
     });
-
-    // Edit ingredient
-    $('#ingredientTable tbody').on('click', 'a.editBtn', function (e) {
+})
+    // Edit upcoming schedule
+    $('#upcomingScheduleBody').on('click', 'button.editBtn', function (e) {
         e.preventDefault();
-        $('#ingredientImage').remove();
-        $('#ingredientId').remove();
-        $("#ingredientForm").trigger("reset");
+        $("#scheduleForm").trigger("reset");
         var id = $(this).data('id');
-        $('<input>').attr({ type: 'hidden', id: 'ingredientId', name: 'id', value: id }).appendTo('#ingredientForm');
-        $('#ingredientModal').modal('show');
-        $('#ingredientSubmit').hide();
-        $('#ingredientUpdate').show();
+        $('#scheduleId').remove();
+        $('<input>').attr({ type: 'hidden', id: 'scheduleId', name: 'id', value: id }).appendTo('#scheduleForm .form-group');
+        $('#scheduleModal').modal('show');
+        $('#scheduleSubmit').hide();
+        $('#scheduleUpdate').show();
 
         $.ajax({
             type: "GET",
-            url: `/api/ingredients/${id}`,
+            url: `/api/available_schedules/${id}`,
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function (data) {
-                console.log(data);
-                $('#name').val(data.name);
-                $('#unit').val(data.unit);
-                $("#ingredientForm").append(`<img src="${data.image_path ? data.image_path : '/uploaded_files/default-product.png'}" width='200px' height='200px' id="ingredientImage" />`);
+                $('#scheduleDate').val(data.schedule);
             },
             error: function (error) {
-                console.log(error);
+                alert(error);
             }
         });
     });
 
     // Update ingredient
-    $("#ingredientUpdate").on('click', function (e) {
+    $("#scheduleUpdate").on('click', function (e) {
         e.preventDefault();
-        var id = $('#ingredientId').val();
-        var table = $('#ingredientTable').DataTable();
-        var data = $('#ingredientForm')[0];
+        var id = $('#scheduleId').val();
+        var table = $('#upcomingScheduleTable').DataTable();
+        var data = $('#scheduleForm')[0];
         let formData = new FormData(data);
         formData.append("_method", "PUT");
 
         $.ajax({
             type: "POST",
-            url: `/api/ingredients/${id}`,
+            url: `/api/available_schedules/${id}`,
             data: formData,
             contentType: false,
             processData: false,
@@ -130,7 +129,7 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data);
-                $('#ingredientModal').modal("hide");
+                $('#scheduleModal').modal("hide");
                 table.ajax.reload();
             },
             error: function (error) {
@@ -139,10 +138,10 @@ $(document).ready(function () {
         });
     });
 
-    // Delete ingredient
-    $('#ingredientTable tbody').on('click', 'a.deleteBtn', function (e) {
+    // Delete Upcoming Schedule
+    $('#upcomingScheduleBody').on('click', 'button.deleteBtn', function (e) {
         e.preventDefault();
-        var table = $('#ingredientTable').DataTable();
+        var table = $('#upcomingScheduleTable').DataTable();
         var id = $(this).data('id');
         var $row = $(this).closest('tr');
         bootbox.confirm({
@@ -161,7 +160,7 @@ $(document).ready(function () {
                 if (result) {
                     $.ajax({
                         type: "DELETE",
-                        url: `/api/ingredients/${id}`,
+                        url: `/api/available_schedules/${id}`,
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                         dataType: "json",
                         success: function (data) {
@@ -180,4 +179,3 @@ $(document).ready(function () {
             }
         });
     });
-});

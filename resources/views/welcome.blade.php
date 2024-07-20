@@ -192,7 +192,7 @@
 
      <!-- Main Content -->
      <div class="container mt-4">
-        <form action="{{ route('search') }}" method="GET" class="mb-3">
+        <form action="" method="GET" class="mb-3">
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search products..." name="query">
                 <div class="input-group-append">
@@ -204,8 +204,9 @@
         <!-- Product Cards -->
         <div class="row">
             @if ($bakedGoods)
-                @foreach($bakedGoods as $bakedGood) 
-                    <form class="col-3" action='{{route('cart.add', $bakedGood->id)}}' method='POST'>
+                @foreach($bakedGoods as $bakedGood)
+                {{-- <form class="col-3" action='{{route('cart.add', $bakedGood->id)}}' method='POST'> --}}
+                    <form class="col-3" action='' method='POST'>
                         @csrf
                         <div class="product-card" style="position: relative;">
                             @php

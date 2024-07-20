@@ -2,25 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Discount;
+use Illuminate\Http\Request;
+use App\Imports\DiscountImport;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DiscountController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $discounts = Discount::orderBy('created_at', 'DESC')->get();
         return response()->json($discounts);
-
-        // Search for discount code
-        // if ($request->has('search')) {
-        //     $discounts->where('discount_code', 'like', '%' . $request->input('search') . '%');
-        // }
-
-        // $discounts = $discounts->paginate(10);
-
-        // return view('discounts.index', compact('discounts'));
     }
 
     public function store(Request $request)
@@ -102,5 +95,30 @@ class DiscountController extends Controller
 
         // Return JSON response with discount details
         return response()->json($discount);
+    }
+
+    public function discountImport(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'item_upload' => 'required|file|mimes:xlsx,xls,csv', // Ensure the file type is correct
+        ]);
+
+        try {
+            // Import the file
+            Excel::import(new DiscountImport, $request->file('item_upload'));
+
+            // Return a success response
+            return response()->json([
+                'success' => true,
+                'message' => 'File imported successfully',
+            ], 200);
+        } catch (\Exception $e) {
+            // Return an error response if the import fails
+            return response()->json([
+                'success' => false,
+                'message' => 'Error importing file: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

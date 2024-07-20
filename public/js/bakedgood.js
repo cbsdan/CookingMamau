@@ -1,6 +1,5 @@
 $(document).ready(function () {
     // Initialize DataTable
-
     $('#bakedGoodsTable').DataTable({
         ajax: {
             url: "/api/baked_goods",
@@ -367,6 +366,101 @@ $(document).ready(function () {
         console.log('delete ingredien');
         $(this).parent('.ingredient-container').remove();
     });
+
+    $('#editIngredientBtn').click(function () {
+        $('#ingredientModal').modal('show');
+
+    });
+
+    $('#ingredientsList').change(function() {
+        var selectedValue = $(this).val();
+        console.log(selectedValue);
+        var $submitButton = $('#addIngredientBtn');
+        $.ajax({
+            type: "GET",
+            url: `/api/ingredients/${selectedValue}`,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function (ingredient) {
+                $('#unitIngredient').val(ingredient.unit)
+            },
+            error: function(error) {
+                console.log(error)
+            }
+        })
+
+        if (selectedValue !== 'false') {
+            $submitButton.prop('disabled', false);
+        } else {
+            $submitButton.prop('disabled', true);
+        }
+    });
+
+    $('#addIngredientBtn').on('click', function(){
+        $('.ingredient_name').val(""); //ingredient name on form
+        $('#unit').val(""); //ingredient unit on form
+
+        var selectedValue = $('#ingredientsList').val();
+        var qtyIngredient = $('#qtyIngredient').val();
+
+        console.log(qtyIngredient);
+        if ($.trim(qtyIngredient) !== '') {
+            $.ajax({
+                type: "GET",
+                url: `/api/ingredients/${selectedValue}`,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "json",
+                success: function (ingredient) {
+                    console.log(ingredient)
+
+                    $('#ingredientsList option[value="' + selectedValue + '"]').remove();
+                    $('#ingredientsList').val('false')
+                    $('#addIngredientBtn').prop('disabled', true)
+                    $('#qtyIngredient').val('');
+                    $('#unitIngredient').val('')
+
+                    $('#added-ingredient-container')
+                        .append(`<div class='ingredient-container my-1'><img src='${ingredient.image_path ? ingredient.image_path : '/uploaded_files/default-product.png'}' width=40px height=40px alt="img">
+                                    <p class='w-100 px-2'>${qtyIngredient} ${ingredient.unit} ${ingredient.name}</p>
+                                    <button type="button" class="btn btn-danger deleteIngredient">Delete</button>
+                                    <input name="ids_ingredient[]" type='hidden' value="${ingredient.id}">
+                                    <input name="qtys_ingredient[]" type='hidden' value="${qtyIngredient}">
+                                </div>`)
+                },
+                error: function(error) {
+                    alert(error)
+                }
+            })
+
+        } else {
+            alert('Please input a qty first');
+        }
+    })
 });
 
+$('#bakedGoodImportForm').on('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: 'api/bakedgood/import', // API endpoint
+        type: 'POST',
+        data: formData,
+        contentType: false, // Important
+        processData: false, // Important
+        success: function(response) {
+            // Handle success response
+            alert(response.message); // Or use a more sophisticated notification system
+
+            var table = $('#bakedGoodsTable').DataTable();
+            table.ajax.reload();
+        },
+        error: function(xhr) {
+            // Handle error response
+            var errorMsg = 'An error occurred: ' + xhr.responseJSON.message;
+            alert(errorMsg);
+        }
+    });
+});
 

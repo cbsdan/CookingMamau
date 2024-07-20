@@ -178,4 +178,32 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('#discountImportForm').on('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: 'api/discount/import', // API endpoint
+            type: 'POST',
+            data: formData,
+            contentType: false, // Important
+            processData: false, // Important
+            success: function(response) {
+                // Handle success response
+                alert(response.message); // Or use a more sophisticated notification system
+
+                var table = $('#discountTable').DataTable();
+                table.ajax.reload();
+            },
+            error: function(xhr) {
+                // Handle error response
+                var errorMsg = 'An error occurred: ' + xhr.responseJSON.message;
+                alert(errorMsg);
+            }
+        });
+    });
 });
+
+

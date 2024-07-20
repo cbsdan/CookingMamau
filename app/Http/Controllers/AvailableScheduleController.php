@@ -6,112 +6,127 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\AvailableSchedule;
 
+
 class AvailableScheduleController extends Controller
 {
     /**
      * Display a listing of the available schedules.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
         // Get all schedules
         $allSchedules = AvailableSchedule::all();
-        
+
         // Separate upcoming and past schedules
         $upcomingSchedules = $allSchedules->filter(function ($schedule) {
             return Carbon::parse($schedule->schedule)->isAfter(now());
         });
-        
+
         $pastSchedules = $allSchedules->filter(function ($schedule) {
             return Carbon::parse($schedule->schedule)->isBefore(now());
         });
-        
-        return view('available_schedules.index', compact('upcomingSchedules', 'pastSchedules'));
-    }
-    
 
-    /**
-     * Show the form for creating a new available schedule.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('available_schedules.create');
+        // Return the schedules as a JSON response
+        return response()->json([
+            'upcomingSchedules' => $upcomingSchedules,
+            'pastSchedules' => $pastSchedules
+        ]);
     }
+
 
     /**
      * Store a newly created available schedule in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
         // Validate the submitted data
         $request->validate([
-            'schedules.*' => 'required|date',
+            'schedule_date' => 'required|date',
         ]);
 
-        // Process each schedule date and store it in the database
-        foreach ($request->schedules as $schedule) {
-            AvailableSchedule::create([
-                'schedule' => $schedule,
-            ]);
-        }
+        // Create the schedule
+        $schedule = AvailableSchedule::create([
+            'schedule' => $request->schedule_date,
+        ]);
 
-        // Redirect back to the index page with a success message
-        return redirect()->route('available_schedules.index')->with('success', 'Available schedules created successfully.');
+        return response()->json([
+            'success' => 'Available schedule created successfully.',
+            'schedule' => $schedule,
+            'status' => 200
+        ]);
     }
 
     /**
      * Show the form for editing the specified available schedule.
      *
-     * @param  \App\Models\AvailableSchedule  $availableSchedule
-     * @return \Illuminate\Http\Response
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(AvailableSchedule $availableSchedule)
+    public function show($id)
     {
-        $availableSchedules = AvailableSchedule::all();
-        return view('available_schedules.edit', compact('availableSchedule'));
+        $availableSchedule = AvailableSchedule::find($id);
+
+        if ($availableSchedule) {
+            return response()->json($availableSchedule);
+        } else {
+            return response()->json(['error' => 'Schedule not found.'], 404);
+        }
     }
 
     /**
      * Update the specified available schedule in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\AvailableSchedule  $availableSchedule
-     * @return \Illuminate\Http\Response
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, AvailableSchedule $availableSchedule)
+    public function update(Request $request, $id)
     {
         // Validate the request data
         $request->validate([
-            'schedule' => ['required', 'date']
+            'schedule_date' => 'required|date'
         ]);
 
-        // Update the available schedule
-        $availableSchedule->update($request->all());
+        // Find and update the available schedule
+        $availableSchedule = AvailableSchedule::find($id);
 
-        // Redirect after updating the available schedule
-        return redirect()->route('available_schedules.index')
-                         ->with('success', 'Available schedule updated successfully.');
+        if ($availableSchedule) {
+            $availableSchedule->update(['schedule' => $request->schedule_date]);
+
+            return response()->json([
+                'success' => 'Available schedule updated successfully.',
+                'schedule' => $availableSchedule,
+                'status' => 200
+            ]);
+        } else {
+            return response()->json(['error' => 'Schedule not found.'], 404);
+        }
     }
 
     /**
      * Remove the specified available schedule from storage.
      *
-     * @param  \App\Models\AvailableSchedule  $availableSchedule
-     * @return \Illuminate\Http\Response
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(AvailableSchedule $availableSchedule)
+    public function destroy($id)
     {
-        // Delete the available schedule
-        $availableSchedule->delete();
+        $availableSchedule = AvailableSchedule::find($id);
 
-        // Redirect after deleting the available schedule
-        return redirect()->route('available_schedules.index')
-                         ->with('success', 'Available schedule deleted successfully.');
+        if ($availableSchedule) {
+            $availableSchedule->delete();
+
+            return response()->json([
+                'success' => 'Available schedule deleted successfully.',
+                'status' => 200
+            ]);
+        } else {
+            return response()->json(['error' => 'Schedule not found.'], 404);
+        }
     }
 }

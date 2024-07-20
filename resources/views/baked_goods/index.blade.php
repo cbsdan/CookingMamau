@@ -19,6 +19,15 @@
         <h1>Baked Goods</h1>
         <hr>
         <!-- Modal -->
+        <form id="bakedGoodImportForm" enctype="multipart/form-data" class='row g-3 mb-3'>
+            @csrf
+            <div class="col-9">
+                <input type="file" name="item_upload" class="form-control w-100" required/>
+            </div>
+            <div class="col-3">
+                <button type="submit" class="btn btn-primary w-100">Import Excel File</button>
+            </div>
+        </form>
         <div class="modal fade" id="bakedGoodModal" tabindex="-1" aria-labelledby="bakedGoodModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -132,76 +141,5 @@
         </div>
     </div>
 
-    <script>
-        $('#editIngredientBtn').click(function () {
-            $('#ingredientModal').modal('show');
-
-        });
-
-        $('#ingredientsList').change(function() {
-            var selectedValue = $(this).val();
-            console.log(selectedValue);
-            var $submitButton = $('#addIngredientBtn');
-            $.ajax({
-                type: "GET",
-                url: `/api/ingredients/${selectedValue}`,
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                dataType: "json",
-                success: function (ingredient) {
-                    $('#unitIngredient').val(ingredient.unit)
-                },
-                error: function(error) {
-                    console.log(error)
-                }
-            })
-
-            if (selectedValue !== 'false') {
-                $submitButton.prop('disabled', false);
-            } else {
-                $submitButton.prop('disabled', true);
-            }
-        });
-
-        $('#addIngredientBtn').on('click', function(){
-            $('.ingredient_name').val(""); //ingredient name on form
-            $('#unit').val(""); //ingredient unit on form
-
-            var selectedValue = $('#ingredientsList').val();
-            var qtyIngredient = $('#qtyIngredient').val();
-
-            console.log(qtyIngredient);
-            if ($.trim(qtyIngredient) !== '') {
-                $.ajax({
-                    type: "GET",
-                    url: `/api/ingredients/${selectedValue}`,
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    dataType: "json",
-                    success: function (ingredient) {
-                        console.log(ingredient)
-
-                        $('#ingredientsList option[value="' + selectedValue + '"]').remove();
-                        $('#ingredientsList').val('false')
-                        $('#addIngredientBtn').prop('disabled', true)
-                        $('#qtyIngredient').val('');
-                        $('#unitIngredient').val('')
-
-                        $('#added-ingredient-container')
-                            .append(`<div class='ingredient-container my-1'><img src='${ingredient.image_path ? ingredient.image_path : '/uploaded_files/default-product.png'}' width=40px height=40px alt="img">
-                                        <p class='w-100 px-2'>${qtyIngredient} ${ingredient.unit} ${ingredient.name}</p>
-                                        <button type="button" class="btn btn-danger deleteIngredient">Delete</button>
-                                        <input name="ids_ingredient[]" type='hidden' value="${ingredient.id}">
-                                        <input name="qtys_ingredient[]" type='hidden' value="${qtyIngredient}">
-                                    </div>`)
-                    },
-                    error: function(error) {
-                        alert(error)
-                    }
-                })
-
-            } else {
-                alert('Please input a qty first');
-            }
-        })
-
-    </script>
+    <script src="{{ asset('js/bakedgood.js') }}" defer></script>
 @endsection

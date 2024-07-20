@@ -1,0 +1,150 @@
+#ingredientTable {
+    background-color: #fae6f9; /* Lavender background */
+}
+
+#ingredientTable th {
+    background-color: #da95da; /* Thistle header */
+    color: rgb(173, 123, 166);
+    border: 1px solid #d8bfd8;
+}
+
+#ingredientTable td {
+    background-color: #e7d3e9; /* Light pastel violet cells */
+    border: 1px solid #d8bfd8;
+}
+
+/* Custom button styles */
+.btn-primary {
+    background-color: #dda0dd;
+    border-color: #dda0dd;
+}
+
+.btn-primary:hover {
+    background-color: #ba55d3;
+    border-color: #ba55d3;
+}
+
+/* Animation for icons */
+.animated-icon {
+    transition: transform 0.3s ease, background 0.3s ease;
+    background-image: linear-gradient(45deg, #e6e6fa, #dda0dd, #e6e6fa, #dda0dd);
+    background-size: 200% 200%;
+    display: inline-block;
+}
+
+.animated-icon:hover {
+    transform: rotate(360deg);
+    background-position: right center;
+}
+
+/* Violet pastel modal styles */
+.modal-content {
+    background-color: #fae6f9; /* Lavender background */
+}
+
+.modal-header {
+    background-color: #d8bfd8; /* Thistle header */
+    color: white;
+    border-bottom: 1px solid #d8bfd8;
+}
+
+.modal-footer {
+    background-color: #d8bfd8; /* Thistle footer */
+    border-top: 1px solid #d8bfd8;
+}
+
+.table-responsive {
+    margin-bottom: 20px;
+}
+.mt-4 {
+    margin-top: 20px;
+}
+/* Center align DataTable content */
+#ingredientTable td, #ingredientTable th {
+    text-align: center;
+}
+/* Add margin-right to buttons and icons */
+.editBtn, .deleteBtn {
+    margin-right: 8px; /* Adjust as needed */
+}
+.btn-primary, .btn-secondary {
+    margin-right: 8px; /* Adjust as needed */
+}
+
+.btn-add-ingredient, .btn-pdf {
+    border-radius: 20px;
+    width: 150px;
+    height: 40px;
+    margin: 5px;
+    background-color: #da95da;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.dt-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.round-image {
+    border-radius: 50%;
+    object-fit: cover; /* Ensures the image fits within the circular boundary */
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+}
+
+.table-responsive {
+    margin-bottom: 40px;
+}
+.mt-4 {
+    margin-top: 20px;
+}
+/* Center align DataTable content */
+#ingredientTable td, #ingredientTable th {
+    text-align: center;
+}
+.dataTables_wrapper .dt-buttons {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.round-image {
+border-radius: 50%;
+object-fit: cover;
+width: 50px;
+height: 50px;
+display: block; /* Ensures it behaves as a block element */
+margin: 0 auto; /* Centers horizontally */
+}
+
+
+/* Style for the video background */
+#video-background-container {
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#bgVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+/* Table header style */
+#ingredientTable th {
+    background-color: rgba(0, 0, 0, 0.7); /* Dark overlay on video */
+    color: white;
+}
+
+#ingredients {
+position: relative;
+}
