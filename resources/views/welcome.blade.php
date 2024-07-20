@@ -8,190 +8,14 @@
     @endif
 
     <style>
-        body {
-            overflow-x: hidden; /* Hide horizontal scrollbars */
-            margin: 0; /* Remove default margin */
-            padding: 0;
-            background-color: lavender; /* Corrected spelling */
-        }
-
-        .bg-video-wrapper {
-            position: relative;
-            top: 0;
-            left: 0;
-            width: 85vw; /* Full viewport width */
-            height: 90vh; /* Full viewport height */
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-left: -10px; /* Adjust the margin on the left side */
-        }
-
-
-        .bg-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .text-black {
-            color: black;
-        }
-
-        .ml-20 {
-            margin-left: 20px; /* Adjust as needed */
-        }
-
-        .mt-48 {
-            margin-top: 48px; /* Adjust as needed */
-        }
-
-        .max-w-xl {
-            max-width: 600px;
-        }
-
-        .absolute {
-            position: absolute;
-        }
-
-        .top-0 {
-            top: 0;
-        }
-
-        .left-0 {
-            left: 0;
-        }
-
-        .text-6xl {
-            font-size: 4rem; /* Adjust font size as needed */
-            line-height: 1.2; /* Adjust line height as needed */
-        }
-
-        .font-semibold {
-            font-weight: 600;
-        }
-
-        .mb-4 {
-            margin-bottom: 1rem; /* Adjust margin as needed */
-        }
-
-        .text-lg {
-            font-size: 1.5rem; /* Keep the font size */
-            line-height: 2; /* Keep the line height */
-            margin-top: 300px; /* Adjust the margin-top as needed */
-            font-family: Arial, sans-serif; /* Keep the font family */
-        }
-
-
-        .font-bold {
-            font-weight: bold; /* Make text bold */
-        }
-
-        .mt-10 {
-            margin-top: 5rem; /* Adjust margin as needed */
-        }
-
-        .bg-yellow-300 {
-            background-color: #f59e0b; /* Adjust color as needed */
-        }
-
-        .rounded-3xl {
-            border-radius: 1.5rem; /* Adjust border radius as needed */
-        }
-
-        .py-3 {
-            padding-top: 0.9rem; /* Adjust padding as needed */
-            padding-bottom: 0.75rem; /* Adjust padding as needed */
-        }
-
-        .px-8 {
-            padding-left: 2rem; /* Adjust padding as needed */
-            padding-right: 2rem; /* Adjust padding as needed */
-        }
-
-        .font-medium {
-            font-weight: 500;
-        }
-
-        .inline-block {
-            display: inline-block;
-        }
-
-        .mr-4 {
-            margin-right: 4rem; /* Adjust margin as needed */
-        }
-
-        .welcome-container {
-            position: relative;
-            height: 100vh; /* Adjust height as needed */
-        }
-
-        .welcome-message {
-            position: absolute;
-            top: 170px; /* Adjust distance from the top as needed */
-            left: 13%; /* Adjust distance from the right as needed */
-            font-weight: bold;
-            font-size: 4rem; /* Adjust font size as needed */
-            color: #333; /* Adjust color as needed */
-            z-index: 1; /* Ensure5the message appears above other elements */
-            /* Add any other styling you want */
-        }
-
-        .product-image {
-            max-height: 200px;
-            height: 200px;
-            width: 100%;
-        }
-
-        .counter {
-            margin-top: 15px;
-        }
-
-        .quantity-toggler {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            margin: 1px;
-        }
-
-        .quantity-input {
-            margin-right: 10px;
-            margin-left: 15px;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group-append .btn {
-            margin-left: 10px;
-            background-color: #F5F5DC;
-            border-color: #9400D3;
-            color: #9400D3;
-        }
-
-        .product-card {
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            margin-bottom: 20px;
-            border: 1px solid black;
-            color: black;
-        }
-
-        .product-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.5);
-        }
-
+        /* Your existing CSS styles */
     </style>
 
     <h1>Our Baked Products</h1>
     <hr>
 
-     <!-- Main Content -->
-     <div class="container mt-4">
+    <!-- Main Content -->
+    <div class="container mt-4">
         <form action="" method="GET" class="mb-3">
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search products..." name="query">
@@ -202,45 +26,101 @@
         </form>
 
         <!-- Product Cards -->
-        <div class="row">
-            @if ($bakedGoods)
-                @foreach($bakedGoods as $bakedGood)
-                {{-- <form class="col-3" action='{{route('cart.add', $bakedGood->id)}}' method='POST'> --}}
-                    <form class="col-3" action='' method='POST'>
-                        @csrf
-                        <div class="product-card" style="position: relative;">
-                            @php
-                                $thumbnail = $bakedGood->thumbnailImage;
-                                $image_path = $thumbnail ? $thumbnail->image_path : "uploaded_files/default-profile.png";
-                            @endphp
-                            <a href="{{route('baked_goods.show', $bakedGood->id)}}">
-                                <img src="{{asset($image_path)}}" alt="{{$bakedGood->name}}" class="product-image">
-                            </a>
-                            <h5 class="mt-2">{{ucwords($bakedGood->name)}}</h5>
-                            <p class='mb-1'><span class='fw-semibold'>Price:</span> P{{$bakedGood->price}}</p>
-                            <p class='mb-1'><span class='fw-semibold'>Weight:</span> {{$bakedGood->weight_gram}} gram</p>
-                            <p class="mb-1 {{$bakedGood->is_available ? 'bg-success' : 'bg-danger'}}" style="position: absolute; top: 0; left: 0; padding: 5px 10px; color: white; border-bottom-right-radius: 10px; border-top-left-radius: 5px;">{{$bakedGood->is_available ? "Available" : "Not Available"}} </p>
-                            <input type='hidden' name='id' value='{{$bakedGood->id}}'>
-                            <input type='hidden' name='name' value='{{$bakedGood->name}}'>
-                            <input type='hidden' name='price' value='{{$bakedGood->price}}'>
+        <div class="row" id="baked-goods-container">
+            <!-- Products will be appended here by AJAX -->
+        </div>
 
-                            @if (!auth()->check() || !auth()->user()->is_admin)
-                                <div class="d-flex flex-column align-items-center gap-2">
-                                    <div class="counter d-flex flex-row">
-                                        <div class="btn btn-primary quantity-toggler" {{$bakedGood->is_available ? "" : "disabled"}}>-</div>
-                                        <input type="number" name='qty' class="form-control border-0 quantity-input" min=1 value="{{$bakedGood->is_available ? 1 : 0}}" {{$bakedGood->is_available ? "" : "readonly"}}>
-                                        <div class="btn btn-primary quantity-toggler" {{$bakedGood->is_available ? "" : "disabled"}}>+</div>
-                                    </div>
-                                    <button type='submit' class="btn {{$bakedGood->is_available ? "btn-success" : "btn-danger"}} mt-2" style="width: 100%" {{$bakedGood->is_available ? "" : "disabled"}} data-product-id="{{$bakedGood->id}}" data-product-name="{{$bakedGood->name}}" data-product-price="{{$bakedGood->price}}">{{$bakedGood->is_available ? "Add to Cart" : "Unavailable"}}</button>
-                                </div>
-                            @endif
-
-                        </div>
-                    </form>
-                @endforeach
-            @else
-                <h3 class="col-12">No Baked Goods Available</h3>
-            @endif
+        <!-- Loader -->
+        <div id="loader" style="display:none; text-align: center; width: 100%;">
+            Loading...
+        </div>
+        <div id="end" style="display:none; text-align: center; width: 100%;">
+            You have reached the end...
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            var loading = false; // Flag to prevent multiple AJAX calls
+            var page = 1; // Start with the first page
+            function loadMoreBakedGoods() {
+                if (loading) return; // Prevent multiple AJAX calls
+
+                loading = true;
+                $('#loader').show(); // Show the loader
+
+                $.ajax({
+                    url: 'api/bakedgoods/paginate?page=' + page,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        setTimeout(function() {
+                        // Hide the loader and reset the loading flag after 2 seconds
+                        $('#loader').hide();
+                        loading = false;
+
+                        page++; // Increment the page number
+
+                        // Append new baked goods to the container
+                        var bakedGoodsContainer = $('#baked-goods-container');
+                        response.data.forEach(function(bakedGood) {
+                            var imagePath = bakedGood.images.length ? bakedGood.images[0].image_path : 'uploaded_files/default-profile.png';
+                            var html = `
+                                <form class="col-3" action='' method='POST'>
+                                    <input type='hidden' name='_token' value='{{ csrf_token() }}'>
+                                    <div class="product-card" style="position: relative;">
+                                        <a href="/baked-goods/${bakedGood.id}">
+                                            <img src="${imagePath}" alt="${bakedGood.name}" class="product-image">
+                                        </a>
+                                        <h5 class="mt-2">${bakedGood.name}</h5>
+                                        <p class='mb-1'><span class='fw-semibold'>Price:</span> P${bakedGood.price}</p>
+                                        <p class='mb-1'><span class='fw-semibold'>Weight:</span> ${bakedGood.weight_gram} gram</p>
+                                        <p class="mb-1 ${bakedGood.is_available ? 'bg-success' : 'bg-danger'}" style="position: absolute; top: 0; left: 0; padding: 5px 10px; color: white; border-bottom-right-radius: 10px; border-top-left-radius: 5px;">${bakedGood.is_available ? "Available" : "Not Available"}</p>
+                                        <input type='hidden' name='id' value='${bakedGood.id}'>
+                                        <input type='hidden' name='name' value='${bakedGood.name}'>
+                                        <input type='hidden' name='price' value='${bakedGood.price}'>
+
+                                        <div class="d-flex flex-column align-items-center gap-2">
+                                            <div class="counter d-flex flex-row">
+                                                <div class="btn btn-primary quantity-toggler" ${bakedGood.is_available ? "" : "disabled"}>-</div>
+                                                <input type="number" name='qty' class="form-control border-0 quantity-input" min=1 value="${bakedGood.is_available ? 1 : 0}" ${bakedGood.is_available ? "" : "readonly"}>
+                                                <div class="btn btn-primary quantity-toggler" ${bakedGood.is_available ? "" : "disabled"}>+</div>
+                                            </div>
+                                            <button type='submit' class="btn ${bakedGood.is_available ? "btn-success" : "btn-danger"} mt-2" style="width: 100%" ${bakedGood.is_available ? "" : "disabled"} data-product-id="${bakedGood.id}" data-product-name="${bakedGood.name}" data-product-price="${bakedGood.price}">${bakedGood.is_available ? "Add to Cart" : "Unavailable"}</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            `;
+                            bakedGoodsContainer.append(html); // Add the new baked goods to the container
+                        });
+
+                        // Show the #end element if there's no more pages
+                        if (!response.next_page_url) {
+                            $('#end').show(); // Show the end indicator
+                            $(window).off('scroll', onScroll); // Remove the scroll event listener
+                        }
+                    }, 2000); // Wait for 2 seconds before appending products
+                },
+                    error: function() {
+                        $('#loader').hide(); // Hide the loader on error
+                        $('#end').show(); // Show the end indicator on error
+                        loading = false; // Reset loading flag
+                    }
+                });
+            }
+
+            function onScroll() {
+                // Check if user has scrolled close to the bottom
+                if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+                    loadMoreBakedGoods(); // Load more baked goods
+                }
+            }
+
+            $(window).on('scroll', onScroll); // Attach scroll event listener
+
+            // Initial load
+            loadMoreBakedGoods(); // Load the first batch of baked goods
+        });
+    </script>
+
 @endsection

@@ -17,10 +17,22 @@ class BakedGoodsController extends Controller
      */
     public function index(Request $request)
     {
-        $bakedGoods = BakedGood::with(['images', 'ingredients'])->orderBy('id', 'DESC')->get();
+        $bakedGoods = BakedGood::with(['images', 'ingredients'])
+                                ->orderBy('id', 'DESC')
+                                ->get();
         return response()->json($bakedGoods);
-    }
 
+    }
+    public function bakedGoodPaginate()
+    {
+        $perPage = 10; // Number of items per page
+        $bakedGoods = BakedGood::with(['images', 'ingredients'])
+                                ->orderBy('id', 'DESC')
+                                ->paginate($perPage);
+        // If the request expects JSON, return paginated data
+        return response()->json($bakedGoods);
+
+    }
 
     /**
      * Store a newly created baked good in storage.

@@ -22,10 +22,7 @@ use App\Http\Controllers\IngredientController;
 */
 Auth::routes();
 
-Route::get('/', function() {
-    $bakedGoods = BakedGood::orderBy('is_available', 'DESC')->get();
-    return view('welcome', compact('bakedGoods'));
-})->name('welcome');
+Route::view('/', 'welcome')->name('welcome');
 
 Route::get('/home', function() {
     return view('home');

@@ -44,6 +44,8 @@ Route::apiResource('ingredients', IngredientController::class);
 Route::apiResource('discounts', DiscountController::class);
 Route::apiResource('available_schedules', AvailableScheduleController::class);
 Route::apiResource('baked_goods', BakedGoodsController::class);
+
+Route::get('bakedgoods/paginate', [BakedGoodsController::class, 'bakedGoodPaginate']);
 Route::delete('/baked_goods/images/{id}', [BakedGoodsController::class, 'deleteImage']);
 
 //excel imports

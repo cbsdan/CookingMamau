@@ -71,7 +71,7 @@
     {{-- <script src="{{ asset('js/profile.js') }}"></script> --}}
 
     <script src="{{ asset('js/datatable.js') }}"></script>
-    <script src="{{ asset('js/admin.js') }}"></script>
+    {{-- <script src="{{ asset('js/admin.js') }}"></script> --}}
     @yield('head')
     @vite(['resources/css/adminDashboard.css', 'resources/js/adminDashboard.js'])
     @vite(['resources/css/adminNavPanel.css', 'resources/js/adminNavPanel.js'])
