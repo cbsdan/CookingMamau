@@ -54,13 +54,11 @@ class CartController extends Controller
 
     public function updateCart(Request $request)
     {
-        $bakedGoodId = $request->input('id_baked_good');
+        $idCart = $request->input('id');
         $quantity = $request->input('qty');
-        $userId = $request->input('id_user');
 
         // Find the cart item for this user
-        $cartItem = CartItem::where('id_user', $userId)
-                             ->where('id_baked_good', $bakedGoodId)
+        $cartItem = CartItem::where('id', $idCart)
                              ->first();
 
         if ($cartItem) {

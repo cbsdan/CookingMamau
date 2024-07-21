@@ -123,7 +123,7 @@ $(document).ready(function() {
 
     $(document).ready(function() {
         // Function to update cart quantity on the server
-        function updateCartQuantity(bakedGoodId, newQuantity) {
+        function updateCartQuantity(idCart, newQuantity) {
             // Validate newQuantity to ensure it's a number and greater than 0
             newQuantity = parseInt(newQuantity);
             if (isNaN(newQuantity) || newQuantity <= 0) {
@@ -139,8 +139,7 @@ $(document).ready(function() {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: {
-                    id_baked_good: bakedGoodId,
-                    id_user: window.auth.userId,
+                    id: idCart,
                     qty: newQuantity
                 },
                 success: function(response) {
@@ -186,7 +185,7 @@ $(document).ready(function() {
             const $this = $(this);
             const $quantityInput = $this.siblings('.quantity-input');
             let quantity = parseInt($quantityInput.val());
-            const bakedGoodId = $this.closest('.cartItem').find('input[name="idCart"]').val();
+            const idCart = $this.closest('.cartItem').find('input[name="idCart"]').val();
 
             if (isNaN(quantity)) {
                 quantity = 1; // Default to 1 if the current quantity is not a number
@@ -197,13 +196,13 @@ $(document).ready(function() {
                     quantity--;
                     $quantityInput.val(quantity);
                     console.log($quantityInput.val());
-                    updateCartQuantity(bakedGoodId, quantity);
+                    updateCartQuantity(idCart, quantity);
                 }
             } else if ($this.hasClass('add')) {
                 quantity++;
                 $quantityInput.val(quantity);
                 console.log($quantityInput.val());
-                updateCartQuantity(bakedGoodId, quantity);
+                updateCartQuantity(idCart, quantity);
             }
         });
 
