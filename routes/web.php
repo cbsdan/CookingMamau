@@ -3,9 +3,11 @@
 use App\Models\BakedGood;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatatableController;
 use App\Http\Controllers\BakedGoodsController;
@@ -66,10 +68,16 @@ Route::put('/api/baked_goods/images/{imageId}/set-thumbnail', [BakedGoodsControl
 
 
 //crud
-Route::middleware(['admin'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::view('/ingredient-all', 'ingredients.index')->name('ingredients');
     Route::view('/discount-all', 'discounts.index')->name('discounts');
     Route::view('/bakedgood-all', 'baked_goods.index')->name('bakedgoods');
     Route::view('/available_schedules-all', 'available_schedules.index')->name('available_schedules');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::view('/checkout', 'order.checkout')->name('checkout_page');
+
+});
+
 

@@ -1,11 +1,5 @@
-// $("#addModalBtn").on('click', function () {
-//     console.log('clicked');
-//     $('#ingredientModal').modal('show');
-// })
 $(document).ready(function () {
-    // Initialize DataTable
-
-    $('#ingredientTable').DataTable({
+    var table = $('#ingredientTable').DataTable({
         ajax: {
             url: "/api/ingredients",
             dataSrc: ""
@@ -27,6 +21,7 @@ $(document).ready(function () {
                     $('#ingredientUpdate').hide();
                     $('#ingredientSubmit').show();
                     $('#ingredientImage').remove();
+                    updateFeedbackClasses();
                 }
             }
         ],
@@ -88,47 +83,89 @@ $(document).ready(function () {
             $('.dataTables_filter label').css({
                 'margin-top': '20px',
                 'margin-left': '10px',
-
                 'align-items': 'center'
             });
         }
-
     });
 
-    // Submit new ingredient
-    $("#ingredientSubmit").on('click', function (e) {
-        e.preventDefault();
-        var data = $('#ingredientForm')[0];
-        let formData = new FormData(data);
-        $.ajax({
-            type: "POST",
-            url: "/api/ingredients",
-            data: formData,
-            contentType: false,
-            processData: false,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function (data) {
-                console.log(data);
-                $('#name').val("")
-                $('#unit').val("")
-                if (window.location.pathname == "/bakedgood-all") {
-                    $('#ingredientsList option:eq(0)').after(`<option value='${data.ingredient.id}'>${data.ingredient.name}</option>`)
-                }
-
-                $("#ingredientModal").modal("hide");
-                var $ingredientTable = $('#ingredientTable').DataTable();
-                $ingredientTable.ajax.reload();
-
-            },
-            error: function (error) {
-                console.log(error);
+    // Add custom validation method for image files
+    $.validator.addMethod("validImage", function(value, element) {
+        var files = element.files;
+        if (files.length === 0) {
+            return true; // Allow empty image field
+        }
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            if (!file.type.match('image.*')) {
+                return false;
             }
-        });
+        }
+        return true;
+    }, "Please upload a valid image.");
+
+    // Add custom validation method for unit field
+    $.validator.addMethod("validUnit", function(value, element) {
+        return this.optional(element) || /^(g|kg|l)$/i.test(value);
+    }, "Please enter a valid unit (g, kg, l).");
+
+    // Validate the form
+    $('#ingredientForm').validate({
+        rules: {
+            name: {
+                required: true
+            },
+            unit: {
+                required: true,
+                validUnit: true
+            },
+            image: {
+                validImage: true
+            }
+        },
+        messages: {
+            name: "Please enter the name",
+            unit: "Please enter a valid unit (g, kg, l, etc...)",
+            image: "Please upload a valid image"
+        },
+        errorElement: 'div',
+        errorClass: 'invalid-feedback',
+        highlight: function(element) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function(element) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function(form) {
+            var formData = new FormData(form);
+            $.ajax({
+                type: "POST",
+                url: "/api/ingredients", // Adjust URL as needed
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                    $("#ingredientModal").modal("hide");
+                    table.ajax.reload(); // Reload the DataTable
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+    });
+
+    // Trigger form submission
+    $("#ingredientSubmit").on('click', function(e) {
+        e.preventDefault();
+        $('#ingredientForm').submit();
     });
 
     // Edit ingredient
     $('#ingredientTable tbody').on('click', 'a.editBtn', function (e) {
+        updateFeedbackClasses();
         e.preventDefault();
         $('#ingredientImage').remove();
         $('#ingredientId').remove();
@@ -160,7 +197,6 @@ $(document).ready(function () {
     $("#ingredientUpdate").on('click', function (e) {
         e.preventDefault();
         var id = $('#ingredientId').val();
-        var table = $('#ingredientTable').DataTable();
         var data = $('#ingredientForm')[0];
         let formData = new FormData(data);
         formData.append("_method", "PUT");
@@ -176,7 +212,7 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 $('#ingredientModal').modal("hide");
-                table.ajax.reload();
+                table.ajax.reload(); // Reload the DataTable
             },
             error: function (error) {
                 console.log(error);
@@ -187,7 +223,6 @@ $(document).ready(function () {
     // Delete ingredient
     $('#ingredientTable tbody').on('click', 'a.deleteBtn', function (e) {
         e.preventDefault();
-        var table = $('#ingredientTable').DataTable();
         var id = $(this).data('id');
         var $row = $(this).closest('tr');
         bootbox.confirm({
@@ -226,37 +261,12 @@ $(document).ready(function () {
         });
     });
 
-    $('#ingredientImportForm').on('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        var formData = new FormData(this);
-
-        $.ajax({
-            url: 'api/ingredient/import', // API endpoint
-            type: 'POST',
-            data: formData,
-            contentType: false, // Important
-            processData: false, // Important
-            success: function(response) {
-                // Handle success response
-                alert(response.message); // Or use a more sophisticated notification system
-
-                var table = $('#ingredientTable').DataTable();
-                table.ajax.reload();
-            },
-            error: function(xhr) {
-                // Handle error response
-                var errorMsg = 'An error occurred: ' + xhr.responseJSON.message;
-                alert(errorMsg);
-            }
+    // Edit discount
+    function updateFeedbackClasses() {
+        $('.invalid-feedback').each(function() {
+            $(this).remove();
         });
-    });
+        $('.is-invalid').removeClass('is-invalid');
 
-    //Infinite Scroll
-    $('#usersTable_wrapper .dataTables_scrollBody').on('scroll', function() {
-        let tbody = $(this);
-        if (tbody.scrollTop() + tbody.innerHeight() >= tbody[0].scrollHeight && !loadingData) {
-            fetchData(currentPage);
-        }
-    });
+    }
 });

@@ -65,3 +65,6 @@ Route::post('/cart/remove', [CartController::class, 'removeFromCart']);
 Route::post('/cart/update', [CartController::class, 'updateCart']);
 Route::get('/cart/items', [CartController::class, 'fetchCartItems']);
 
+//Checkout
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+Route::get('/check-discount', [DiscountController::class, 'checkDiscount'])->name('check.discount');

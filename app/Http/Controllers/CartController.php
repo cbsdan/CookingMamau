@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use App\Models\AvailableSchedule;
-use App\Models\CartItem;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
@@ -88,13 +89,17 @@ class CartController extends Controller
         ]);
     }
 
-
     public function checkout(Request $request)
     {
-        $userId = $request->input('id_user');
-        $cartItems = CartItem::where('id_user', $userId)->get();
-        $user = Auth::user();
+        $userId = $request->id_user;
+        $cartItems = CartItem::with('bakedGood.images')->where('id_user', $userId)->get();
+        $user = User::with('buyer')->find($userId);
         $availableSchedules = AvailableSchedule::where('schedule', '>=', Carbon::now())->limit(20)->get();
-        return view('order.checkout', compact('cartItems', 'user', 'availableSchedules'));
+
+        return response()->json([
+            'cartItems' => $cartItems,
+            'user' => $user,
+            'availableSchedules' => $availableSchedules,
+        ], 200);
     }
 }

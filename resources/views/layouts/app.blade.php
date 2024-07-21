@@ -274,13 +274,13 @@
                             <form action="" method="POST"
                                 class="d-flex align-items-center px-1 text-center flex-1">
                                 @csrf
-                                <div class="quantity-toggler btn minus">-</div>
+                                <div class="quantity-toggler on-cart btn minus">-</div>
                                 <input type="number" name='qty'
                                     class="quantity-input border-0 m-0 d-flex align-items-center justify-content-center"
                                     style="width:30px; background: transparent;" min=1
                                     value="{{ $bakedGood->is_available ? $cartItem->qty : 0 }}"
                                     {{ $bakedGood->is_available ? '' : 'readonly' }}>
-                                <div class="quantity-toggler btn add">+</div>
+                                <div class="quantity-toggler on-cart btn add">+</div>
                             </form>
 
                             <div class="d-flex align-items-center col-2 px-1 text-start">
@@ -305,7 +305,7 @@
                     </div>
                     @if ($cartItems->count())
                         {{-- <form action="{{route('checkout')}}" method="GET"> --}}
-                        <form action="" method="GET">
+                        <form action="{{route('checkout_page')}}" method="GET">
                             @csrf
                             <button type='submit' class="btn btn-success checkout-btn"
                                 style="background:#ead660; color: black">Checkout</button>

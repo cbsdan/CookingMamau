@@ -15,7 +15,8 @@ $(document).ready(function() {
     });
 
     // Handle clicks on dynamically added quantity toggler buttons
-    $(document).on('click', '.quantity-toggler', function() {
+    $(document).on('click', '.quantity-toggler.on-home', function() {
+        console.log('quantity click');
         var input = $(this).siblings('input');
         var value = parseInt(input.val());
         if ($(this).text() === '+') {
@@ -181,7 +182,7 @@ $(document).ready(function() {
         }
 
         // Ensure event handler is attached only once
-        $(document).off('click', '.quantity-toggler').on('click', '.quantity-toggler', function() {
+        $(document).off('click', '.quantity-toggler.on-cart').on('click', '.quantity-toggler', function() {
             const $this = $(this);
             const $quantityInput = $this.siblings('.quantity-input');
             let quantity = parseInt($quantityInput.val());
@@ -262,9 +263,9 @@ $(document).ready(function() {
                                 <p class='mb-0'>P<span class='price'>${bakedGood.price}</span></p>
                             </div>
                             <form action="" method="POST" class="d-flex align-items-center px-1 text-center flex-1">
-                                <div class="quantity-toggler btn minus">-</div>
+                                <div class="quantity-toggler on-cart btn minus">-</div>
                                 <input type="number" name='qty' class="quantity-input border-0 m-0 d-flex align-items-center justify-content-center" style="width:30px; background: transparent;" min=1 value="${bakedGood.is_available ? cartItem.qty : 0}" ${bakedGood.is_available ? '' : 'readonly'}>
-                                <div class="quantity-toggler btn add">+</div>
+                                <div class="quantity-toggler on-cart btn add">+</div>
                             </form>
                             <div class="d-flex align-items-center col-2 px-1 text-start">
                                 <p class="mb-0 w-100 text-start total">P${total}</p>
@@ -444,9 +445,9 @@ $(document).ready(function() {
         return `
             <div class="d-flex flex-column align-items-center gap-2 ">
                 <div class="counter d-flex flex-row">
-                    <div class="btn btn-primary quantity-toggler" ${bakedGood.is_available ? "" : "disabled"}>-</div>
+                    <div class="btn btn-primary quantity-toggler on-home" ${bakedGood.is_available ? "" : "disabled"}>-</div>
                     <input type="number" name='qty' class="form-control border-0 quantity-input" min=1 value="${bakedGood.is_available ? 1 : 0}" ${bakedGood.is_available ? "" : "readonly"}>
-                    <div class="btn btn-primary quantity-toggler" ${bakedGood.is_available ? "" : "disabled"}>+</div>
+                    <div class="btn btn-primary quantity-toggler on-home" ${bakedGood.is_available ? "" : "disabled"}>+</div>
                 </div>
                 <button type='button' class="btn add-to-cart-btn ${bakedGood.is_available ? "btn-success" : "btn-danger"} mt-2" style="width: 100%" ${bakedGood.is_available ? "" : "disabled"} data-product-id="${bakedGood.id}" data-product-name="${bakedGood.name}" data-product-price="${bakedGood.price}">${bakedGood.is_available ? "Add to Cart" : "Unavailable"}</button>
             </div>
