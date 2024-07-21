@@ -23,7 +23,7 @@ class ChartController extends Controller
             }
 
             $revenueData[] = [
-                'schedule' => $schedule->schedule, 
+                'schedule' => $schedule->schedule,
                 'revenue' => $scheduleRevenue,
             ];
         }

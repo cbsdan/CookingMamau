@@ -5,99 +5,96 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\AvailableSchedule;
+use App\Models\CartItem;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
-        $bakedGoodId = $request->input('id');
+        $bakedGoodId = $request->input('id_baked_good');
         $quantity = $request->input('qty');
-        $name = $request->input('name');
-        $image_path = $request->input('image_path');
-        $price = $request->input('price');
-    
-        // Retrieve the cart data from session or initialize an empty array
-        $cart = session()->get('cart', []);
-        // Check if the item already exists in the cart
-        if (array_key_exists($bakedGoodId, $cart)) {
+        $userId = $request->input('id_user');
+
+        $isUpdated = false;;
+        // Check if the item already exists in the cart for this user
+        $cartItem = CartItem::where('id_user', $userId)
+                             ->where('id_baked_good', $bakedGoodId)
+                             ->first();
+
+        if ($cartItem) {
             // If it exists, update the quantity
-            $cart[$bakedGoodId]['quantity'] += $quantity;
+            $cartItem->qty += $quantity;
+            $cartItem->save();
+            $isUpdated = true;
         } else {
-            // If it doesn't exist, add it to the cart
-            $cart[$bakedGoodId] = [
-                'name' => $name,
-                'quantity' => $quantity,
-                'price' => $price,
-                'image_path' => $image_path
-            ];
+            // If it doesn't exist, create a new cart item
+            CartItem::create([
+                'id_user' => $userId,
+                'id_baked_good' => $bakedGoodId,
+                'qty' => $quantity,
+            ]);
         }
-    
-        // Store the updated cart data back into session
-        session()->put('cart', $cart);
-    
-        return back();
+
+        return response()->json(['message' => 'Item added to cart successfully.', 'isUpdated' => $isUpdated]);
     }
-    
 
     public function removeFromCart(Request $request)
     {
-        // Retrieve the product ID to be removed from the request
-        $bakedGoodId = $request->input('id');
-    
-        // Retrieve the current cart items from the session
-        $cartItems = session()->get('cart', []);
-    
-        // Check if the product exists in the cart
-        if (isset($cartItems[$bakedGoodId])) {
-            // Remove the product from the cart
-            unset($cartItems[$bakedGoodId]);
-    
-            // Save the updated cart items back to the session
-            session()->put('cart', $cartItems);
-    
-            return redirect()->back()->with('success', 'Product removed from cart.');
-        }
-    
-        return redirect()->back()->with('error', 'Product not found in cart.');
-    }
+        $cartId = $request->input('id'); // Retrieve the 'id' from the request
+        $cartItem = CartItem::find($cartId);
 
-    // public function viewCart()
-    // {
-    //     // Retrieve the current cart items from the session
-    //     $cartItems = session()->get('cart', []);
-    
-    //     // Pass the cart items to the view for rendering
-    //     return view('cart.view', compact('cartItems'));
-    // }
+        if ($cartItem) {
+            $cartItem->delete();
+            return response()->json(['message' => 'Product removed from cart.']);
+        }
+
+        return response()->json(['message' => 'Product not found in cart.'], 404);
+    }
 
     public function updateCart(Request $request)
     {
-        // Retrieve the product ID and updated quantity from the request
-        $bakedGoodId = $request->input('id');
+        $bakedGoodId = $request->input('id_baked_good');
         $quantity = $request->input('qty');
+        $userId = $request->input('id_user');
 
-        // Retrieve the current cart items from the session
-        $cartItems = session()->get('cart', []);
+        // Find the cart item for this user
+        $cartItem = CartItem::where('id_user', $userId)
+                             ->where('id_baked_good', $bakedGoodId)
+                             ->first();
 
-        // Check if the product exists in the cart
-        if (isset($cartItems[$bakedGoodId])) {
-            // Update the quantity of the specified product
-            $cartItems[$bakedGoodId]['quantity'] = $quantity;
-
-            // Save the updated cart items back to the session
-            session()->put('cart', $cartItems);
-
-            return redirect()->back()->with('success', 'Cart updated successfully.');
+        if ($cartItem) {
+            // Update the quantity
+            $cartItem->qty = $quantity;
+            $cartItem->save();
+            return response()->json(['message' => 'Cart updated successfully.']);
         }
-        
-        // If the product does not exist in the cart, redirect back with an error message
-        return redirect()->back()->with('error', 'Product not found in cart.');
+
+        return response()->json(['message' => 'Product not found in cart.'], 404);
     }
-    
-    public function checkout()
+
+    public function fetchCartItems(Request $request)
     {
-        $cartItems = session()->get('cart', []);
+        $userId = $request->id_user;
+        $cartItems = CartItem::where('id_user', $userId)
+            ->with('bakedGood.images')
+            ->orderBy('id', 'desc') // Order by latest id first
+            ->get();
+        $grandTotal = $cartItems->reduce(function ($carry, $item) {
+            return $carry + ($item->qty * $item->bakedGood->price);
+        }, 0);
+
+        return response()->json([
+            'cartItems' => $cartItems,
+            'grandTotal' => $grandTotal
+        ]);
+    }
+
+
+    public function checkout(Request $request)
+    {
+        $userId = $request->input('id_user');
+        $cartItems = CartItem::where('id_user', $userId)->get();
         $user = Auth::user();
         $availableSchedules = AvailableSchedule::where('schedule', '>=', Carbon::now())->limit(20)->get();
         return view('order.checkout', compact('cartItems', 'user', 'availableSchedules'));

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\DashboardController;
@@ -57,3 +58,10 @@ Route::post('discount/import', [DiscountController::class, 'discountImport']);
 Route::get('/user/fetch', [DatatableController::class, 'fetchUser'])->name('user.fetch');
 Route::get('/user/{id}', [UserController::class, 'getUserById']);
 Route::put('/user/{id}', [UserController::class, 'updateUser']);
+
+//Cart
+Route::post('/cart/add', [CartController::class, 'addToCart']);
+Route::post('/cart/remove', [CartController::class, 'removeFromCart']);
+Route::post('/cart/update', [CartController::class, 'updateCart']);
+Route::get('/cart/items', [CartController::class, 'fetchCartItems']);
+

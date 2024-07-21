@@ -67,5 +67,4 @@
 </div>
 
 <script src='{{ asset('js/scheduleCrud.js') }}'></script>
-
 @endsection

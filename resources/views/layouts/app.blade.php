@@ -1,5 +1,6 @@
 @php
     use App\Models\BakedGood;
+    use App\Models\CartItem;
 @endphp
 
 <!doctype html>
@@ -66,13 +67,13 @@
 
 
     <!-- Custom Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <script src="{{ asset('js/function.js') }}" defer></script>
     {{-- <script src="{{ asset('js/profile.js') }}"></script> --}}
 
     <script src="{{ asset('js/datatable.js') }}"></script>
     {{-- <script src="{{ asset('js/admin.js') }}"></script> --}}
     @yield('head')
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     @vite(['resources/css/adminDashboard.css', 'resources/js/adminDashboard.js'])
     @vite(['resources/css/adminNavPanel.css', 'resources/js/adminNavPanel.js'])
     @vite(['resources/css/adminProfile.css'])
@@ -173,45 +174,59 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     @if (auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="">{{ __('Dashboard (not working)') }}</a></li>
+                                        <li><a class="dropdown-item" href="">{{ __('Dashboard (not working)') }}</a>
+                                        </li>
                                     @endif
                                     @if (auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="">{{ __('Users (not working)') }}</a></li>
+                                        <li><a class="dropdown-item" href="">{{ __('Users (not working)') }}</a>
+                                        </li>
                                     @endif
                                     @if (auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="{{ route('ingredients') }}">{{ __('Baked Goods Ingredients') }}</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('ingredients') }}">{{ __('Baked Goods Ingredients') }}</a>
+                                        </li>
                                     @endif
                                     @if (!auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="{{ route('welcome') }}">{{ __('Baked Goods') }}</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('welcome') }}">{{ __('Baked Goods') }}</a></li>
                                     @endif
                                     @if (auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="{{ route('bakedgoods') }}">{{ __('Baked Goods') }}</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('bakedgoods') }}">{{ __('Baked Goods') }}</a></li>
                                     @endif
                                     @if (auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="{{ route('available_schedules') }}">{{ __('Available Schedule') }}</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('available_schedules') }}">{{ __('Available Schedule') }}</a>
+                                        </li>
                                     @endif
                                     @if (auth()->user())
-                                        <li><a class="dropdown-item" href="">{{ __('Orders (not working)') }}</a></li>
+                                        <li><a class="dropdown-item" href="">{{ __('Orders (not working)') }}</a>
+                                        </li>
                                     @endif
                                     @if (auth()->user())
-                                        <li><a class="dropdown-item" href="">{{ __('Order Reviews (not working)') }}</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="">{{ __('Order Reviews (not working)') }}</a></li>
                                     @endif
                                     @if (auth()->user())
-                                        <li><a class="dropdown-item" href="{{ route('discounts') }}">{{ __('Discounts') }}</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('discounts') }}">{{ __('Discounts') }}</a></li>
                                     @endif
                                     @if (!auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="{{ route('user.profile') }}">{{ __('Account') }}</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('user.profile') }}">{{ __('Account') }}</a></li>
                                     @else
-                                        <li><a class="dropdown-item" href="{{ route('admin.profile') }}">{{ __('Account') }}</a></li>
+                                        <li><a class="dropdown-item"
+                                                href="{{ route('admin.profile') }}">{{ __('Account') }}</a></li>
                                     @endif
                                     <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
-                                           onclick="event.preventDefault();
+                                            onclick="event.preventDefault();
                                                          document.getElementById('logout-form').submit();">
                                             {{ __('Logout') }}
                                         </a>
                                     </li>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                        class="d-none">
                                         @csrf
                                     </form>
                                 </ul>
@@ -225,6 +240,114 @@
         <main class="py-4 container">
             @yield('content')
         </main>
+        @if (auth()->check() && !auth()->user()->is_admin)
+            <!-- Shopping Cart -->
+            @php
+                $userId = auth()->id();
+                $cartItems = CartItem::where('id_user', $userId)->with('bakedGood')->get();
+                $grandTotal = 0;
+                $cartItemNumber = $cartItems->count();
+            @endphp
+            <div id="cart-items-container" class="cart flex-column justify-content-between" style="display:none;">
+                <div id="cartItems">
+                    <h2>My Cart</h2>
+                    @foreach ($cartItems as $cartItem)
+                        @php
+                            $bakedGood = $cartItem->bakedGood;
+                            $total = $cartItem->qty * $bakedGood->price;
+                            $grandTotal += $total;
+                        @endphp
+                        <div class='cartItem d-flex flex-row align-items-center p-1 mb-1'
+                            style="background: rgb(141, 244, 223);">
+                            <input type='hidden' name='idCart' value="{{ $cartItem->id }}" class='bakedGoodId'>
+                            <div class="col-3 px-1">
+                                <img src="{{ $bakedGood->images->firstWhere('is_thumbnail', true)->image_path ??
+                                    ($bakedGood->images->first()->image_path ?? 'uploaded_files/default-profile.png') }}"
+                                    class="img-thumbnail" style='height: 70px; width: 70px;'>
+                            </div>
+                            <div class="col-3 px-1 d-flex flex-column align-items-center justify-content-center">
+                                <p class='mb-0'>{{ $bakedGood->name }}</p>
+                                <p class='mb-0'>P<span class='price'>{{ $bakedGood->price }}</span></p>
+                            </div>
+
+                            {{-- <form action="{{route('cart.update', $cartItem->id)}}" method="POST" class="d-flex align-items-center px-1 text-center flex-1"> --}}
+                            <form action="" method="POST"
+                                class="d-flex align-items-center px-1 text-center flex-1">
+                                @csrf
+                                <div class="quantity-toggler btn minus">-</div>
+                                <input type="number" name='qty'
+                                    class="quantity-input border-0 m-0 d-flex align-items-center justify-content-center"
+                                    style="width:30px; background: transparent;" min=1
+                                    value="{{ $bakedGood->is_available ? $cartItem->qty : 0 }}"
+                                    {{ $bakedGood->is_available ? '' : 'readonly' }}>
+                                <div class="quantity-toggler btn add">+</div>
+                            </form>
+
+                            <div class="d-flex align-items-center col-2 px-1 text-start">
+                                <p class="mb-0 w-100 text-start total">P{{ $total }}</p>
+                            </div>
+                            {{-- <form action="{{route('cart.remove')}}" method="POST" class="d-flex align-items-center col-1 px-1 text-center" style='position: relative;'> --}}
+                            <div class="d-flex align-items-center col-1 px-1 text-center" style='position: relative;'>
+                                @csrf
+                                <input type="hidden" name='id' value='{{ $cartItem->id }}'>
+                                <button name="submit" class="btn btn-danger mb-0 p-1 text-start delete-cart-item"
+                                    data-id="{{ $cartItem->id }}"
+                                    style="position: absolute; top: -20px; right: 5px; z-index: 100;">
+                                    x
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <div>
+                    <div class="cart-total text-end">
+                        Total: P<span class='grand-total'>{{ $grandTotal }}</span>
+                    </div>
+                    @if ($cartItems->count())
+                        {{-- <form action="{{route('checkout')}}" method="GET"> --}}
+                        <form action="" method="GET">
+                            @csrf
+                            <button type='submit' class="btn btn-success checkout-btn"
+                                style="background:#ead660; color: black">Checkout</button>
+                        </form>
+                    @else
+                        <a href='{{ route('welcome') }}' class="btn btn-success checkout-btn"
+                            style="background:#ead660; color: black">Go to Baked Goods</a>
+                    @endif
+                </div>
+            </div>
+            <button id="open-btn" class="btn open-btn p-2 cart-toggle-visibility" style="background:#ead660">
+                <img src='{{ asset('images/cart-icon.png') }}' alt="Cart"
+                    style="width: 50px; height: 50px; border-radius: 50% !important;">
+                <span class='dot-label'>
+                    {{ $cartItemNumber }}
+                </span>
+            </button>
+            <button id="close-btn" class="btn close-btn p-2 cart-toggle-visibility"
+                style="display: none; background:#ead660; margin-right:350px;">
+                <img src='{{ asset('images/cart-icon.png') }}' alt="Cart"
+                    style="width: 50px; height: 50px; border-radius: 50% !important;">
+                <span class='dot-label'>{{ $cartItemNumber }}</span>
+            </button>
+
+            <script>
+                $(document).ready(function() {
+                    $('#open-btn').click(function() {
+                        $('#cart-items-container').show();
+                        $('#open-btn').hide();
+                        $('#close-btn').show();
+                    });
+
+                    $('#close-btn').click(function() {
+                        $('#cart-items-container').hide();
+                        $('#open-btn').show();
+                        $('#close-btn').hide();
+                        console.log('clicked close btn')
+                    });
+                });
+            </script>
+        @endif
+
     </div>
 </body>
 
