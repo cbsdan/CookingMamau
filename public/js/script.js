@@ -384,16 +384,46 @@ $(document).ready(function() {
             type: 'GET',
             dataType: 'json',
             success: function(bakedGood) {
-                var imagePath = bakedGood.images.length ? bakedGood.images[0].image_path : 'uploaded_files/default-profile.png';
+                var imagePath = 'uploaded_files/default-profile.png'; // Default image
+
+                if (bakedGood.images.length) {
+                    // Find the image with is_thumbnail set to true
+                    var thumbnailImage = bakedGood.images.find(image => image.is_thumbnail);
+
+                    if (thumbnailImage) {
+                        imagePath = thumbnailImage.image_path; // Set to the thumbnail image if found
+                    } else {
+                        imagePath = bakedGood.images[0].image_path; // Set to the first image if no thumbnail is found
+                    }
+                }
                 var modalContent = `
-                    <div class="text-center">
-                        <img src="${imagePath}" alt="${bakedGood.name}" class="img-fluid mb-3">
-                        <h5>${bakedGood.name}</h5>
-                        <p><strong>Price:</strong> P${bakedGood.price}</p>
-                        <p><strong>Weight:</strong> ${bakedGood.weight_gram} gram</p>
-                        <p><strong>Description:</strong> ${bakedGood.description}</p>
-                        <p class="${bakedGood.is_available ? 'bg-success' : 'bg-danger'}" style="padding: 5px 10px; color: white; border-radius: 5px;">${bakedGood.is_available ? "Available" : "Not Available"}</p>
-                        ${authCheck() ? renderAddCartButton(bakedGood) : ''}
+                    <div class=''>
+                        <div class='left'>
+                            <img src="${imagePath}" alt="${bakedGood.name}" class="img-fluid mb-3 w-100" style="min-height: 270px; object-fit: cover;">
+                            <h5>${bakedGood.name}</h5>
+                            <hr>
+                            <p><strong>Price:</strong> P${bakedGood.price}</p>
+                            <p><strong>Weight:</strong> ${bakedGood.weight_gram} gram</p>
+                            <strong>Description:</strong>
+                            <p> ${bakedGood.description}</p>
+                            <p class="mb-1 ${bakedGood.is_available ? 'bg-success' : 'bg-danger'}" style="position: absolute; top: 16px; right: 16px; padding: 5px 10px; color: white; border-bottom-left-radius: 10px; border-top-right-radius: 5px;">${bakedGood.is_available ? "Available" : "Not Available"}</p>
+                            <p class='fw-bold'>Ingredients</p>
+                            <div class="row">
+                                <ol class="p-2">
+                                    ${bakedGood.ingredients.map(ingredient => `
+                                        <li class='mx-4 d-flex align-items-center gap-3'>
+                                        <img src='${ingredient.image_path ? ingredient.image_path : 'uploaded_files/default-product.png'}' width=40px height=40px>
+                                            ${ingredient.pivot.qty} ${ingredient.unit} ${ingredient.name}
+                                        </li>
+                                    `).join('')}
+                                </ol>
+                            </div>
+                            ${authCheck() ? renderAddCartButton(bakedGood) : ''}
+                        </div>
+                        <div class='right'>
+                            <h5>Reviews</h5>
+                            <hr>
+                        </div>
                     </div>
                 `;
                 $('#bakedGoodDetails').html(modalContent);

@@ -95,31 +95,69 @@ $(document).ready(function () {
         "order": [[0, "desc"]]
     });
 
-    // Submit new baked good
-    $("#bakedGoodSubmit").on('click', function (e) {
-        e.preventDefault();
-        var data = $('#bakedGoodForm')[0];
-        let formData = new FormData(data);
-        console.log(data);
-        $.ajax({
-            type: "POST",
-            url: "/api/baked_goods",
-            data: formData,
-            contentType: false,
-            processData: false,
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function (data) {
-                console.log(data);
-
-                $("#bakedGoodModal").modal("hide");
-                var $bakedGoodsTable = $('#bakedGoodsTable').DataTable();
-                $bakedGoodsTable.ajax.reload();
-            },
-            error: function (error) {
-                console.log(error);
+    $.validator.addMethod("validImage", function(value, element) {
+        var files = element.files;
+        if (files.length === 0) {
+            return false;
+        }
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            if (!file.type.match('image.*')) {
+                return false;
             }
-        });
+        }
+        return true;
+    }, "Please upload a valid image.");
+
+    // Validate the form
+    $('#bakedGoodForm').validate({
+        rules: {
+            name: {
+                required: true
+            },
+            price: {
+                required: true,
+                number: true
+            },
+            weight_gram: {
+                required: true,
+                number: true
+            }
+        },
+        messages: {
+            name: "Insert Baked Good's Name",
+            price: "Please enter the price",
+            weight_gram: "Please enter the weight in grams",
+        },
+        errorElement: 'div',
+        errorClass: 'invalid-feedback',
+        highlight: function(element) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function(element) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function(form) {
+            var formData = new FormData(form);
+            $.ajax({
+                type: "POST",
+                url: "/api/baked_goods",
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                    $("#bakedGoodModal").modal("hide");
+                    var $bakedGoodsTable = $('#bakedGoodsTable').DataTable();
+                    $bakedGoodsTable.ajax.reload();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
     });
 
     // Edit baked good
@@ -396,46 +434,61 @@ $(document).ready(function () {
         }
     });
 
-    $('#addIngredientBtn').on('click', function(){
-        $('.ingredient_name').val(""); //ingredient name on form
-        $('#unit').val(""); //ingredient unit on form
+    // Trigger form submission
+    $("#bakedGoodSubmit").on('click', function (e) {
+        e.preventDefault();
+        $('#bakedGoodForm').submit();
+    });
 
+    $('#addIngredientBtn').on('click', function() {
+        // Get the selected ingredient value and quantity
         var selectedValue = $('#ingredientsList').val();
         var qtyIngredient = $('#qtyIngredient').val();
 
-        console.log(qtyIngredient);
-        if ($.trim(qtyIngredient) !== '') {
-            $.ajax({
-                type: "GET",
-                url: `/api/ingredients/${selectedValue}`,
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                dataType: "json",
-                success: function (ingredient) {
-                    console.log(ingredient)
+        // Clear previous error messages
+        $('#ingredientsList').removeClass('is-invalid');
+        $('#qtyIngredient').removeClass('is-invalid');
+        $('.invalid-feedback').remove();
 
-                    $('#ingredientsList option[value="' + selectedValue + '"]').remove();
-                    $('#ingredientsList').val('false')
-                    $('#addIngredientBtn').prop('disabled', true)
-                    $('#qtyIngredient').val('');
-                    $('#unitIngredient').val('')
+        // Perform validation
+            var isValid = true;
+            if (!$('#qtyIngredient').val() || isNaN($('#qtyIngredient').val()) || $('#qtyIngredient').val() <= 0) {
+                isValid = false;
+                $('#qtyIngredient').addClass('is-invalid').after('<div class="invalid-feedback">Quantity must be greater than zero</div>');
+            }
+            // If validation fails, return early
+            if (!isValid) {
+                return;
+            }
 
-                    $('#added-ingredient-container')
-                        .append(`<div class='ingredient-container my-1'><img src='${ingredient.image_path ? ingredient.image_path : '/uploaded_files/default-product.png'}' width=40px height=40px alt="img">
-                                    <p class='w-100 px-2'>${qtyIngredient} ${ingredient.unit} ${ingredient.name}</p>
-                                    <button type="button" class="btn btn-danger deleteIngredient">Delete</button>
-                                    <input name="ids_ingredient[]" type='hidden' value="${ingredient.id}">
-                                    <input name="qtys_ingredient[]" type='hidden' value="${qtyIngredient}">
-                                </div>`)
-                },
-                error: function(error) {
-                    alert(error)
-                }
-            })
+        // Proceed with AJAX request if validation passes
+        $.ajax({
+            type: "GET",
+            url: '/api/ingredients/${selectedValue}',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function (ingredient) {
+                $('#ingredientsList option[value="' + selectedValue + '"]').remove();
+                $('#ingredientsList').val('false');
+                $('#addIngredientBtn').prop('disabled', true);
+                $('#qtyIngredient').val('');
+                $('#unitIngredient').val('');
 
-        } else {
-            alert('Please input a qty first');
-        }
-    })
+                $('#added-ingredient-container').append(`
+                    <div class='ingredient-container my-1'>
+                        <img src='${ingredient.image_path ? ingredient.image_path : '/uploaded_files/default-product.png'}' width=40px height=40px alt="img">
+                        <p class='w-100 px-2'>${qtyIngredient} ${ingredient.unit} ${ingredient.name}</p>
+                        <button type="button" class="btn btn-danger deleteIngredient">Delete</button>
+                        <input name="ids_ingredient[]" type='hidden' value="${ingredient.id}">
+                        <input name="qtys_ingredient[]" type='hidden' value="${qtyIngredient}">
+                    </div>
+                `);
+            },
+            error: function(error) {
+                alert('Error fetching ingredient data');
+            }
+        });
+    });
 
     // Submit new ingredient
     $("#ingredientSubmit").on('click', function (e) {
