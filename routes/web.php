@@ -44,6 +44,7 @@ Route::middleware(['admin'])->group(function () {
     Route::put('/admin/password/update', [AdminController::class, 'updatePassword'])->name('admin.update.password');
 });
 
+
 // Users
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
@@ -73,6 +74,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::view('/discount-all', 'discounts.index')->name('discounts');
     Route::view('/bakedgood-all', 'baked_goods.index')->name('bakedgoods');
     Route::view('/available_schedules-all', 'available_schedules.index')->name('available_schedules');
+    Route::view('/users-all', 'admin.users.index')->name('users');
 });
 
 Route::middleware(['auth'])->group(function () {

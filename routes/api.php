@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatatableController;
@@ -68,3 +70,14 @@ Route::get('/cart/items', [CartController::class, 'fetchCartItems']);
 //Checkout
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
 Route::get('/check-discount', [DiscountController::class, 'checkDiscount'])->name('check.discount');
+
+//Orders
+Route::apiResource('/order', OrderController::class);
+
+//Account
+Route::apiResource('/users', UserController::class);
+Route::put('/users/{id}/update-role', [UserController::class, 'updateRole']);
+Route::put('/users/{id}/update-status', [UserController::class, 'updateStatus']);
+
+//Meili Search
+Route::get('/search/bakedgoods', [SearchController::class, 'search']);

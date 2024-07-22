@@ -1,14 +1,34 @@
 @extends('layouts.app')
 
 @section('content')
-    @if(session('error'))
+    @if (session('error'))
         <div class="alert alert-warning">
             {{ session('error') }}
         </div>
     @endif
 
     <style>
-        /* Your existing CSS styles */
+        .suggestions-box {
+            position: absolute; /* Position the suggestions box absolutely */
+            background-color: #fff; /* White background for the box */
+            border: 1px solid #ddd; /* Light border around the box */
+            border-radius: 5px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            z-index: 1000; /* Ensure it appears above other elements */
+            width: 500px; /* Adjust width as needed */
+        }
+
+        .suggestion {
+            padding: 10px; /* Space around text */
+            background-color: #ffffe0; /* Light yellow background */
+            color: #333; /* Dark text color for readability */
+            border-bottom: 1px solid #ddd; /* Border between items */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        .suggestion:hover {
+            background-color: #f0f0f0; /* Slightly darker background on hover */
+        }
     </style>
 
     <h1>Our Baked Products</h1>
@@ -16,14 +36,10 @@
 
     <!-- Main Content -->
     <div class="container mt-4">
-        <form action="" method="GET" class="mb-3">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search products..." name="query">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">Search</button>
-                </div>
-            </div>
-        </form>
+        <div class="search-bar mb-3">
+            <input type="text" id="itemSearch" name="q" class="form-control" placeholder="Search for baked goods..." autocomplete="off">
+            <div id="suggestions" class="suggestions-box w-50"></div>
+        </div>
 
         <!-- Product Cards -->
         <div class="row" id="baked-goods-container">
@@ -40,7 +56,8 @@
     </div>
 
     <!-- Modal for baked good -->
-    <div class="modal fade" id="bakedGoodModal" tabindex="-1" role="dialog" aria-labelledby="bakedGoodModalLabel" aria-hidden="true">
+    <div class="modal fade" id="bakedGoodModal" tabindex="-1" role="dialog" aria-labelledby="bakedGoodModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -61,10 +78,8 @@
         window.auth = {
             isAuthenticated: @json(auth()->check()),
             isAdmin: @json(auth()->check() ? auth()->user()->is_admin : false),
-            userId: @json(auth()->check() ? auth()->user()->id : null)
+            userId: @json(auth()->check() ? auth()->user()->id : null),
         };
-
     </script>
     <script src="{{ asset('js/script.js') }}"></script>
-
 @endsection

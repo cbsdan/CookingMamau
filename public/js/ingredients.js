@@ -4,7 +4,7 @@ $(document).ready(function () {
             url: "/api/ingredients",
             dataSrc: ""
         },
-        dom: 'Bfrtip',
+        dom: 'lBfrtip',
         buttons: [
             'excel',
             {

@@ -48,7 +48,7 @@
                     </select>
                 </div>
                 <div class="form-group gap-2">
-                    <label class='fw-semibold' for="discountCode">Discount Code</label>
+                    <label class='fw-semibold' for="discountCode">Discount Code (Optional)</label>
                     <div class='d-flex flex-row align-items-center gap-2'>
                         <input type="text" class="form-control" id="discountCode">
                         <button type="button" class="btn btn-primary" id="checkDiscountBtn">Apply</button>
@@ -87,11 +87,12 @@
                     <span>Discount:</span>
                     <span id='discountOff'>-P0.00</span>
                 </h6>
-                <h4 class='bg-primary text-light p-2 d-flex justify-content-between mb-0'>
+                <h4 class='bg-warning text-light p-2 d-flex justify-content-between mb-0'>
                     <span>Grand Total:</span>
                     <span id='totalAmount'>P0.00</span>
                 </h4>
             </div>
+            <button id="submitOrder" type="submit" class="btn btn-primary ml-auto mt-4 w-50">Confirm Order</button>
         </div>
     </form>
 
@@ -139,7 +140,7 @@
                                 <p class='m-0 flex-1'>Total Price: P${total}</p>
                                 <input type="hidden" name="bakedGoods[]" value="${item.baked_good.id}">
                                 <input type="hidden" name="bakedGoodPrices[]" value="${item.baked_good.price}">
-                                <input type="hidden" name="bakedGoodQtys[]" value="${item.baked_good.qty}">
+                                <input type="number" style="display: none;" name="bakedGoodQtys[]" value="${item.qty}">
                             </div>
                         `);
                     });
@@ -214,6 +215,111 @@
                     }
                 });
             });
+
+            $('#checkoutForm').validate({
+                rules: {
+                    buyer_name: {
+                        required: true,
+                        minlength: 3
+                    },
+                    email_address: {
+                        required: true,
+                        email: true
+                    },
+                    delivery_address: {
+                        required: true,
+                        minlength: 5
+                    },
+                    id_schedule: {
+                        required: true
+                    },
+                    mode: {
+                        required: true
+                    }
+                },
+                messages: {
+                    buyer_name: {
+                        required: "Please enter your name",
+                        minlength: "Your name must be at least 3 characters long"
+                    },
+                    email_address: {
+                        required: "Please enter your email address",
+                        email: "Please enter a valid email address"
+                    },
+                    delivery_address: {
+                        required: "Please enter your delivery address",
+                        minlength: "Your delivery address must be at least 5 characters long"
+                    },
+                    id_schedule: {
+                        required: "Please select a delivery date and time"
+                    },
+                    mode: {
+                        required: "Please select a payment method"
+                    }
+                },
+                errorElement: 'div',
+                errorClass: 'invalid-feedback',
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    // Convert bakedGoodQtys to integers
+                    let bakedGoodQtys = $("input[name='bakedGoodQtys[]']").map(function() {
+                        return parseInt($(this).val(), 10);
+                    }).get();
+
+                    // Serialize the form data
+                    let formData = $(form).serializeArray();
+
+                    // Convert the serialized array into an object
+                    let data = {};
+                    formData.forEach(item => {
+                        if (data[item.name]) {
+                            if (Array.isArray(data[item.name])) {
+                                data[item.name].push(item.value);
+                            } else {
+                                data[item.name] = [data[item.name], item.value];
+                            }
+                        } else {
+                            data[item.name] = item.value;
+                        }
+                    });
+
+                    // Perform the AJAX request on form submission
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/order',
+                        contentType: false,
+                        processData: false,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: data,
+                        dataType: "json",
+                        success: function(response) {
+                            console.log(response);
+                            console.log(formData, data);
+                            alert('Order placed successfully!');
+                            // window.location.href = '/'; // Redirect to home or order confirmation page
+                        },
+                        error: function(response) {
+                            alert('Error placing order. Please try again.');
+                            console.log(response.responseJSON.errors);
+                        }
+                    });
+                }
+            });
+
+            // Trigger form submission
+            $("#submitOrder").on('click', function(e) {
+                e.preventDefault();
+                $('#checkoutForm').submit();
+            });
+
+
         });
     </script>
 @endsection

@@ -41,6 +41,14 @@ $(document).ready(function() {
                 qty: quantity
             },
             success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Status',
+                    text: 'Baked good was added to yout cart successfully.',
+                    timer: 3000,
+                    confirmButtonText: 'OK'
+                });
+
                 console.log('Item added to cart:', response);
                 $(`button[data-product-id="${bakedGoodId}"]`).closest('.d-flex').find('.quantity-input').val(1);
 
@@ -63,6 +71,13 @@ $(document).ready(function() {
                 updateCartItems(window.auth.userId);
             },
             error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Status',
+                    text: 'Baked good was added to your cart successfully.',
+                    timer: 3000,
+                    confirmButtonText: 'OK'
+                });
                 console.error('Error:', xhr.responseText);
             }
         });
@@ -253,7 +268,7 @@ $(document).ready(function() {
                     const total = cartItem.qty * bakedGood.price;
 
                     cartItemsHtml += `
-                        <div class='cartItem d-flex flex-row align-items-center p-1 mb-1' style="background: rgb(141, 244, 223);">
+                        <div class='cartItem d-flex flex-row align-items-center p-1 mb-2' style="position: relative; background: rgb(141, 244, 223);">
                             <input type='hidden' name='idCart' value="${cartItem.id}" class='bakedGoodId'>
                             <div class="col-3 px-1">
                                 <img src="${bakedGood.images.find(image => image.is_thumbnail)?.image_path ?? bakedGood.images[0]?.image_path ?? 'uploaded_files/default-profile.png'}" class="img-thumbnail" style='height: 70px; width: 70px;'>
@@ -270,8 +285,8 @@ $(document).ready(function() {
                             <div class="d-flex align-items-center col-2 px-1 text-start">
                                 <p class="mb-0 w-100 text-start total">P${total}</p>
                             </div>
-                            <div class="d-flex align-items-center col-1 px-1 text-center" style='position: relative;'>
-                                <button name="submit" class="btn btn-danger mb-0 p-1 text-start delete-cart-item" data-id="${cartItem.id}" style="position: absolute; top: -20px; right: 5px; z-index: 100;">x</button>
+                            <div class="d-flex align-items-center col-1 px-1 text-center" style='display: flex; align-items: center; justify-content: center; position: absolute; width: 40px; height: 40px; border-radius: 50%; right: -20px; top: -20px; z-index: 100'>
+                                <button name="submit" class="text-center btn btn-danger mb-0 p-1 text-start delete-cart-item" data-id="${cartItem.id}" style="width: 30px; height: 30px; border-radius: 50%; padding: 0; margin: 0;">x</button>
                             </div>
                         </div>
                     `;
@@ -420,10 +435,6 @@ $(document).ready(function() {
                             </div>
                             ${authCheck() ? renderAddCartButton(bakedGood) : ''}
                         </div>
-                        <div class='right'>
-                            <h5>Reviews</h5>
-                            <hr>
-                        </div>
                     </div>
                 `;
                 $('#bakedGoodDetails').html(modalContent);
@@ -462,6 +473,96 @@ $(document).ready(function() {
         }
         return window.auth.isAuthenticated;
     }
+
+    $(document).ready(function() {
+        $('#itemSearch').on('input', function() {
+            var query = $(this).val();
+
+            loading = false; // Flag to prevent multiple AJAX calls
+            page = 1;
+
+            if (query.length < 1) {
+                $('#baked-goods-container').empty(); // Clear the container if query is too short
+                $('.suggestions-box').remove();
+                loadMoreBakedGoods();
+                return;
+            }
+
+            $.ajax({
+                url: '/api/search/bakedgoods',
+                method: 'GET',
+                data: {
+                    q: query
+                },
+                success: function(response) {
+                    console.log('Search response:', response); // Log response
+
+                    var suggestions = response.results;
+                    var html = '';
+                    $('.no-result-found-label').remove();
+
+                    // Clear previous search results
+                    $('#baked-goods-container').empty();
+
+                    if (suggestions && suggestions.length > 0) {
+                        suggestions.forEach(function(bakedGood) {
+                            html += `<div class="suggestion">${bakedGood.name}</div>`; // Fixed HTML tags
+                        });
+                        $('.suggestions-box').remove(); // Remove previous suggestions
+                        $('.search-bar').append('<div class="suggestions-box">' + html + '</div>');
+                        html = '';
+
+                        suggestions.forEach(function(bakedGood) {
+                            console.log(bakedGood);
+                            const imagePath = Array.isArray(bakedGood.images) && bakedGood.images.length
+                            ? bakedGood.images.find(img => img.is_thumbnail)?.image_path || bakedGood.images[0].image_path
+                            : 'uploaded_files/default-profile.png';
+                            html += `
+                                <form class="col-3" action='' method='POST'>
+                                    <input type='hidden' name='_token' value='{{ csrf_token() }}'>
+                                    <div class="product-card" style="position: relative;">
+                                        <a href="#" class="baked-good-link" data-id="${bakedGood.id}">
+                                            <img src="${imagePath}" alt="${bakedGood.name}" class="product-image w-100" style="min-height: 270px">
+                                        </a>
+                                        <h5 class="mt-2">${bakedGood.name}</h5>
+                                        <p class='mb-1'><span class='fw-semibold'>Price:</span> P${bakedGood.price}</p>
+                                        <p class='mb-1'><span class='fw-semibold'>Weight:</span> ${bakedGood.weight_gram} gram</p>
+                                        <p class="mb-1 ${bakedGood.is_available ? 'bg-success' : 'bg-danger'}" style="position: absolute; top: 0; left: 0; padding: 5px 10px; color: white; border-bottom-right-radius: 10px; border-top-left-radius: 5px;">${bakedGood.is_available ? "Available" : "Not Available"}</p>
+                                        <input type='hidden' name='id' value='${bakedGood.id}'>
+                                        <input type='hidden' name='name' value='${bakedGood.name}'>
+                                        <input type='hidden' name='price' value='${bakedGood.price}'>
+
+                                        ${authCheck() ? renderAddCartButton(bakedGood) : ''}
+                                    </div>
+                                </form>
+                            `;
+                        });
+                        $('#baked-goods-container').html(html); // Add new baked goods to the container
+                    } else {
+                        $('.suggestions-box').remove(); // No results
+                        $('#baked-goods-container').html('<h5 class="no-result-found-label mt-3 p-2 text-center" style="border-radius:5%; background-color: lightyellow;">No results found</h5>'); // Show no results message
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.responseText);
+                }
+            });
+        });
+
+        // Handle click on suggestion
+        $(document).on('click', '.suggestion', function() {
+            var bakedGoodName = $(this).text();
+            $('#itemSearch').val(bakedGoodName);
+            $('.suggestions-box').remove();
+        });
+
+        // Hide suggestions when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.search-bar').length) {
+                $('.suggestions-box').remove();
+            }
+        });
+    });
 });
 
 

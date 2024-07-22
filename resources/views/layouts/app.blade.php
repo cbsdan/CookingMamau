@@ -70,12 +70,17 @@
     <script src="{{ asset('js/function.js') }}" defer></script>
     {{-- <script src="{{ asset('js/profile.js') }}"></script> --}}
 
+    <!-- SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
     <script src="{{ asset('js/datatable.js') }}"></script>
     {{-- <script src="{{ asset('js/admin.js') }}"></script> --}}
     @yield('head')
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    @vite(['resources/css/adminDashboard.css', 'resources/js/adminDashboard.js'])
-    @vite(['resources/css/adminNavPanel.css', 'resources/js/adminNavPanel.js'])
+    {{-- @vite(['resources/css/adminDashboard.css', 'resources/js/adminDashboard.js']) --}}
+    {{-- @vite(['resources/css/adminNavPanel.css', 'resources/js/adminNavPanel.js']) --}}
     @vite(['resources/css/adminProfile.css'])
 
 </head>
@@ -134,23 +139,31 @@
                                     @csrf
                                 </form>
                                 <script>
-                                    alert("Your account is deactivated. Please contact the administrator.");
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Account Deactivated',
+                                        text: 'Your account is deactivated. Please contact the administrator.',
+                                        confirmButtonText: 'OK'
+                                    }).then((result) => {
+                                        // Check if the user clicked the "OK" button
+                                        if (result.isConfirmed) {
+                                            // Create a form element
+                                            var form = document.createElement('form');
+                                            form.method = 'POST';
+                                            form.action = "{{ route('logout') }}";
+                                            document.body.appendChild(form);
 
-                                    // Create a form element
-                                    var form = document.createElement('form');
-                                    form.method = 'POST';
-                                    form.action = "{{ route('logout') }}";
-                                    document.body.appendChild(form);
+                                            // Create a hidden input field for the CSRF token
+                                            var csrfToken = document.createElement('input');
+                                            csrfToken.type = 'hidden';
+                                            csrfToken.name = '_token';
+                                            csrfToken.value = "{{ csrf_token() }}";
+                                            form.appendChild(csrfToken);
 
-                                    // Create a hidden input field for the CSRF token
-                                    var csrfToken = document.createElement('input');
-                                    csrfToken.type = 'hidden';
-                                    csrfToken.name = '_token';
-                                    csrfToken.value = "{{ csrf_token() }}";
-                                    form.appendChild(csrfToken);
-
-                                    // Submit the form
-                                    form.submit();
+                                            // Submit the form
+                                            form.submit();
+                                        }
+                                    });
                                 </script>
                             @endif
                             <li class='nav-item'>
@@ -178,7 +191,7 @@
                                         </li>
                                     @endif
                                     @if (auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="">{{ __('Users (not working)') }}</a>
+                                        <li><a class="dropdown-item" href="{{route('users')}}">{{ __('Users') }}</a>
                                         </li>
                                     @endif
                                     @if (auth()->user()->is_admin)
@@ -257,8 +270,8 @@
                             $total = $cartItem->qty * $bakedGood->price;
                             $grandTotal += $total;
                         @endphp
-                        <div class='cartItem d-flex flex-row align-items-center p-1 mb-1'
-                            style="background: rgb(141, 244, 223);">
+                        <div class='cartItem d-flex flex-row align-items-center p-1 mb-2'
+                            style="background: rgb(141, 244, 223); position: relative;">
                             <input type='hidden' name='idCart' value="{{ $cartItem->id }}" class='bakedGoodId'>
                             <div class="col-3 px-1">
                                 <img src="{{ $bakedGood->images->firstWhere('is_thumbnail', true)->image_path ??
@@ -287,12 +300,12 @@
                                 <p class="mb-0 w-100 text-start total">P{{ $total }}</p>
                             </div>
                             {{-- <form action="{{route('cart.remove')}}" method="POST" class="d-flex align-items-center col-1 px-1 text-center" style='position: relative;'> --}}
-                            <div class="d-flex align-items-center col-1 px-1 text-center" style='position: relative;'>
+                            <div class="d-flex align-items-center col-1 px-1 text-center" style='display: flex; align-items: center; justify-content: center; position: absolute; width: 40px; height: 40px; border-radius: 50%; right: -20px; top: -20px; z-index: 100'>
                                 @csrf
                                 <input type="hidden" name='id' value='{{ $cartItem->id }}'>
-                                <button name="submit" class="btn btn-danger mb-0 p-1 text-start delete-cart-item"
+                                <button name="submit" class="btn btn-danger mb-0 p-1 text-center delete-cart-item"
                                     data-id="{{ $cartItem->id }}"
-                                    style="position: absolute; top: -20px; right: 5px; z-index: 100;">
+                                    style="width: 30px; height: 30px; border-radius: 50%; padding: 0; margin: 0;">
                                     x
                                 </button>
                             </div>
@@ -332,6 +345,11 @@
 
             <script>
                 $(document).ready(function() {
+                    if (window.location.pathname === '/home') {
+                        document.getElementById('open-btn').style.display = 'none';
+                        document.getElementById('close-btn').style.display = 'none';
+                    }
+
                     $('#open-btn').click(function() {
                         $('#cart-items-container').show();
                         $('#open-btn').hide();

@@ -2,219 +2,293 @@
 
 @section('content')
 <style>
-    body {
-        overflow-x: hidden; /* Hide horizontal scrollbars */
-        margin: 0; /* Remove default margin */
-        padding: 0;
-        background-color: lavender; /* Corrected spelling */
-    }
-
-    .bg-video-wrapper {
-position: relative;
-top: 0;
-left: 0;
-width: 85vw; /* Full viewport width */
-height: 90vh; /* Full viewport height */
-overflow: hidden;
-display: flex;
-justify-content: center;
-align-items: center;
-margin-left: -10px; /* Adjust the margin on the left side */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
 }
 
+.container-fluid {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+}
 
-    .bg-video {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+/* Carousel Styles */
+.carousel,
+.carousel-inner,
+.carousel-item {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.carousel-item img,
+.carousel-item video {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.carousel-caption {
+    bottom: 10%;
+    left: 10%;
+    text-align: left;
+    width: 40%;
+    color: white;
+    z-index: 2;
+    position: absolute;
+    animation: fadeIn 2s ease-in-out;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.carousel-caption p {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    line-height: 1.6;
+    animation: slideInLeft 1.5s ease-in-out;
+}
+
+.carousel-caption .btn {
+    animation: slideInLeft 1.8s ease-in-out;
+}
+
+.carousel-caption,
+.carousel-control-prev,
+.carousel-control-next {
+    z-index: 2;
+}
+
+.carousel-indicators {
+    z-index: 3;
+}
+
+/* Welcome Message */
+.welcome-message {
+    position: absolute;
+    top: 30%;
+    left: 10%;
+    transform: translate(0, -40%);
+    font-size: 5rem;
+    color: white;
+    z-index: 10;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    font-weight: 700;
+    letter-spacing: 1px;
+    animation: amazingTextAnimation 2s ease-in-out;
+}
+
+/* Navigation Bar */
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    transition: all 0.4s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-primary {
+    background-color: #ffd700;
+    border-color: #ffd700;
+    color: #000;
+}
+
+.btn-primary:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.2);
+    transition: all 0.4s ease;
+    z-index: -1;
+}
+
+.btn-primary:hover {
+    background-color: #e6c200;
+    border-color: #e6c200;
+    color: #000;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.btn-primary:hover:before {
+    left: 100%;
+}
+
+/* Carousel Controls */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(100%);
+    width: 40px;
+    height: 40px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    0% { transform: translateX(-100px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes amazingTextAnimation {
+    0% {
+        transform: translateX(-100px) scale(0.8);
+        opacity: 0;
+        color: #FFD700;
+    }
+    50% {
+        transform: translateX(10px) scale(1.2);
+        color: #FF6347;
+    }
+    100% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+        color: white;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .carousel-caption {
+        width: 60%;
     }
 
-    .text-black {
-        color: black;
-    }
-
-    .ml-20 {
-        margin-left: 20px; /* Adjust as needed */
-    }
-
-    .mt-48 {
-        margin-top: 48px; /* Adjust as needed */
-    }
-
-    .max-w-xl {
-        max-width: 600px;
-    }
-
-    .absolute {
-        position: absolute;
-    }
-
-    .top-0 {
-        top: 0;
-    }
-
-    .left-0 {
-        left: 0;
-    }
-
-    .text-6xl {
-        font-size: 4rem; /* Adjust font size as needed */
-        line-height: 1.2; /* Adjust line height as needed */
-    }
-
-    .font-semibold {
-        font-weight: 600;
-    }
-
-    .mb-4 {
-        margin-bottom: 1rem; /* Adjust margin as needed */
-    }
-
-    .text-lg {
-        font-size: 1.5rem; /* Keep the font size */
-        line-height: 2; /* Keep the line height */
-        margin-top: 300px; /* Adjust the margin-top as needed */
-        font-family: Arial, sans-serif; /* Keep the font family */
-        }
-
-
-    .font-bold {
-        font-weight: bold; /* Make text bold */
-    }
-
-    .mt-10 {
-        margin-top: 5rem; /* Adjust margin as needed */
-    }
-
-    .bg-yellow-300 {
-        background-color: #f59e0b; /* Adjust color as needed */
-    }
-
-    .rounded-3xl {
-        border-radius: 1.5rem; /* Adjust border radius as needed */
-    }
-
-    .py-3 {
-        padding-top: 0.9rem; /* Adjust padding as needed */
-        padding-bottom: 0.75rem; /* Adjust padding as needed */
-    }
-
-    .px-8 {
-        padding-left: 2rem; /* Adjust padding as needed */
-        padding-right: 2rem; /* Adjust padding as needed */
-    }
-
-    .font-medium {
-        font-weight: 500;
-    }
-
-    .inline-block {
-        display: inline-block;
-    }
-
-    .mr-4 {
-        margin-right: 4rem; /* Adjust margin as needed */
-    }
-
-    .welcome-container {
-        position: relative;
-        height: 100vh; /* Adjust height as needed */
-    }
-    .container {
-        position: relative;
-    }
     .welcome-message {
-        position: absolute;
-        top: 170px; /* Adjust distance from the top as needed */
-        left: 20px; /* Adjust distance from the right as needed */
-        font-weight: bold;
-        font-size: 4rem; /* Adjust font size as needed */
-        color: #333; /* Adjust color as needed */
-        z-index: 1; /* Ensure5the message appears above other elements */
-        /* Add any other styling you want */
-        }
-
-    .product-image {
-        max-height: 200px;
-        height: 200px;
-        width: 100%;
+        font-size: 2rem;
     }
 
-    .counter {
-        margin-bottom: 15px;
+    .carousel-caption p {
+        font-size: 1.3rem;
     }
 
-    .quantity-toggler {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.75rem;
-        margin: 1px;
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .welcome-message {
+        font-size: 1.5rem;
     }
 
-    .quantity-input {
-        margin-right: 10px;
-        margin-left: 15px;
+    .carousel-caption {
+        width: 80%;
     }
 
-    .input-group {
-        margin-bottom: 15px;
+    .carousel-caption p {
+        font-size: 1.1rem;
     }
 
-    .input-group-append .btn {
-        margin-left: 10px;
-        background-color: #F5F5DC;
-        border-color: #9400D3;
-        color: #9400D3;
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
     }
-
-    .product-card {
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        margin-bottom: 20px;
-        border: 1px solid black;
-        color: black;
-    }
-
-    .product-card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.5);
-    }
+}
 
 </style>
 
-<div class="container">
+<div class="container-fluid p-0">
     @if(session('error'))
         <div class="alert alert-warning">
             {{ session('error') }}
         </div>
     @endif
-    <div class="bg-video-wrapper">
-        <video autoplay muted loop class="bg-video">
-            <source src="uploaded_files/cover.mp4" type="video/mp4">
-        </video>
 
-        <div class="ml-20 text-black mt-48 max-w-xl absolute top-0 left-0">
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="3000">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <video autoplay muted loop class="d-block w-100 h-100">
+                    <source src="uploaded_files/cover.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="carousel-item">
+                <img src="{{ asset('uploaded_files/cake1.jpg') }}" class="d-block w-100 h-100" alt="Slide 1">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ asset('uploaded_files/cake2.jpg') }}" class="d-block w-100 h-100" alt="Slide 2">
+            </div>
+            <div class="carousel-item">
+                <img src="{{ asset('uploaded_files/cake3.jpg') }}" class="d-block w-100 h-100" alt="Slide 3">
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+
+        <div class="carousel-caption d-none d-md-block">
             <p class="text-lg">Indulge in the heavenly delights of our pastry goods,<br> where each bite is a celebration of flavor, texture, and artistry.</p>
             @if (!auth()->check() || !auth()->user()->is_admin )
-                <div class="mt-10">
-                    <a href="{{route('welcome')}}" class="btn bg-yellow-300 rounded-3xl py-3 px-8 font-medium inline-block mr-4 hover:bg-transparent hover:border-yellow-300 hover:text-white duration-300 hover border border-transparent">Order Now</a>
+                <div class="mt-4">
+                    <a href="{{route('welcome')}}" class="btn btn-primary">Order Now</a>
                 </div>
             @endif
         </div>
     </div>
 
-    <h1 class="welcome-message">Welcome 
+    <h1 class="welcome-message">Welcome
         @if (auth()->check())
             @if (auth()->user()->is_admin)
                 Admin
             @else
-                to Cooking <br>Mamau Shop
+                to <br> Cooking <br>Mamau Shop
             @endif
         @else
             to Cooking <br> Mamau Shop
         @endif
     </h1>
-    
 </div>
 @endsection

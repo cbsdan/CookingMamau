@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BakedGood extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     public $timestamps = true;
 
@@ -41,5 +42,14 @@ class BakedGood extends Model
     {
         return OrderReview::whereIn('id_order', $this->orderedGoods()->pluck('orders.id')->toArray())
             ->get();
+    }
+
+    public function toSearchableArray() {
+        $array = $this->toArray();
+        $array['name'] =  $this->name;
+        $array['price'] = (float) $this->price;
+        $array['description'] = $this->description;
+
+        return $array;
     }
 }

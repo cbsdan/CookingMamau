@@ -41,45 +41,42 @@ class OrderController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['errors' => $validator->errors(), 'request' => $request->all() ], 200);
         }
 
         $order = new Order();
-        $discountCode = $request->input('discount_code');
+        $discountCode = $request->discount_code;
         $discount = Discount::where('discount_code', $discountCode)->first();
 
         if ($discount) {
             $order->discount_code = $discount->discount_code;
         }
 
-        $order->buyer_name = $request->input('buyer_name');
-        $order->email_address = $request->input('email_address');
-        $order->delivery_address = $request->input('delivery_address');
-        $order->buyer_note = $request->input('buyer_note');
+        $order->buyer_name = $request->buyer_name;
+        $order->email_address = $request->email_address;
+        $order->delivery_address = $request->delivery_address;
+        $order->buyer_note = $request->buyer_note;
         $order->shipping_cost = 50;
-        $order->id_schedule = $request->input('id_schedule');
+        $order->id_schedule = $request->id_schedule;
         $order->order_status = 'Pending';
         $order->id_buyer = auth()->user()->buyer->id;
 
         $order->save();
 
         $payment = new Payment();
-        $payment->mode = $request->input('mode');
-        $payment->amount = $request->input('amount');
+        $payment->mode = $request->mode;
+        $payment->amount = $request->amount;
         $payment->id_order = $order->id;
         $payment->save();
 
-        foreach ($request->input('bakedGoods') as $index => $bakedGoodId) {
+        foreach ($request->bakedGoods as $index => $bakedGoodId) {
             $orderedGood = new OrderedGood();
             $orderedGood->id_order = $order->id;
             $orderedGood->id_baked_goods = $bakedGoodId;
-            $orderedGood->price_per_good = $request->input('bakedGoodPrices')[$index];
-            $orderedGood->qty = $request->input('bakedGoodQtys')[$index];
+            $orderedGood->price_per_good = $request->bakedGoodPrices[$index];
+            $orderedGood->qty = $request->bakedGoodQtys[$index];
             $orderedGood->save();
         }
-
-        session()->forget('cart');
-
         return response()->json(['message' => 'Order created successfully', 'order' => $order], 201);
     }
 

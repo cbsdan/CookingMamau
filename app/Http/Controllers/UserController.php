@@ -3,17 +3,179 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Buyer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
 class UserController extends Controller
 {
     public function index()
     {
-        return view('auth.login');
+        $users = User::with('buyer')
+            ->where('email', '!=', 'cookingmamau@gmail.com')
+            ->get();
+        return response()->json(['users' => $users]);
     }
+
+    public function store(Request $request)
+    {
+        try {
+            // Validate the request data
+            $userData = $request->validate([
+                'email' => ['required', 'email', 'unique:users'],
+                'password' => ['required', 'min:8'],
+                'fname' => ['required', 'string', 'max:255'],
+                'lname' => ['required', 'string', 'max:255'],
+                'contact' => ['required', 'string', 'max:255'],
+                'address' => ['nullable', 'string', 'max:255'],
+                'barangay' => ['nullable', 'string', 'max:255'],
+                'city' => ['nullable', 'string', 'max:255'],
+                'landmark' => ['nullable', 'string', 'max:255'],
+                'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+                'is_admin' => ['required', 'boolean'],
+                'is_activated' => ['required', 'boolean'],
+            ]);
+
+            // Create the user
+            $user = User::create([
+                'email' => $userData['email'],
+                'password' => Hash::make($userData['password']),
+                'is_admin' => $userData['is_admin'],
+                'is_activated' => $userData['is_activated'],
+            ]);
+
+            if (isset($userData['image'])) {
+                $file = $userData['image'];
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . "." . $extension;
+
+                $path = "uploaded_files/";
+                $file->move($path, $filename);
+                $user->profile_image_path = $path . $filename;
+                $user->save();
+            }
+
+            // Create buyer information
+            $user->buyer()->create([
+                'fname' => $userData['fname'],
+                'lname' => $userData['lname'],
+                'contact' => $userData['contact'],
+                'address' => $userData['address'],
+                'barangay' => $userData['barangay'],
+                'city' => $userData['city'],
+                'landmark' => $userData['landmark'],
+            ]);
+
+            // Return success response
+            return response()->json([
+                'message' => 'User created successfully.',
+                'user' => $user
+            ], 201);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'message' => 'Error creating user.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function show(User $user)
+    {
+        return response()->json([
+            'user' => $user->load('buyer')
+        ], 200);
+    }
+
+    public function update(Request $request, User $user)
+    {
+        try {
+            // Validate the request data
+            $userData = $request->validate([
+                'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+                'password' => ['nullable', 'min:8'],
+                'fname' => ['required', 'string', 'max:255'],
+                'lname' => ['required', 'string', 'max:255'],
+                'contact' => ['required', 'string', 'max:255'],
+                'address' => ['nullable', 'string', 'max:255'],
+                'barangay' => ['nullable', 'string', 'max:255'],
+                'city' => ['nullable', 'string', 'max:255'],
+                'landmark' => ['nullable', 'string', 'max:255'],
+                'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+                'is_admin' => ['required', 'boolean'],
+                'is_activated' => ['required', 'boolean'],
+            ]);
+
+            // Update the user
+            $user->update([
+                'email' => $userData['email'],
+                'password' => isset($userData['password']) ? Hash::make($userData['password']) : $user->password,
+                'is_admin' => $userData['is_admin'],
+                'is_activated' => $userData['is_activated'],
+            ]);
+
+            // Handle profile image if provided
+            if (isset($userData['image'])) {
+                $file = $userData['image'];
+                $extension = $file->getClientOriginalExtension();
+                $filename = time() . "." . $extension;
+
+                $path = "uploaded_files/";
+                $file->move($path, $filename);
+                $user->profile_image_path = $path . $filename;
+                $user->save();
+            }
+
+            // Update buyer information if available
+            if ($user->buyer) {
+                $user->buyer->update([
+                    'fname' => $userData['fname'],
+                    'lname' => $userData['lname'],
+                    'contact' => $userData['contact'],
+                    'address' => $userData['address'],
+                    'barangay' => $userData['barangay'],
+                    'city' => $userData['city'],
+                    'landmark' => $userData['landmark'],
+                ]);
+            }
+
+            // Return success response
+            return response()->json([
+                'message' => 'User updated successfully.',
+                'user' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'message' => 'Error updating user.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function destroy(User $user)
+    {
+        try {
+            // Delete the user
+            $user->delete();
+
+            // Return success response
+            return response()->json([
+                'message' => 'User deleted successfully.'
+            ], 200);
+        } catch (\Exception $e) {
+            // Return error response
+            return response()->json([
+                'message' => 'Error deleting user.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function register()
     {
         return view('auth.register');
@@ -176,5 +338,45 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(['user' => $user, 'message' => 'User updated successfully']);
+    }
+
+    // Update user role
+    public function updateRole(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->is_admin = $request->input('is_admin');
+            $user->save();
+
+            return response()->json([
+                'message' => 'Role updated successfully.',
+                'user' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating role.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Update user status
+    public function updateStatus(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->is_activated = $request->input('is_activated');
+            $user->save();
+
+            return response()->json([
+                'message' => 'Status updated successfully.',
+                'user' => $user
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating status.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
