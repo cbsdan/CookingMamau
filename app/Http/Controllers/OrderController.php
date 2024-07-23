@@ -34,6 +34,15 @@ class OrderController extends Controller
         return response()->json($orders, 200);
     }
 
+    public function userOrder(Request $request) {
+        $idBuyer = $request->route('id'); // Get the ID from the route
+        $orders = Order::with('orderedGoods', 'payments', 'discount', 'schedule')
+                        ->orderBy('created_at', 'desc')
+                        ->where('id_buyer', $idBuyer) // Filter by the buyer ID
+                        ->get();
+        return response()->json($orders, 200);
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -24,19 +24,22 @@ use App\Http\Controllers\IngredientController;
 */
 Auth::routes();
 
+//Welcome and Home page
 Route::view('/', 'welcome')->name('welcome');
 
 Route::get('/home', function() {
     return view('home');
 })->name('home')->middleware(['auth']);
 
-//Acount
+
+//User Acount
 Route::middleware(['auth'])->group(function() {
     Route::get('/profile', [ProfileController::class, 'index'])->name('user.profile');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('user.update.profile');
     Route::put('/profile/password/update', [ProfileController::class, 'updatePassword'])->name('user.update.password');
 });
 
+//Admin Account
 Route::middleware(['admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
@@ -45,25 +48,12 @@ Route::middleware(['admin'])->group(function () {
 });
 
 
-// Users
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
-//     Route::post('/logout', [UserController::class, 'logout'])->name('auth.logout');
-// });
-// Route::post('/logout', [UserController::class, 'logout'])->name('auth.logout');
 
 Route::get('/user/index',[DatatableController::class, 'userIndex'])->name('user.index');
 
 Route::middleware(['admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
 });
-
-// Route::get('/register', [UserController::class, 'register'])->name('page.register');
-// Route::get('/login', [UserController::class, 'index'])->name('page.login');
-// Route::get('/forgot', [UserController::class, 'forgot'])->name('page.forgot');
-// Route::get('/reset', [UserController::class, 'reset'])->name('page.reset');
-
-
 
 Route::put('/api/baked_goods/images/{imageId}/set-thumbnail', [BakedGoodsController::class, 'setThumbnail']);
 
@@ -81,7 +71,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::view('/checkout', 'order.checkout')->name('checkout_page');
-
+    Route::view('/my-orders', 'user.orders')->name('my-orders');
 });
 
 
+// Users
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+//     Route::post('/logout', [UserController::class, 'logout'])->name('auth.logout');
+// });
+// Route::post('/logout', [UserController::class, 'logout'])->name('auth.logout');
+
+
+// Route::get('/register', [UserController::class, 'register'])->name('page.register');
+// Route::get('/login', [UserController::class, 'index'])->name('page.login');
+// Route::get('/forgot', [UserController::class, 'forgot'])->name('page.forgot');
+// Route::get('/reset', [UserController::class, 'reset'])->name('page.reset');

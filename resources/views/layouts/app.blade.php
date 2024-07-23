@@ -220,7 +220,7 @@
                                         </li>
                                     @endif
                                     @if (auth()->user())
-                                        <li><a class="dropdown-item" href="{{(auth()->user()->is_admin) ? route('orders') : '/'}}">{{ __('Orders') }}</a></li>
+                                        <li><a class="dropdown-item" href="{{(auth()->user()->is_admin) ? route('orders') : route('my-orders')}}">{{ __('Orders') }}</a></li>
                                     @endif
                                     @if (auth()->user())
                                         <li><a class="dropdown-item"

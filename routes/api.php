@@ -49,7 +49,8 @@ Route::apiResource('available_schedules', AvailableScheduleController::class);
 Route::apiResource('baked_goods', BakedGoodsController::class);
 Route::apiResource('/order', OrderController::class);
 
-//Order Update Status
+//Order Other route
+Route::get('order/{id}/user', [OrderController::class, 'userOrder']);
 Route::patch('order/{id}/status', [OrderController::class, 'updateStatus']);
 
 Route::get('bakedgoods/paginate', [BakedGoodsController::class, 'bakedGoodPaginate']);
