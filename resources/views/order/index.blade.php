@@ -1,65 +1,75 @@
 @extends('layouts.app')
+@section('title', 'Orders')
 
 @section('content')
-    <h1>{{(auth()->check() && auth()->user()->is_admin) ? "Orders" : "My Orders"}}</h1>
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
+<style>
+    /* Custom width for the modal */
+    .modal-dialog {
+        max-width: 900px;
+    }
+</style>
+
+<div class="container">
+    <h1>Orders</h1>
+    <hr>
+    <div class="mb-3">
+        <label for="orderStatusFilter">Filter by Order Status:</label>
+        <select id="orderStatusFilter" class="form-control">
+            <option value="">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Canceled">Canceled</option>
+            <option value="Preparing">Preparing</option>
+            <option value="Out for Delivery">Out for Delivery</option>
+            <option value="Delivered">Delivered</option>
+        </select>
+
+    </div>
+    <table id="orders-table" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Buyer Name</th>
+                <th>Email</th>
+                <th>Delivery Address</th>
+                <th>Buyer Note</th>
+                <th>Discount Code</th>
+                <th>Schedule Date</th>
+                <th>Order Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="order-details"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-    @endif
-    @if($userOrders->isEmpty())
-        <p>No orders found.</p>
-    @else
-        <div class="row">
-            @foreach($userOrders as $order)
-                <div class="col-md-6 mb-4 p-2">
-                    <div class="card">
-                        <div class="card-header">
-                            Order ID: {{ $order->id }}
-                        </div>
-                        <div class="card-body">
-                            <!-- Add display for ordered goods and discounts if needed -->
+    </div>
+</div>
 
-                            <h5 class="card-title py-2 fw-bold">Ordered Goods</h5>
-                            @if($order->orderedGoods->isNotEmpty())
-                                    @foreach($order->orderedGoods as $orderedGood)
-                                        <div class='d-flex flex-row gap-2 px-3 py-1 align-items-center'>
-                                            <img src="{{ asset($orderedGood->meal->thumbnailImage->image_path ?? 'uploaded_files/default-profile.png')}}" alt='{{ $orderedGood->meal->name }}' style='width: 50px; height: 50px'>
-                                            
-                                            {{ $orderedGood->meal->name }} - Price: {{ $orderedGood->price_per_good }}, Quantity: {{ $orderedGood->qty }}
-                                        </div>
-                                        <!-- Add more details as needed -->
-                                    @endforeach
-                            @else
-                                <p>No items ordered.</p>
-                            @endif
 
-                            
+<script src={{asset('js/order.js')}}></script>
+@endsection
 
-                            <h5 class="card-title mt-2 fw-bold">Payment Details</h5>
-                            @if($order->payment)
-                                <p class="card-text mb-0"><span class='fw-bold'>Payment Mode: </span> {{ $order->payment->mode }}</p>
-                                <p class="card-text mb-0"><span class='fw-bold'>Payment Amount: </span> {{ $order->payment->amount }}</p>
-                                <!-- Add more payment details as needed -->
-                            @else
-                                <p class="card-text mb-0">Payment details not available.</p>
-                            @endif
+@section('scripts')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
-                        </div>
-                        <div class="card-footer d-flex flex-row justify-content-between align-items-center">
-                            <div>
-                                Order Status: {{ $order->order_status }}
-                            </div>
-                            <div>
-                                <a class="btn btn-primary" href="{{route('user.order.show', $order->id)}}">
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @endif
 @endsection

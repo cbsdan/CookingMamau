@@ -14,9 +14,23 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('orderedGoods', 'payments', 'discount')->orderBy('created_at', 'desc')->get();
+        // Retrieve the order_status filter from the request
+        $orderStatus = $request->input('order_status');
+
+        // Build the query
+        $query = Order::with('orderedGoods', 'payments', 'discount', 'schedule')->orderBy('created_at', 'desc');
+
+        // Apply the filter if provided
+        if ($orderStatus) {
+            $query->where('order_status', $orderStatus);
+        }
+
+        // Execute the query and get the results
+        $orders = $query->get();
+
+        // Return the results as JSON
         return response()->json($orders, 200);
     }
 
@@ -91,11 +105,12 @@ class OrderController extends Controller
         }
     }
 
-    public function show(Order $order)
+    public function show($id)
     {
-        // Load the related models
-        $order->load('orderedGoods', 'payments', 'discount');
+        // Retrieve the order by ID
+        $order = Order::with('orderedGoods', 'payments', 'discount', 'schedule')->findOrFail($id);
 
+        // Return the order with related models in JSON format
         return response()->json(['order' => $order], 200);
     }
 
@@ -117,18 +132,14 @@ class OrderController extends Controller
         return response()->json($userOrders, 200);
     }
 
-    public function updateStatus(Request $request, Order $order)
+    public function updateStatus(Request $request, $id)
     {
         $validatedData = $request->validate([
             'order_status' => 'required|in:Pending,Canceled,Preparing,Out for Delivery,Delivered',
         ]);
 
+        $order = Order::findOrFail($id);
         $order->update(['order_status' => $validatedData['order_status']]);
-
-        if ($order->order_status == "Delivered") {
-            // Return success response and possibly trigger email sending
-            return response()->json(['message' => 'Order delivered successfully'], 200);
-        }
 
         return response()->json(['message' => 'Order status updated successfully'], 200);
     }

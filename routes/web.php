@@ -76,6 +76,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::view('/bakedgood-all', 'baked_goods.index')->name('bakedgoods');
     Route::view('/available_schedules-all', 'available_schedules.index')->name('available_schedules');
     Route::view('/users-all', 'admin.users.index')->name('users');
+    Route::view('/orders-all', 'order.index')->name('orders');
 });
 
 Route::middleware(['auth'])->group(function () {

@@ -47,6 +47,10 @@ Route::apiResource('ingredients', IngredientController::class);
 Route::apiResource('discounts', DiscountController::class);
 Route::apiResource('available_schedules', AvailableScheduleController::class);
 Route::apiResource('baked_goods', BakedGoodsController::class);
+Route::apiResource('/order', OrderController::class);
+
+//Order Update Status
+Route::patch('order/{id}/status', [OrderController::class, 'updateStatus']);
 
 Route::get('bakedgoods/paginate', [BakedGoodsController::class, 'bakedGoodPaginate']);
 Route::delete('/baked_goods/images/{id}', [BakedGoodsController::class, 'deleteImage']);
@@ -71,9 +75,6 @@ Route::delete('/cart/items/delete', [CartController::class, 'destory']);
 //Checkout
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
 Route::get('/check-discount', [DiscountController::class, 'checkDiscount'])->name('check.discount');
-
-//Orders
-Route::apiResource('/order', OrderController::class);
 
 //Account
 Route::apiResource('/users', UserController::class);

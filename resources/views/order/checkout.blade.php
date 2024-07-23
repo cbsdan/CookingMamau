@@ -153,7 +153,6 @@
                     $('#totalAmount').text('P' + amount.toFixed(2));
                     $('#paymentAmount').text('P' + amount.toFixed(2));
                     $('#amount').val(amount.toFixed(2));
-                    $('#amount').attr('min', amount.toFixed(2));
 
                     availableSchedules.forEach(schedule => {
                         $('#deliveryDateTime').append(`

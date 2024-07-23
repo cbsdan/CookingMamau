@@ -18,7 +18,7 @@ $(document).ready(function () {
             'excel',
             {
                 text: 'Add Available Schedule',
-                className: 'btn btn-primary',
+                className: 'btn btn-primary add-sched-btn',
                 action: function (e, dt, node, config) {
                     $("#scheduleForm").trigger("reset");
                     $('#scheduleModal').modal('show');
@@ -108,6 +108,14 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "Added schedule successfully.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
+
                 $('#schedule').val("")
 
                 $("#scheduleModal").modal("hide");
@@ -117,6 +125,13 @@ $(document).ready(function () {
             },
             error: function (error) {
                 console.log(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Failed to add schedule.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
@@ -141,7 +156,7 @@ $(document).ready(function () {
                 $('#scheduleDate').val(data.schedule);
             },
             error: function (error) {
-                alert(error);
+                console.log(error);
             }
         });
     });
@@ -166,10 +181,25 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 $('#scheduleModal').modal("hide");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "Updated schedule successfully.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
+
                 table.ajax.reload();
             },
             error: function (error) {
                 console.log(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Failed to update schedule.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
@@ -204,12 +234,23 @@ $(document).ready(function () {
                             $row.fadeOut(4000, function () {
                                 table.row($row).remove().draw();
                             });
-                            bootbox.alert(data.success);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Deleted Schedule successfully.",
+                                timer: 2000,
+                                confirmButtonText: 'OK'
+                            });
                         },
                         error: function (error) {
                             console.log(error);
-                            bootbox.alert('Error deleting ingredient.');
-                        }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: "Failed to delete schedule.",
+                                timer: 2000,
+                                confirmButtonText: 'OK'
+                            });                        }
                     });
                 }
             }
