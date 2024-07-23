@@ -348,15 +348,23 @@ $(document).ready(function() {
                     // Append new baked goods to the container
                     const bakedGoodsContainer = $('#baked-goods-container');
                     response.data.forEach(function(bakedGood) {
-                        const imagePath = bakedGood.images.length
-                            ? bakedGood.images.find(img => img.is_thumbnail)?.image_path || bakedGood.images[0].image_path
-                            : 'uploaded_files/default-profile.png';
+                        const sortedImages = bakedGood.images.sort((a, b) => b.is_thumbnail - a.is_thumbnail);
+                        const defaultImagePath = 'uploaded_files/default-profile.png'; // Define the path for the default image
+
                         const html = `
                             <form class="col-3" action='' method='POST'>
                                 <input type='hidden' name='_token' value='{{ csrf_token() }}'>
                                 <div class="product-card" style="position: relative;">
                                     <a href="#" class="baked-good-link" data-id="${bakedGood.id}">
-                                        <img src="${imagePath}" alt="${bakedGood.name}" class="product-image w-100" style="min-height: 270px">
+                                        <div class="product-image-carousel">
+                                            ${
+                                                sortedImages.length
+                                                ? sortedImages.map(img => `
+                                                    <div><img src="${img.image_path}" alt="${bakedGood.name}" class="w-100" style="min-height: 300px; max-height: 300px; object-fit: cover;"></div>
+                                                `).join('')
+                                                : `<div><img src="${defaultImagePath}" alt="${bakedGood.name}" class="w-100" style="min-height: 300px; max-height: 300px; object-fit: cover;"></div>`
+                                            }
+                                        </div>
                                     </a>
                                     <h5 class="mt-2">${bakedGood.name}</h5>
                                     <p class='mb-1'><span class='fw-semibold'>Price:</span> P${bakedGood.price}</p>
@@ -371,6 +379,16 @@ $(document).ready(function() {
                             </form>
                         `;
                         bakedGoodsContainer.append(html); // Add the new baked goods to the container
+                    });
+
+                    // Initialize the carousel
+                    $('.product-image-carousel').slick({
+                        dots: true,
+                        infinite: true,
+                        speed: 300,
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        arrows: true
                     });
 
                     // Show the #end element if there's no more pages
@@ -522,7 +540,7 @@ $(document).ready(function() {
                                     <input type='hidden' name='_token' value='{{ csrf_token() }}'>
                                     <div class="product-card" style="position: relative;">
                                         <a href="#" class="baked-good-link" data-id="${bakedGood.id}">
-                                            <img src="${imagePath}" alt="${bakedGood.name}" class="product-image w-100" style="min-height: 270px">
+                                            <img src="${imagePath}" alt="${bakedGood.name}" class="product-image w-100" style="min-height: 300px; max-height: 300px; object-fit: cover;">
                                         </a>
                                         <h5 class="mt-2">${bakedGood.name}</h5>
                                         <p class='mb-1'><span class='fw-semibold'>Price:</span> P${bakedGood.price}</p>
