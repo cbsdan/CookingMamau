@@ -53,6 +53,26 @@ class CartController extends Controller
         return response()->json(['message' => 'Product not found in cart.'], 404);
     }
 
+    public function destroy(Request $request)
+    {
+        // Retrieve the user ID from the request
+        $userId = $request->input('id_user');
+
+        // Check if the user ID is provided
+        if (!$userId) {
+            return response()->json(['message' => 'User ID is required.'], 400);
+        }
+
+        // Delete all cart items for the given user ID
+        $deletedCount = CartItem::where('id_user', $userId)->delete();
+
+        // Return a response indicating the number of items deleted
+        return response()->json([
+            'message' => 'All cart items removed successfully.',
+            'deleted_count' => $deletedCount
+        ]);
+    }
+
     public function updateCart(Request $request)
     {
         $idCart = $request->input('id');

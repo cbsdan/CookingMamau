@@ -298,7 +298,7 @@ $(document).ready(function() {
                         <div class="cart-total text-end">
                             Total: P<span class='grand-total'>${grandTotal}</span>
                         </div>
-                        ${cartItems.length ? `<form action="" method="GET"><button type="submit" class="btn btn-success checkout-btn" style="background:#ead660; color: black">Checkout</button></form>` : `<a href="{{ route('welcome') }}" class="btn btn-success checkout-btn" style="background:#ead660; color: black">Go to Baked Goods</a>`}
+                        ${cartItems.length < 1 ? `<a href="/" class="btn btn-success checkout-btn" style="background:#ead660; color: black">Go to Baked Goods</a>` : `<a href="/checkout" class="btn btn-success checkout-btn" style="background:#ead660; color: black">Checkout</a>`}
                     </div>
                 `;
 

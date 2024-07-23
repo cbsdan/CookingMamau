@@ -87,7 +87,6 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
 </head>
@@ -324,12 +323,8 @@
                         Total: P<span class='grand-total'>{{ $grandTotal }}</span>
                     </div>
                     @if ($cartItems->count())
-                        {{-- <form action="{{route('checkout')}}" method="GET"> --}}
-                        <form action="{{route('checkout_page')}}" method="GET">
-                            @csrf
-                            <button type='submit' class="btn btn-success checkout-btn"
-                                style="background:#ead660; color: black">Checkout</button>
-                        </form>
+                        <a href='{{route('checkout_page')}}' class="btn btn-success checkout-btn"
+                            style="background:#ead660; color: black">Checkout</a>
                     @else
                         <a href='{{ route('welcome') }}' class="btn btn-success checkout-btn"
                             style="background:#ead660; color: black">Go to Baked Goods</a>

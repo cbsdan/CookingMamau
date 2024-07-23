@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Discount;
 use App\Models\OrderedGood;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,13 +16,7 @@ class OrderController extends Controller
 {
     public function index()
     {
-        if (auth()->check() && auth()->user()->is_admin) {
-            $orders = Order::with('orderedGoods', 'payment', 'discount')->orderBy('created_at', 'desc')->get();
-        } else {
-            $userId = auth()->user()->buyer->id;
-            $orders = Order::with('orderedGoods', 'payment', 'discount')->where('id_buyer', $userId)->orderBy('created_at', 'desc')->get();
-        }
-
+        $orders = Order::with('orderedGoods', 'payments', 'discount')->orderBy('created_at', 'desc')->get();
         return response()->json($orders, 200);
     }
 
@@ -41,48 +37,66 @@ class OrderController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors(), 'request' => $request->all() ], 200);
+            return response()->json(['errors' => $validator->errors(), 'request' => $request->all()], 422);
         }
 
-        $order = new Order();
-        $discountCode = $request->discount_code;
-        $discount = Discount::where('discount_code', $discountCode)->first();
+        DB::beginTransaction(); // Start transaction
 
-        if ($discount) {
-            $order->discount_code = $discount->discount_code;
+        try {
+            $order = new Order();
+            $discountCode = $request->discount_code;
+            $discount = Discount::where('discount_code', $discountCode)->first();
+
+            if ($discount) {
+                $order->discount_code = $discount->discount_code;
+            }
+
+            $order->buyer_name = $request->buyer_name;
+            $order->email_address = $request->email_address;
+            $order->delivery_address = $request->delivery_address;
+            $order->buyer_note = $request->buyer_note;
+            $order->shipping_cost = 50;
+            $order->id_schedule = $request->id_schedule;
+            $order->order_status = 'Pending';
+            $order->id_buyer = $request->id_buyer; // Consider using auth()->user()->buyer->id in production
+
+            $order->save();
+
+            $payment = new Payment();
+            $payment->mode = $request->mode;
+            $payment->amount = $request->amount;
+            $payment->id_order = $order->id;
+            $payment->save();
+
+            foreach ($request->bakedGoods as $index => $bakedGoodId) {
+                $orderedGood = new OrderedGood();
+                $orderedGood->id_order = $order->id;
+                $orderedGood->id_baked_goods = $bakedGoodId;
+                $orderedGood->price_per_good = $request->bakedGoodPrices[$index];
+                $orderedGood->qty = $request->bakedGoodQtys[$index];
+                $orderedGood->save();
+            }
+
+            //Delete the cart items
+            CartItem::where('id_user', $request->id_user)->delete();
+
+
+            DB::commit(); // Commit transaction
+
+            return response()->json(['message' => 'Order created successfully', 'order' => $order], 201);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback transaction on error
+
+            return response()->json(['error' => 'Failed to create order', 'message' => $e->getMessage()], 500);
         }
-
-        $order->buyer_name = $request->buyer_name;
-        $order->email_address = $request->email_address;
-        $order->delivery_address = $request->delivery_address;
-        $order->buyer_note = $request->buyer_note;
-        $order->shipping_cost = 50;
-        $order->id_schedule = $request->id_schedule;
-        $order->order_status = 'Pending';
-        $order->id_buyer = auth()->user()->buyer->id;
-
-        $order->save();
-
-        $payment = new Payment();
-        $payment->mode = $request->mode;
-        $payment->amount = $request->amount;
-        $payment->id_order = $order->id;
-        $payment->save();
-
-        foreach ($request->bakedGoods as $index => $bakedGoodId) {
-            $orderedGood = new OrderedGood();
-            $orderedGood->id_order = $order->id;
-            $orderedGood->id_baked_goods = $bakedGoodId;
-            $orderedGood->price_per_good = $request->bakedGoodPrices[$index];
-            $orderedGood->qty = $request->bakedGoodQtys[$index];
-            $orderedGood->save();
-        }
-        return response()->json(['message' => 'Order created successfully', 'order' => $order], 201);
     }
 
     public function show(Order $order)
     {
-        return response()->json($order->load('orderedGoods', 'payment', 'discount'), 200);
+        // Load the related models
+        $order->load('orderedGoods', 'payments', 'discount');
+
+        return response()->json(['order' => $order], 200);
     }
 
     public function destroy(Order $order)

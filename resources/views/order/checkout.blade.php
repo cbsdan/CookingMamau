@@ -25,6 +25,8 @@
         <div class='d-flex flex-row gap-5 flex-1 col-7'>
             <div class='d-flex flex-column gap-2 flex-1'>
                 <h3>Order Form</h3>
+                <input type="hidden" name="id_buyer" value="{{auth()->user()->buyer->id}}">
+                <input type="hidden" id="id_user_input" name="id_user" value="{{auth()->user()->id}}">
                 <div class="form-group">
                     <label class='fw-semibold' for="buyerName">Buyer Name</label>
                     <input type="text" class="form-control" id="buyerName" name="buyer_name" value="">
@@ -266,26 +268,15 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    // Convert bakedGoodQtys to integers
                     let bakedGoodQtys = $("input[name='bakedGoodQtys[]']").map(function() {
                         return parseInt($(this).val(), 10);
                     }).get();
 
-                    // Serialize the form data
-                    let formData = $(form).serializeArray();
+                    let formData = new FormData(form);
 
-                    // Convert the serialized array into an object
-                    let data = {};
-                    formData.forEach(item => {
-                        if (data[item.name]) {
-                            if (Array.isArray(data[item.name])) {
-                                data[item.name].push(item.value);
-                            } else {
-                                data[item.name] = [data[item.name], item.value];
-                            }
-                        } else {
-                            data[item.name] = item.value;
-                        }
+                    // Append bakedGoodQtys to FormData
+                    bakedGoodQtys.forEach((qty, index) => {
+                        formData.append(`bakedGoodQtys[${index}]`, qty);
                     });
 
                     // Perform the AJAX request on form submission
@@ -297,27 +288,38 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        data: data,
+                        data: formData,
                         dataType: "json",
                         success: function(response) {
                             console.log(response);
-                            console.log(formData, data);
-                            alert('Order placed successfully!');
-                            // window.location.href = '/'; // Redirect to home or order confirmation page
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Order placed successfully!",
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Redirect only after the user clicks "OK"
+                                    window.location.href = '/';
+                                }
+                            });
                         },
                         error: function(response) {
-                            alert('Error placing order. Please try again.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: "Failed to placed an Order!",
+                                timer: 3000,
+                                confirmButtonText: 'OK'
+                            });
                             console.log(response.responseJSON.errors);
                         }
                     });
                 }
             });
 
-            // Trigger form submission
-            $("#submitOrder").on('click', function(e) {
-                e.preventDefault();
-                $('#checkoutForm').submit();
-            });
+
 
 
         });

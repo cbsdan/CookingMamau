@@ -41,7 +41,7 @@ class Order extends Model
 
     public function orderedGoods()
     {
-        return $this->belongsToMany(BakedGood::class, 'ordered_goods', 'id_order', 'id_baked_good')
+        return $this->belongsToMany(BakedGood::class, 'ordered_goods', 'id_order', 'id_baked_goods')
                     ->withPivot('price_per_good', 'qty')
                     ->withTimestamps();
     }
