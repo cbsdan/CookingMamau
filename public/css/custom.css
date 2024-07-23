@@ -1,0 +1,156 @@
+/* Pastel purple gradient background */
+/* custom.css */
+
+/* Pastel purple gradient background for body */
+.bg-body-gradient {
+    background: linear-gradient(135deg, rgba(208, 203, 214, 0.8), rgba(173, 86, 167, 0.9));
+    background-size: cover; /* Ensures the gradient covers the entire element */
+    background-attachment: fixed; /* Optional: Fixes the background position during scrolling */
+    min-height: 100vh; /* Ensures the background covers the full viewport height */
+    margin: 0; /* Ensures no default margin on the body */
+}
+
+/* custom.css */
+
+/* Make font color white in the navbar */
+.text-white {
+    color: #fff !important; /* Important to override other styles */
+}
+
+.navbar .nav-link:hover {
+    color: #ddd !important; /* Optional: Slightly darker color on hover */
+}
+
+
+/* Card body responsive design */
+.card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* Gradient background for card body */
+.background-styling {
+    position: relative;
+    padding: 2rem;
+    background: linear-gradient(
+        135deg, /* Diagonal gradient */
+        rgba(226, 91, 217, 0.9), /* Pastel purple color */
+        rgba(200, 193, 203, 0.9) /* Lighter pastel purple color */
+    );
+    z-index: 1;
+      position: relative; /* Ensure the ::before pseudo-element positions correctly */
+    overflow: hidden; /* Hide overflow to keep the animation contained */
+}
+
+.card-body {
+    background-color: #D6B4FC !important;
+}
+.main-bg-color {
+    background-color: #D6B4FC !important;
+}
+
+/* Moving cake icon background */
+.background-styling::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/uploaded_files/cupcake.jpg') repeat; /* Repeat the background image */
+    background-size: 100px 100px; /* Size of the icon */
+    z-index: -1; /* Place behind the content */
+    animation: moveBackground 10s linear infinite, scaleBackground 5s ease-in-out infinite; /* Add scaling animation */
+}
+
+
+/* Animation for moving background */
+@keyframes moveBackground {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 100% 100%;
+    }
+}
+
+/* Animation for scaling background */
+@keyframes scaleBackground {
+    0% {
+        transform: scale(1); /* Start with normal size */
+    }
+    50% {
+        transform: scale(1.5); /* Scale up to 1.5 times the original size */
+    }
+    100% {
+        transform: scale(1); /* Return to normal size */
+    }
+}
+
+.toggle-container {
+    position: relative;
+    background-color: #dab7e4;
+    display: flex;
+    width: 300px; /* Width of the entire button container */
+    border-radius: 20px; /* Rounded corners for the whole button container */
+    overflow: hidden; /* Hide overflow to ensure the indicator is clipped to the container */
+    margin: 0 auto; /* Center the container horizontally */
+    margin-bottom: 20px; /* Space between toggle and form */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.btn-toggle {
+    background: #dab7e4; /* Button background color */
+    border: none;
+    flex: 1; /* Make each button take up equal space */
+    margin: 0;
+    padding: 10px 0; /* Increase vertical padding */
+    border-radius: 20px; /* Remove border radius to merge buttons */
+    cursor: pointer;
+    outline: none;
+    transition: background 0.3s, color 0.3s;
+    text-align: center; /* Center text horizontally */
+    font-size: 18px; /* Adjust font size if needed */
+    font-weight: bold; /* Make the text bold */
+    position: relative; /* Position relative for text visibility */
+    z-index: 1; /* Ensure text is on top of the indicator */
+}
+
+
+.btn-toggle-indicator {
+    position: absolute;
+    height: 100%; /* Full height to cover the button */
+    width: 50%; /* Half the width to cover one button */
+    border-radius: 50%; /* Circular shape for the indicator */
+    background: #dab7e4; /* Indicator background color */
+    transition: transform 0.3s ease; /* Smooth sliding effect */
+    z-index: 0; /* Place indicator behind the buttons */
+    transform: translateY(50%); /* Move the indicator down to align with the bottom of the buttons */
+}
+
+.btn-toggle.active {
+    background-color: #bc11f0;
+    color: #ffffff;
+}
+
+.btn-toggle#btn-register.active ~ .btn-toggle-indicator {
+    transform: translateX(0) translateY(50%); /* Move indicator to cover the register button */
+    width: 100%; /* Full width of the container when active */
+    left: 0; /* Align to the left edge */
+}
+
+.btn-toggle#btn-login.active ~ .btn-toggle-indicator {
+    transform: translateX(100%) translateY(50%); /* Move indicator to cover the login button */
+    width: 100%; /* Full width of the container when active */
+    left: 0; /* Align to the left edge */
+}
+
+/* Pastel purple gradient background for body */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Ensure the body takes up the full height of the viewport */
+    background: linear-gradient(135deg, rgba(188, 150, 231, 0.8), rgba(222, 152, 217, 0.9)); /* Pastel purple gradient */
+    background-size: cover; /* Ensure the background covers the entire element */
+    background-attachment: fixed; /* Optional: Fixes the background position during scrolling */
+}

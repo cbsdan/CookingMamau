@@ -86,10 +86,10 @@
 
                         data.forEach(function(discount) {
                             var discountCard = `
-                                <div class="col-md-4">
+                                <div class="col-md-4 product-card">
                                     <div class="card mb-4 view-discount" data-bs-toggle="modal" data-bs-target="#discountModal" data-discount='${JSON.stringify(discount)}'>
                                         <img src="${discount.image_path || 'uploaded_files/default-profile.png'}" class="card-img-top" alt="Discount Image" style="object-fit: cover; width: 100%; min-height: 300px; max-height: 300px">
-                                        <div class="card-body" style="border-top: 1px solid grey">
+                                        <div class="card-body" style="border-top: 1px solid grey;">
                                             <h5 class='display-flex align-items-center justify-content-between row'>
                                                 <span class="col-9"><strong>Code: </strong> <span class="discount-code">${discount.discount_code}</span></span>
                                                 <span class="col-3 copyDiscountCode text-end">

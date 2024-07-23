@@ -2,98 +2,85 @@
 @section('title', 'Login')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row d-flex justify-content-center align-items-center min-vh-100">
-        <div class="col-lg-4">
-            <div class="card shadow">
-                <div class="card-header">
-                    <h2 class="fw-bold text-secondary">Login</h2>
+<div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 110px)">
+    <div class="col-lg-4" id="auth-container" data-login-route="{{ route('login') }}" data-register-route="{{ route('register') }}">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-5 background-styling">
+                <div class="text-center mb-3">
+                    <div class="toggle-container position-relative">
+                        <button id="btn-register" class="btn-toggle">Sign up</button>
+                        <button id="btn-login" class="btn-toggle active">Log in</button>
+                        <div class="btn-toggle-indicator position-absolute"></div>
+                    </div>
                 </div>
-                <div class="card-body p-5">
-                    <div id="login_alert"></div>
-                    <form action="{{ route('login') }}" method="POST" id="login_form">
-                        @csrf
-                        <div class="mb-3">
-                            <input type="email" name="email" id="email" class="form-control rounded-0"
-                                placeholder="E-mail">
-                            <div class="invalid-feedback"></div>
+                <div id="login_alert"></div>
+                <form action="{{ route('login') }}" method="POST" id="login_form">
+                    @csrf
+                    <div class="mb-3">
+                        <input type="email" name="email" id="email" class="form-control rounded-pill" placeholder="Enter Email or Username">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password" id="password" class="form-control rounded-pill" placeholder="Password">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="mb-3 d-grid">
+                        <button type="submit" class="btn btn-primary rounded-pill">Log in</button>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-secondary">OR</div>
+                        <div class="mt-2">
+                            <a href="#" class="btn btn-outline-primary btn-social"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="btn btn-outline-danger btn-social"><i class="fab fa-google"></i></a>
+                            <a href="#" class="btn btn-outline-info btn-social"><i class="fab fa-twitter"></i></a>
                         </div>
-
-                        <div class="mb-3">
-                            <input type="password" name="password" id="password" class="form-control rounded-0"
-                                placeholder="Password">
-                            <div class="invalid-feedback"></div>
-                        </div>
-
-                        <div class="mb-3">
-                            <a class="text-decoration-none" href="/forgot">Forgot Password</a>
-                        </div>
-
-                        <div class="mb-3 d-grid">
-                            <button type="submit" class="btn btn-dark rounded-0" id="login_btn">Login</button>
-                        </div>
-
-                        <div class="text-center text-secondary">
-                            <div>Don't have an account? <a href="{{ route('register') }}" class="text-decoration-none">Register Here</a></div>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    $("#login_form").validate({
+        rules: {
+            email: {
+                required: true,
+                email: true
+            },
+            password: {
+                required: true,
+                minlength: 6
+            }
+        },
+        messages: {
+            email: {
+                required: "Please enter your email address",
+                email: "Please enter a valid email address"
+            },
+            password: {
+                required: "Please enter your password",
+                minlength: "Your password must be at least 6 characters long"
+            }
+        },
+        errorElement: 'div',
+        errorPlacement: function(error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.mb-3').append(error);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass('is-invalid').removeClass('is-valid');
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass('is-invalid').addClass('is-valid');
+        }
+    });
+});
+</script>
 @endsection
 
 @section('script')
-{{-- <script>
-   $(function () {
-    $('#login_form').submit(function (e) {
-        e.preventDefault();
-        $("#login_btn").val('Please Wait...');
-        console.log('clicked');
-        $.ajax({
-            url: '{{ route('login') }}',
-            method: 'POST',
-            data: $(this).serialize(),
-            contentType: false,
-            processData: false,
-            success: function (res) {
-                console.log('reached');
-                if (res.status === 422) {
-                    showError('email', res.message.email);
-                    showError('password', res.message.password);
-                    $("#login_btn").val('Login');
-                } else if (res.status === 401) {
-                    $("#login_alert").html(showMessage('danger', res.message));
-                    $("#login_btn").val('Login');
-                } else {
-                    console.log('reached');
-                    localStorage.setItem('authToken', res.token); // Save the token
-                    window.location.href = '{{ route('user.profile') }}'; // Redirect to profile page
-                }
-            },
-            error: function (err) {
-                console.error('Error:', err);
-                $("#login_alert").html(showMessage('danger', 'An error occurred while logging in.'));
-                $("#login_btn").val('Login');
-            }
-        });
-    });
-
-    // Function to show error message for form fields
-    function showError(field, errors) {
-        $('#' + field).addClass('is-invalid');
-        $('#' + field).siblings('.invalid-feedback').html(errors);
-    }
-
-    // Function to show alert message
-    function showMessage(type, message) {
-        return '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
-            message +
-            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-            '</div>';
-    }
-}); --}}
-
-</script>
+<script src="{{ asset('js/toggle.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+@yield('script')
 @endsection

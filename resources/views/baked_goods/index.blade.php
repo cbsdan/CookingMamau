@@ -122,7 +122,7 @@
 
         <div id='bakedgoods' class='container'>
             <div class="table-responsive">
-                <table id="bakedGoodsTable" class="table table-striped table-hover w-100">
+                <table id="bakedGoodsTable" class="table table-striped table-hover w-100 main-table-bg-color">
                     <thead>
                         <tr>
                             <th>ID</th>

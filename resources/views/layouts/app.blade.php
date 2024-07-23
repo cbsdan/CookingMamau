@@ -14,6 +14,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <script src="{{ asset('js/toggle.js') }}"></script>
 
     <!-- Bootstrap CSS -->
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
@@ -91,14 +93,14 @@
 
 </head>
 
-<body>
+<body class="bg-body-gradient">
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light shadow-sm" style="background: beige;">
+        <nav class="navbar navbar-expand-md navbar-light shadow-sm" style="background: #b63dd7;">
             <div class="container">
                 <img src="{{ asset('uploaded_files/e.jpg') }}" alt="Logo" width="40" height="40"
                     style="border-radius: 50%;">
 
-                <a class="navbar-brand ml-3" href="{{ auth()->check() ? url('/home') : route('welcome') }}">
+                <a class="navbar-brand ml-3 text-white" href="{{ auth()->check() ? url('/home') : route('welcome') }}">
                     {{ config('app.name', 'Cooking Mamau') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -107,7 +109,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent" style="color: rgb(47, 47, 47)">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
 
@@ -118,24 +120,24 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class='nav-item'>
-                                <a class="nav-link" href="{{ route('welcome') }}">
+                                <a class="nav-link text-white" href="{{ route('welcome') }}">
                                     {{ __('Baked Goods') }}
                                 </a>
                             </li>
                             <li class='nav-item'>
-                                <a class="nav-link" href="{{ route('discounts_page') }}">
+                                <a class="nav-link text-white" href="{{ route('discounts_page') }}">
                                     {{ __('Discounts') }}
                                 </a>
                             </li>
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    <a class="nav-link text-white" href="{{ route('login') }}">{{ __('Login') }}</a>
                                 </li>
                             @endif
 
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link text-white" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
                         @else
@@ -173,17 +175,17 @@
                                 </script>
                             @endif
                             <li class='nav-item'>
-                                <a class="nav-link" href="{{ route('welcome') }}">
+                                <a class="nav-link text-white" href="{{ route('welcome') }}">
                                     {{ __('Baked Goods') }}
                                 </a>
                             </li>
                             <li class='nav-item'>
-                                <a class="nav-link" href="{{ route('discounts_page') }}">
+                                <a class="nav-link text-white" href="{{ route('discounts_page') }}">
                                     {{ __('Discounts') }}
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle text-white" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     @if (auth()->user()->is_admin)
                                         Administrator

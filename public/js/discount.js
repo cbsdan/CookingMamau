@@ -46,7 +46,43 @@ var table = $('#discountTable').DataTable({
             }
         }
     ],
-    "order": [[0, "desc"]]
+    "order": [[0, "desc"]],
+    initComplete: function () {
+        $('.btn-add-ingredient, .btn-pdf').css({
+            'border-radius': '20px',
+            'width': '150px',
+            'height': '40px',
+            'margin': '5px',
+            'background-color': '#da95da',
+            'display': 'flex',
+            'align-items': 'center',
+            'justify-content': 'center',
+            'padding': '10px 20px',
+            'font-size': '15px',
+            'cursor': 'pointer',
+            'margin-top': '20px'
+        });
+
+        $('.dt-buttons').css({
+            'display': 'flex',
+            'gap': '10px'
+        });
+
+        $('.dataTables_filter input').css({
+            'width': '250px',
+            'margin-top': '20px',
+            'margin-left': '10px',
+            'border-radius': '20px',
+            'padding': '5px 10px',
+            'border': '1px solid #ccc'
+        });
+
+        $('.dataTables_filter label').css({
+            'margin-top': '20px',
+            'margin-left': '10px',
+            'align-items': 'center'
+        });
+    }
 });
 
 // Add custom validation method for image files

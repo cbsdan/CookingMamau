@@ -1,85 +1,72 @@
 @extends('layouts.app')
 @section('title', 'Register')
 @section('content')
-    <div class="container-fluid">
-        <div class="row d-flex justify-content-center align-items-center min-vh-100">
-            <div class="col-lg-4">
-                <div class="card shadow">
-                    <div class="card-header">
-                        <h2 class="fw-bold text-secondary">Register</h2>
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 110px)">
+        <div class="col-lg-4" id="auth-container" data-login-route="{{ route('login') }}" data-register-route="{{ route('register') }}">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-3">
+                        <div class="toggle-container position-relative">
+                            <button id="btn-register" class="btn-toggle active">Sign up</button>
+                            <button id="btn-login" class="btn-toggle">Log in</button>
+                            <div class="btn-toggle-indicator position-absolute"></div>
+                        </div>
                     </div>
-                    <div class="card-body p-5">
-                        <div id="show_success_alert"></div>
-                        <form action="{{ route('auth.register') }}" method="POST" id="register_form"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="mb-3">
-                                <input type="text" name="fname" id="fname" class="form-control rounded-0"
-                                    placeholder="First Name">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" name="lname" id="lname" class="form-control rounded-0"
-                                    placeholder="Last Name">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" name="contact" id="contact" class="form-control rounded-0"
-                                    placeholder="Contact Number">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" name="address" id="address" class="form-control rounded-0"
-                                    placeholder="Address">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" name="barangay" id="barangay" class="form-control rounded-0"
-                                    placeholder="Barangay">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" name="city" id="city" class="form-control rounded-0"
-                                    placeholder="City">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" name="landmark" id="landmark" class="form-control rounded-0"
-                                    placeholder="Landmark">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="email" name="email" id="email" class="form-control rounded-0"
-                                    placeholder="Email">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="password" name="password" id="password" class="form-control rounded-0"
-                                    placeholder="Password">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="password" name="cpassword" id="cpassword" class="form-control rounded-0"
-                                    placeholder="Confirm Password">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="file" name="image" id="image" class="form-control rounded-0"
-                                    accept="image/*">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
-                                <a class="text-decoration-none" href="/forgot">Forgot Password</a>
-                            </div>
-                            <div class="mb-3 d-grid">
-                                <input type="submit" value="Register" class="btn btn-dark rounded-0" id="register_btn">
-                            </div>
-                            <div class="text-center text-secondary">
-                                <div>Already have an account? <a href="/" class="text-decoration-none">Login Here</a>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                    <div id="show_success_alert"></div>
+                    <form action="{{ route('auth.register') }}" method="POST" id="register_form" enctype="multipart/form-data">
+                        @csrf
+                        <!-- Form fields here -->
+                        <div class="mb-3">
+                            <input type="text" name="fname" id="fname" class="form-control rounded-pill" placeholder="First Name">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="lname" id="lname" class="form-control rounded-pill" placeholder="Last Name">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="contact" id="contact" class="form-control rounded-pill" placeholder="Contact Number">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="address" id="address" class="form-control rounded-pill" placeholder="Address">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="barangay" id="barangay" class="form-control rounded-pill" placeholder="Barangay">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="city" id="city" class="form-control rounded-pill" placeholder="City">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="landmark" id="landmark" class="form-control rounded-pill" placeholder="Landmark">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" name="email" id="email" class="form-control rounded-pill" placeholder="Email">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" name="password" id="password" class="form-control rounded-pill" placeholder="Password">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" name="cpassword" id="cpassword" class="form-control rounded-pill" placeholder="Confirm Password">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="file" name="image" id="image" class="form-control rounded-pill" accept="image/*">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="mb-3 d-grid">
+                            <input type="submit" value="Sign Up" class="btn btn-primary rounded-pill" id="register_btn">
+                        </div>
+                        <div class="text-center text-secondary">
+                            <div>Already a member? <a href="{{ route('login') }}" class="text-decoration-none">Log in</a></div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -138,4 +125,10 @@
         }
     });
 </script>
+@endsection
+
+@section('script')
+    <script src="{{ asset('js/toggle.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+@yield('script')
 @endsection

@@ -46,10 +46,6 @@ $(document).ready(function () {
             }
         ],
         "order": [[0, "desc"]],
-        scrollY: 400,
-        scroller: {
-            loadingIndicator: true
-        },
         initComplete: function () {
             $('.btn-add-ingredient, .btn-pdf').css({
                 'border-radius': '20px',
