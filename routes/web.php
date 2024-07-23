@@ -67,7 +67,8 @@ Route::middleware(['admin'])->group(function () {
 
 Route::put('/api/baked_goods/images/{imageId}/set-thumbnail', [BakedGoodsController::class, 'setThumbnail']);
 
-
+//Discount
+Route::view('/discounts', 'discounts')->name('discounts_page');
 //crud
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::view('/ingredient-all', 'ingredients.index')->name('ingredients');

@@ -117,7 +117,7 @@
                                 </a>
                             </li>
                             <li class='nav-item'>
-                                <a class="nav-link" href="{{ route('discounts') }}">
+                                <a class="nav-link" href="{{ route('discounts_page') }}">
                                     {{ __('Discounts') }}
                                 </a>
                             </li>
@@ -172,7 +172,7 @@
                                 </a>
                             </li>
                             <li class='nav-item'>
-                                <a class="nav-link" href="{{ route('discounts') }}">
+                                <a class="nav-link" href="{{ route('discounts_page') }}">
                                     {{ __('Discounts') }}
                                 </a>
                             </li>

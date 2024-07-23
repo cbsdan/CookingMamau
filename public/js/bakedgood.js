@@ -149,12 +149,27 @@ $(document).ready(function () {
                 dataType: "json",
                 success: function(data) {
                     console.log(data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: "Baked Good added Successfully!",
+                        timer: 2000,
+                        confirmButtonText: 'OK'
+                    });
+
                     $("#bakedGoodModal").modal("hide");
                     var $bakedGoodsTable = $('#bakedGoodsTable').DataTable();
                     $bakedGoodsTable.ajax.reload();
                 },
                 error: function(error) {
                     console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "Baked Good failed to add!",
+                        timer: 2000,
+                        confirmButtonText: 'OK'
+                    });
                 }
             });
         }
@@ -268,10 +283,24 @@ $(document).ready(function () {
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function (response) {
                 console.log(response);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "Deleted Baked Good Image Successfully!",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
                 imageContainer.remove();
             },
             error: function (error) {
                 console.log(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Failed to delete Baked Good Image!",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
@@ -288,16 +317,14 @@ $(document).ready(function () {
             url: `/api/baked_goods/images/${imageId}/set-thumbnail`,
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function (response) {
-                bootbox.alert({
-                    message: "Thumbnail set successfully.",
-                    buttons: {
-                        ok: {
-                            label: 'OK',
-                            className: 'btn-primary'
-                        }
-                    },
-                    className: 'bootbox-centered'
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "Thumbnail set Successfully!",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
                 });
+
                 // Reset all other image containers
                 $('.image-container').each(function () {
                     var btn = $(this).find('.setImageBtn');
@@ -311,6 +338,14 @@ $(document).ready(function () {
             },
             error: function (error) {
                 console.log(error);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Thumbnail image failed to set!",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
@@ -333,15 +368,12 @@ $(document).ready(function () {
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function (data) {
-                bootbox.alert({
-                    message: "Baked Good updated successfully.",
-                    buttons: {
-                        ok: {
-                            label: 'OK',
-                            className: 'btn-primary'
-                        }
-                    },
-                    className: 'bootbox-centered'
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "Baked Good updated Successfully!",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
                 });
 
                 $('#bakedGoodModal').modal("hide");
@@ -349,6 +381,13 @@ $(document).ready(function () {
             },
             error: function (error) {
                 console.log(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Failed to update Baked Good.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
@@ -383,11 +422,23 @@ $(document).ready(function () {
                             $row.fadeOut(4000, function () {
                                 table.row($row).remove().draw();
                             });
-                            bootbox.alert(data.success);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Deleted Baked Good Successfully!",
+                                timer: 2000,
+                                confirmButtonText: 'OK'
+                            });
                         },
                         error: function (error) {
                             console.log(error);
-                            bootbox.alert('Error deleting baked good.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: "Failed to delete Baked Good Product",
+                                timer: 2000,
+                                confirmButtonText: 'OK'
+                            });
                         }
                     });
                 }
@@ -464,7 +515,7 @@ $(document).ready(function () {
         // Proceed with AJAX request if validation passes
         $.ajax({
             type: "GET",
-            url: '/api/ingredients/${selectedValue}',
+            url: `/api/ingredients/${selectedValue}`,
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function (ingredient) {
@@ -510,6 +561,14 @@ $(document).ready(function () {
                     $('#ingredientsList option:eq(0)').after(`<option value='${data.ingredient.id}'>${data.ingredient.name}</option>`)
                 }
 
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "Ingredient added successfully.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
+
                 $("#ingredientModal").modal("hide");
                 var $ingredientTable = $('#ingredientTable').DataTable();
                 $ingredientTable.ajax.reload();
@@ -517,6 +576,13 @@ $(document).ready(function () {
             },
             error: function (error) {
                 console.log(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Failed to add Ingredient",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
@@ -535,7 +601,13 @@ $('#bakedGoodImportForm').on('submit', function(event) {
         processData: false, // Important
         success: function(response) {
             // Handle success response
-            alert(response.message); // Or use a more sophisticated notification system
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: "Excel import successfully.",
+                timer: 2000,
+                confirmButtonText: 'OK'
+            });
 
             var table = $('#bakedGoodsTable').DataTable();
             table.ajax.reload();
@@ -543,7 +615,14 @@ $('#bakedGoodImportForm').on('submit', function(event) {
         error: function(xhr) {
             // Handle error response
             var errorMsg = 'An error occurred: ' + xhr.responseJSON.message;
-            alert(errorMsg);
+            console.log(errorMsg);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "Failed to import Excel",
+                timer: 2000,
+                confirmButtonText: 'OK'
+            });
         }
     });
 });

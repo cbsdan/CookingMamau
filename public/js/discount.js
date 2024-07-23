@@ -4,7 +4,7 @@ var table = $('#discountTable').DataTable({
         url: "/api/discounts",
         dataSrc: ""
     },
-    dom: 'Bfrtip',
+    dom: 'lBfrtip',
     buttons: [
         'pdf',
         'excel',
@@ -155,7 +155,6 @@ $('#discountForm').validate({
 // Submit new discount
 $("#discountSubmit").on('click', function (e) {
     e.preventDefault();
-    $('#discountForm').submit();
     console.log('clicked');
     var data = $('#discountForm')[0];
     let formData = new FormData(data);
@@ -169,12 +168,26 @@ $("#discountSubmit").on('click', function (e) {
         dataType: "json",
         success: function (data) {
             console.log(data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                timer: 2000,
+                text: "Discount added successfully",
+                confirmButtonText: 'OK'
+            });
             $("#discountModal").modal("hide");
             var $discountTable = $('#discountTable').DataTable();
             $discountTable.ajax.reload();
         },
         error: function (error) {
             console.log(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                timer: 2000,
+                text: "Discount failed to add",
+                confirmButtonText: 'OK'
+            });
         }
     });
 });
@@ -243,12 +256,27 @@ $("#discountUpdate").on('click', function (e) {
         success: function (data) {
             $('#discountModal').modal("hide");
 
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                timer: 2000,
+                text: "Discount updated successfully",
+                confirmButtonText: 'OK'
+            });
+
             // Add a slight delay before reloading the table
             setTimeout(function () {
                 table.ajax.reload();
             }, 500);
         },
         error: function (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                timer: 2000,
+                text: "Discount failed to update",
+                confirmButtonText: 'OK'
+            });
             console.log(error);
         }
     });
@@ -284,14 +312,64 @@ $('#discountTable tbody').on('click', 'a.deleteBtn', function (e) {
                         $row.fadeOut(4000, function () {
                             table.row($row).remove().draw();
                         });
-                        bootbox.alert(data.success);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            timer: 2000,
+                            text: "Discount deleted successfully",
+                            confirmButtonText: 'OK'
+                        });
                     },
                     error: function (error) {
                         console.log(error);
-                        bootbox.alert('Error deleting discount.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            timer: 2000,
+                            text: "Discount failed to delete",
+                            confirmButtonText: 'OK'
+                        });
                     }
                 });
             }
+        }
+    });
+});
+
+$('#discountImportForm').on('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: 'api/discount/import', // API endpoint
+        type: 'POST',
+        data: formData,
+        contentType: false, // Important
+        processData: false, // Important
+        success: function(response) {
+            // Handle success response
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: "Excel import successfully.",
+                timer: 2000,
+                confirmButtonText: 'OK'
+            });
+
+            var table = $('#discountTable').DataTable();
+            table.ajax.reload();
+        },
+        error: function(xhr) {
+            // Handle error response
+            var errorMsg = 'An error occurred: ' + xhr.responseJSON.message;
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "Excel failed to import.",
+                timer: 2000,
+                confirmButtonText: 'OK'
+            });
         }
     });
 });

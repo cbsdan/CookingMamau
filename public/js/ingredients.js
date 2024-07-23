@@ -147,11 +147,25 @@ $(document).ready(function () {
                 dataType: "json",
                 success: function(data) {
                     console.log(data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: "Ingredient added successfully.",
+                        timer: 2000,
+                        confirmButtonText: 'OK'
+                    });
                     $("#ingredientModal").modal("hide");
                     table.ajax.reload(); // Reload the DataTable
                 },
                 error: function(error) {
                     console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "Ingredient failed to add.",
+                        timer: 2000,
+                        confirmButtonText: 'OK'
+                    });
                 }
             });
         }
@@ -211,11 +225,25 @@ $(document).ready(function () {
             dataType: "json",
             success: function (data) {
                 console.log(data);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "Ingredient updated successfully.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
                 $('#ingredientModal').modal("hide");
                 table.ajax.reload(); // Reload the DataTable
             },
             error: function (error) {
                 console.log(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Failed to update ingredien.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
@@ -249,14 +277,65 @@ $(document).ready(function () {
                             $row.fadeOut(4000, function () {
                                 table.row($row).remove().draw();
                             });
-                            bootbox.alert(data.success);
-                        },
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Ingredient deleted successfully.",
+                                timer: 2000,
+                                confirmButtonText: 'OK'
+                            });                        },
                         error: function (error) {
                             console.log(error);
-                            bootbox.alert('Error deleting ingredient.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: "Failed to delete ingredient.",
+                                timer: 2000,
+                                confirmButtonText: 'OK'
+                            });
                         }
                     });
                 }
+            }
+        });
+    });
+
+    //Excel Import
+    $('#ingredientImportForm').on('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: 'api/ingredient/import', // API endpoint
+            type: 'POST',
+            data: formData,
+            contentType: false, // Important
+            processData: false, // Important
+            success: function(response) {
+                // Handle success response
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "Excel import successfully.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
+
+                var table = $('#ingredientTable').DataTable();
+                table.ajax.reload();
+            },
+            error: function(xhr) {
+                // Handle error response
+                var errorMsg = 'An error occurred: ' + xhr.responseJSON.message;
+                console.log(errorMsg);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Failed to import Excel.",
+                    timer: 2000,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });

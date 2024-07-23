@@ -45,7 +45,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="discountForm" method="POST" action="#" enctype="multipart/form-data">
+                    <form id="discountForm" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="discount_code">Discount Code</label>
