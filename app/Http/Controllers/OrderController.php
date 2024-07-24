@@ -38,12 +38,21 @@ class OrderController extends Controller
         $idBuyer = $request->route('id'); // Get the ID from the route
         $orderStatus = $request->query('order_status', null); // Get the order_status from the query string
 
+        // Normalize the status to a standard format
+        $normalizedStatus = null;
+        if ($orderStatus) {
+            // Convert to lowercase and replace spaces with underscores for comparison
+            $normalizedStatus = (strtolower($orderStatus) === 'out for delivery' || strtolower($orderStatus) === 'out_for_delivery')
+                                ? 'Out for Delivery'
+                                : $orderStatus;
+        }
+
         $query = Order::with('orderedGoods', 'payments', 'discount', 'schedule')
                       ->orderBy('created_at', 'desc')
                       ->where('id_buyer', $idBuyer); // Filter by the buyer ID
 
-        if ($orderStatus) {
-            $query->where('order_status', $orderStatus); // Filter by order status if provided
+        if ($normalizedStatus) {
+            $query->where('order_status', $normalizedStatus); // Filter by normalized order status if provided
         }
 
         $orders = $query->get();
