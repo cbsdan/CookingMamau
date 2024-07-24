@@ -222,7 +222,7 @@
                                     @if (auth()->user())
                                         <li><a class="dropdown-item" href="{{(auth()->user()->is_admin) ? route('orders') : route('my-orders')}}">{{ __('Orders') }}</a></li>
                                     @endif
-                                    @if (auth()->user())
+                                    @if (auth()->user()->is_admin)
                                         <li><a class="dropdown-item"
                                                 href="{{ route('discounts') }}">{{ __('Discounts') }}</a></li>
                                     @endif
