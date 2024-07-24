@@ -74,7 +74,6 @@ $(document).ready(function() {
                 let discountDetails = order.discount ? `
                     <hr>
                     <p class='mt-1'><strong>Discount Code:</strong> ${order.discount.discount_code}</p>
-                    <p class='mt-1'><strong>Discount Amount:</strong> ${order.discount.max_discount_amount || 'N/A'}</p>
                     <p class='mt-1'><strong>Discount Percent:</strong> ${order.discount.percent || 'N/A'}%</p>
                 ` : `<p class='mt-1'><strong>Discount Code:</strong> None</p>`;
 
@@ -144,6 +143,8 @@ $(document).ready(function() {
                             <p class="d-flex align-items-center justify-content-between "><strong>Discount:</strong> <span>- ₱${discountAmount}</span</p>
                             <hr>
                             <p class="d-flex align-items-center justify-content-between "><strong>Grand Total:</strong> <span>₱${grandTotal}</span</p>
+                            <p class="d-flex align-items-center justify-content-between "><strong>Paid Amount:</strong> <span>₱${order.payments.amount}</span</p>
+                            <p class="d-flex align-items-center justify-content-between "><strong>Mode of Payment:</strong> <span>₱${order.payments.mode}</span</p>
                         </div>
                     </div>
                 `;

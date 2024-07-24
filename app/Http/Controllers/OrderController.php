@@ -36,10 +36,17 @@ class OrderController extends Controller
 
     public function userOrder(Request $request) {
         $idBuyer = $request->route('id'); // Get the ID from the route
-        $orders = Order::with('orderedGoods', 'payments', 'discount', 'schedule')
-                        ->orderBy('created_at', 'desc')
-                        ->where('id_buyer', $idBuyer) // Filter by the buyer ID
-                        ->get();
+        $orderStatus = $request->query('order_status', null); // Get the order_status from the query string
+
+        $query = Order::with('orderedGoods', 'payments', 'discount', 'schedule')
+                      ->orderBy('created_at', 'desc')
+                      ->where('id_buyer', $idBuyer); // Filter by the buyer ID
+
+        if ($orderStatus) {
+            $query->where('order_status', $orderStatus); // Filter by order status if provided
+        }
+
+        $orders = $query->get();
         return response()->json($orders, 200);
     }
 
@@ -151,5 +158,32 @@ class OrderController extends Controller
         $order->update(['order_status' => $validatedData['order_status']]);
 
         return response()->json(['message' => 'Order status updated successfully'], 200);
+    }
+
+    public function statusCounts($buyerId) {
+        $statusCounts = Order::where('id_buyer', $buyerId)
+            ->selectRaw('
+                CASE
+                    WHEN order_status IN ("Out for Delivery", "Out_for_Delivery") THEN "Out_for_Delivery"
+                    ELSE order_status
+                END AS merged_status,
+                count(*) as count
+            ')
+            ->groupBy('merged_status')
+            ->pluck('count', 'merged_status')
+            ->toArray();
+
+        // Ensure all statuses are present in the response
+        $allStatuses = ['Pending', 'Preparing', 'Out_for_Delivery', 'Delivered', 'Canceled'];
+        foreach ($allStatuses as $status) {
+            if (!isset($statusCounts[$status])) {
+                $statusCounts[$status] = 0;
+            }
+        }
+
+        // Total count
+        $statusCounts['all'] = array_sum($statusCounts);
+
+        return response()->json($statusCounts);
     }
 }

@@ -52,6 +52,7 @@ Route::apiResource('/order', OrderController::class);
 //Order Other route
 Route::get('order/{id}/user', [OrderController::class, 'userOrder']);
 Route::patch('order/{id}/status', [OrderController::class, 'updateStatus']);
+Route::get('order/{id}/status_counts', [OrderController::class, 'statusCounts']);
 
 Route::get('bakedgoods/paginate', [BakedGoodsController::class, 'bakedGoodPaginate']);
 Route::delete('/baked_goods/images/{id}', [BakedGoodsController::class, 'deleteImage']);

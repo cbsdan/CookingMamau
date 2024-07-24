@@ -300,7 +300,7 @@
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     // Redirect only after the user clicks "OK"
-                                    window.location.href = '/';
+                                    window.location.href = '{{route('my-orders')}}';
                                 }
                             });
                         },
