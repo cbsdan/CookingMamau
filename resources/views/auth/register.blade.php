@@ -97,11 +97,24 @@
                             showError('cpassword', res.message.cpassword);
                             $("#register_btn").val('Register');
                         } else {
-                            // $("#show_success_alert").html(showMessage('success', res.message));
-                            $("#register_form")[0].reset();
-                            removeValidationClasses("#register_form");
-                            $("#register_btn").val('Register');
-                            window.location.href = '{{ route ('login') }}';
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: "Registered successfully.",
+                                timer: 2000,
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                // Check if the SweetAlert was confirmed
+                                if (result.isConfirmed) {
+                                    // Reset the form and other UI elements
+                                    $("#register_form")[0].reset();
+                                    removeValidationClasses("#register_form");
+                                    $("#register_btn").val('Register');
+
+                                    // Redirect to the login page
+                                    window.location.href = '{{ route('login') }}';
+                                }
+                            });
                         }
                     },
                     error: function(xhr) {

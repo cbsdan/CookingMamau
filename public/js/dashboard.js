@@ -14,6 +14,8 @@ $(document).ready(function() {
         $('.deactivated-user-count').html(data.deactivatedUserCount);
         $('.admin-user-count').html(data.adminUserCount);
 
+        data.activatedUsers.reverse();
+
         // Generate table rows for activated users
         let activatedUsersRows = '';
         data.activatedUsers.forEach(user => {
@@ -22,7 +24,7 @@ $(document).ready(function() {
                     <td width="60px">
                         <a href="#" class='btn'>
                             <div class="imgBx">
-                                <img src="${user.profile_image_path ? user.profile_image_path : 'uploaded_files/default-profile.png'}" alt="img">
+                                <img src="/${user.profile_image_path ? user.profile_image_path : 'uploaded_files/default-profile.png'}" alt="img">
                             </div>
                         </a>
                     </td>

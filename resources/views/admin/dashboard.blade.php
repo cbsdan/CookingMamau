@@ -142,7 +142,7 @@
             <!-- ================= New Customers ================ -->
             <div class="recentCustomers">
                 <div class="cardHeader">
-                    <h2>Recent Registered User</h2>
+                    <h2>Active User</h2>
                 </div>
 
                 <table id="recentActiveUsersTable">

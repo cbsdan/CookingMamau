@@ -212,7 +212,7 @@ class UserController extends Controller
             try {
                 $profileImagePath = null;
                 if ($request->hasFile('image')) {
-                    $profileImagePath = $request->file('image')->store('profile_images', 'public');
+                    $profileImagePath = $request->file('image')->store('uploaded_files', 'public');
                 }
                 $user = $this->createUser($request, $profileImagePath);
                 $buyer = $this->createBuyer($request, $user->id);
