@@ -38,7 +38,7 @@
     <!-- Main Content -->
     <div class="container mt-4">
         <!-- Product Cards -->
-        <div class="row" id="discounts-container">
+        <div class="row g-3" id="discounts-container">
             <!-- Discounts will be appended here by AJAX -->
         </div>
 

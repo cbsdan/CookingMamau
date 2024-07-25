@@ -55,9 +55,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.5/js/buttons.html5.min.js"></script>
 
-    <!-- Chart.js -->
-    {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.min.js" crossorigin="anonymous"></script> --}}
-
     <!-- Bootbox.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js" crossorigin="anonymous"></script>
 
@@ -194,7 +191,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     @if (auth()->user()->is_admin)
-                                        <li><a class="dropdown-item" href="">{{ __('Dashboard (not working)') }}</a>
+                                        <li><a class="dropdown-item" href="{{route('admin.dashboard')}}">{{ __('Dashboard') }}</a>
                                         </li>
                                     @endif
                                     @if (auth()->user()->is_admin)

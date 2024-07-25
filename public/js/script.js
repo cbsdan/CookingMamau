@@ -381,8 +381,8 @@ $(document).ready(function() {
                         bakedGoodsContainer.append(html); // Add the new baked goods to the container
                     });
 
-                    // Initialize the carousel
-                    $('.product-image-carousel').slick({
+                    // Initialize the carousel for the new elements
+                    bakedGoodsContainer.find('.product-image-carousel').not('.slick-initialized').slick({
                         dots: true,
                         infinite: true,
                         speed: 300,
@@ -417,22 +417,36 @@ $(document).ready(function() {
             type: 'GET',
             dataType: 'json',
             success: function(bakedGood) {
-                var imagePath = 'uploaded_files/default-profile.png'; // Default image
+                const sortedImages = bakedGood.images.sort((a, b) => b.is_thumbnail - a.is_thumbnail);
+                const defaultImagePath = 'uploaded_files/default-profile.png'; // Define the path for the default image
 
                 if (bakedGood.images.length) {
-                    // Find the image with is_thumbnail set to true
-                    var thumbnailImage = bakedGood.images.find(image => image.is_thumbnail);
-
-                    if (thumbnailImage) {
-                        imagePath = thumbnailImage.image_path; // Set to the thumbnail image if found
-                    } else {
-                        imagePath = bakedGood.images[0].image_path; // Set to the first image if no thumbnail is found
-                    }
+                    imagesHtml = bakedGood.images.map(image => `
+                        <div>
+                            <img src="${image.image_path}" alt="${bakedGood.name}" class="img-fluid mb-3 w-100" style="min-height: 270px; max-height: 300px; object-fit: cover;">
+                        </div>
+                    `).join('');
+                } else {
+                    // If no images, use the default image
+                    imagesHtml = `
+                        <div>
+                            <img src="uploaded_files/default-profile.png" alt="${bakedGood.name}" class="img-fluid mb-3 w-100" style="min-height: 270px; max-height: 300px; object-fit: cover;">
+                        </div>
+                    `;
                 }
+
                 var modalContent = `
                     <div class=''>
                         <div class='left'>
-                            <img src="${imagePath}" alt="${bakedGood.name}" class="img-fluid mb-3 w-100" style="min-height: 270px; object-fit: cover;">
+                            <div class="carousel" style='min-height: 300px; max-height: 300px; '>
+                                ${
+                                    sortedImages.length
+                                    ? sortedImages.map(img => `
+                                        <div><img src="${img.image_path}" alt="${bakedGood.name}" class="w-100" style="min-height: 300px; max-height: 300px; object-fit: cover;"></div>
+                                    `).join('')
+                                    : `<div><img src="${defaultImagePath}" alt="${bakedGood.name}" class="w-100" style="min-height: 300px; max-height: 300px; object-fit: cover;"></div>`
+                                }
+                            </div>
                             <h5>${bakedGood.name}</h5>
                             <hr>
                             <p><strong>Price:</strong> P${bakedGood.price}</p>
@@ -457,6 +471,20 @@ $(document).ready(function() {
                 `;
                 $('#bakedGoodDetails').html(modalContent);
                 $('#bakedGoodModal').modal('show');
+
+                // Initialize the carousel
+
+                // Initialize the carousel in the modal's shown event
+                $('#bakedGoodModal').on('shown.bs.modal', function () {
+                    $('#bakedGoodDetails').find('.carousel').not('.slick-initialized').slick({
+                        dots: true,
+                        infinite: true,
+                        speed: 300,
+                        slidesToShow: 1,
+                        slidesToScroll: 1,
+                        adaptiveHeight: true
+                    });
+                });
             }
         });
     });

@@ -8,7 +8,7 @@
             <div class="card-body p-5 background-styling">
                 <div class="text-center mb-3">
                     <div class="toggle-container position-relative">
-                        <button id="btn-register" class="btn-toggle">Sign up</button>
+                        <button id="btn-register" class="btn-toggle"><a style="text-decoration: none; color: black;" href="{{route('register')}}">Sign up</a></button>
                         <button id="btn-login" class="btn-toggle active">Log in</button>
                         <div class="btn-toggle-indicator position-absolute"></div>
                     </div>

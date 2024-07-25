@@ -2,13 +2,13 @@
 @section('title', 'Register')
 @section('content')
     <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 110px)">
-        <div class="col-lg-4" id="auth-container" data-login-route="{{ route('login') }}" data-register-route="{{ route('register') }}">
+        <div class="col-lg-4" id="auth-container" >
             <div class="card shadow-lg border-0">
-                <div class="card-body p-5">
+                <div class="card-body p-5 background-styling">
                     <div class="text-center mb-3">
                         <div class="toggle-container position-relative">
                             <button id="btn-register" class="btn-toggle active">Sign up</button>
-                            <button id="btn-login" class="btn-toggle">Log in</button>
+                            <button id="btn-login" class="btn-toggle"><a style="text-decoration: none; color: black;" href="{{route('login')}}">Log in</a></button>
                             <div class="btn-toggle-indicator position-absolute"></div>
                         </div>
                     </div>

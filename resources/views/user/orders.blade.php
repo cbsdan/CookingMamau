@@ -34,10 +34,10 @@
         .body-orders {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 10px;
+            margin-top: 10px;
         }
         .order {
-            margin-top: 5px;
             display: flex;
             flex-direction: column;
             width: 100%;
@@ -50,14 +50,15 @@
 
         }
         .prod-image-cont, .order-img {
-            width: 35%;
+            width: 200px;
+            padding: 5px;
         }
         .order-img {
             width: 200px;
             height: 200px;
         }
         .prod-details {
-            width: 65%;
+            width: calc(100% - 200px - 10px);
             display: flex;
             flex-direction: column;
             justify-content: space-between
@@ -103,9 +104,9 @@
     <!-- Order Details Modal -->
     <div class="modal fade" id="orderDetailsModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
+            <div class="modal-content" style='min-width: 900px'>
                 <div class="modal-header">
-                    <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
+                    <h3 class="modal-title" id="orderModalLabel"><strong>Order Details</strong></h3>
                 </div>
                 <div class="modal-body">
                     <!-- Order details will be dynamically inserted here by viewOrderDetails function -->
@@ -177,12 +178,15 @@
                             : 0;
                         let grandTotal = parseFloat(total) + parseFloat(shippingCost) - parseFloat(discountAmount);
 
-                        //Images
-                        let thumbnail = 'uploaded_files/default-product.png';
-                        let firstBakedGood = order.ordered_goods[0];
+                        // Images
+                        let thumbnail = 'uploaded_files/default-product.png'; // Default image
+                        let firstBakedGood = order.ordered_goods[0]; // First baked good in the order
+
                         if (firstBakedGood && firstBakedGood.images && firstBakedGood.images.length > 0) {
+                            // Try to find the thumbnail image
                             let thumbnailImage = firstBakedGood.images.find(image => image.is_thumbnail);
-                            thumbnail = thumbnailImage ? `/uploaded_files/${thumbnailImage.file_name}` : `/uploaded_files/${firstBakedGood.images[0].file_name}`;
+                            // Use the thumbnail image if found, otherwise use the first image
+                            thumbnail = thumbnailImage ? thumbnailImage.image_path : firstBakedGood.images[0].image_path;
                         }
 
                         $order.html(`
@@ -201,7 +205,7 @@
                             </div>
                             <div class='item-no-total-cont'>
                                 <h5 class="order-count mb-0">${order.ordered_goods.length} Item/s</h5>
-                                <h5 class="order-grand-total mb-0">Grand Total: ₱${grandTotal.toFixed(2)}</h5>
+                                <h5 class="order-grand-total mb-0"><strong>Grand Total: </strong> ₱${grandTotal.toFixed(2)}</h5>
                             </div>
                             <div class='status-cont'>
                                 <h5 class="order-status">Status: ${order.order_status}</h5>
@@ -234,16 +238,33 @@
                     <p class='mt-1'><strong>Discount Percent:</strong> ${order.discount.percent || 'N/A'}%</p>
                 ` : `<p class='mt-1'><strong>Discount Code:</strong> None</p>`;
 
+
+                // Initialize variables for product images
+                let defaultThumbnail = 'uploaded_files/default-product.png'; // Default image
+
                 // Prepare ordered goods table
-                let orderedGoodsHtml = order.ordered_goods.map(item => `
-                    <tr>
-                        <td>${item.pivot.id_baked_goods}</td>
-                        <td>${item.name}</td>
-                        <td>${item.pivot.qty}</td>
-                        <td>₱${parseFloat(item.pivot.price_per_good).toFixed(2)}</td>
-                        <td>₱${(item.pivot.qty * parseFloat(item.pivot.price_per_good)).toFixed(2)}</td>
-                    </tr>
-                `).join('');
+                let orderedGoodsHtml = order.ordered_goods.map(item => {
+                    let thumbnail = defaultThumbnail; // Reset thumbnail to default for each item
+                    let firstBakedGood = item; // Current baked good in the order
+
+                    if (firstBakedGood && firstBakedGood.images && firstBakedGood.images.length > 0) {
+                        // Try to find the thumbnail image
+                        let thumbnailImage = firstBakedGood.images.find(image => image.is_thumbnail);
+                        // Use the thumbnail image if found, otherwise use the first image
+                        thumbnail = thumbnailImage ? thumbnailImage.image_path : firstBakedGood.images[0].image_path;
+                    }
+
+                    return `
+                        <tr>
+                            <td>${item.pivot.id_baked_goods}</td>
+                            <td><img src='${thumbnail}' alt='img' width='30px' height='30px' style='object-fit: cover'></td>
+                            <td>${item.name}</td>
+                            <td>${item.pivot.qty}</td>
+                            <td>₱${parseFloat(item.pivot.price_per_good).toFixed(2)}</td>
+                            <td>₱${(item.pivot.qty * parseFloat(item.pivot.price_per_good)).toFixed(2)}</td>
+                        </tr>
+                    `;
+                }).join('');
 
                 let total = parseFloat(order.ordered_goods.reduce((sum, item) => sum + (item.pivot.qty * parseFloat(item.pivot.price_per_good)), 0)).toFixed(2);
                 let shippingCost = parseFloat(order.shipping_cost).toFixed(2);
@@ -275,7 +296,7 @@
                             <p class='mt-1'><strong>Buyer Name:</strong> ${order.buyer_name}</p>
                             <p class='mt-1'><strong>Email Address:</strong> ${order.email_address}</p>
                             <p class='mt-1'><strong>Delivery Address:</strong> ${order.delivery_address}</p>
-                            <p class='mt-1'><strong>Buyer Note:</strong> ${order.buyer_note || 'None'}</p>
+                            <p class='mt-1'><strong>Buyer Note:<br></strong> ${order.buyer_note || 'None'}</p>
                             ${discountDetails}
                             <hr>
                             <p class='mt-1'><strong>Schedule ID:</strong> ${order.id_schedule}</p>
@@ -298,6 +319,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Image</th>
                                         <th>Name</th>
                                         <th>Quantity</th>
                                         <th>Price</th>

@@ -20,9 +20,9 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.add('active');
             btnLogin.classList.remove('active');
             updateIndicator();
-            setTimeout(() => {
-                window.location.href = "/register";
-            }, 300); // Delay to match the CSS transition duration
+            // setTimeout(() => {
+            //     window.location.href = "/register";
+            // }, 300); // Delay to match the CSS transition duration
         }
     });
 
@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.add('active');
             btnRegister.classList.remove('active');
             updateIndicator();
-            setTimeout(() => {
-                window.location.href = "/login";
-            }, 300); // Delay to match the CSS transition duration
+            // setTimeout(() => {
+            //     window.location.href = "/login";
+            // }, 300); // Delay to match the CSS transition duration
         }
     });
 

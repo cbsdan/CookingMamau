@@ -20,7 +20,7 @@ class OrderController extends Controller
         $orderStatus = $request->input('order_status');
 
         // Build the query
-        $query = Order::with('orderedGoods', 'payments', 'discount', 'schedule')->orderBy('created_at', 'desc');
+        $query = Order::with('orderedGoods.images', 'payments', 'discount', 'schedule')->orderBy('created_at', 'desc');
 
         // Apply the filter if provided
         if ($orderStatus) {
@@ -47,7 +47,7 @@ class OrderController extends Controller
                                 : $orderStatus;
         }
 
-        $query = Order::with('orderedGoods', 'payments', 'discount', 'schedule')
+        $query = Order::with('orderedGoods.images', 'payments', 'discount', 'schedule')
                       ->orderBy('created_at', 'desc')
                       ->where('id_buyer', $idBuyer); // Filter by the buyer ID
 
@@ -133,7 +133,7 @@ class OrderController extends Controller
     public function show($id)
     {
         // Retrieve the order by ID
-        $order = Order::with('orderedGoods', 'payments', 'discount', 'schedule')->findOrFail($id);
+        $order = Order::with('orderedGoods.images', 'payments', 'discount', 'schedule')->findOrFail($id);
 
         // Return the order with related models in JSON format
         return response()->json(['order' => $order], 200);
@@ -148,10 +148,10 @@ class OrderController extends Controller
     public function userOrders()
     {
         if (auth()->check() && auth()->user()->is_admin) {
-            $userOrders = Order::with('orderedGoods', 'payment', 'discount')->orderBy('created_at', 'desc')->get();
+            $userOrders = Order::with('orderedGoods.images', 'payment', 'discount')->orderBy('created_at', 'desc')->get();
         } else {
             $userId = auth()->user()->buyer->id;
-            $userOrders = Order::with('orderedGoods', 'payment', 'discount')->where('id_buyer', $userId)->orderBy('created_at', 'desc')->get();
+            $userOrders = Order::with('orderedGoods.images', 'payment', 'discount')->where('id_buyer', $userId)->orderBy('created_at', 'desc')->get();
         }
 
         return response()->json($userOrders, 200);

@@ -77,16 +77,33 @@ $(document).ready(function() {
                     <p class='mt-1'><strong>Discount Percent:</strong> ${order.discount.percent || 'N/A'}%</p>
                 ` : `<p class='mt-1'><strong>Discount Code:</strong> None</p>`;
 
+
+                // Initialize variables for product images
+                let defaultThumbnail = 'uploaded_files/default-product.png'; // Default image
+
                 // Prepare ordered goods table
-                let orderedGoodsHtml = order.ordered_goods.map(item => `
-                    <tr>
-                        <td>${item.pivot.id_baked_goods}</td>
-                        <td>${item.name}</td>
-                        <td>${item.pivot.qty}</td>
-                        <td>₱${parseFloat(item.pivot.price_per_good).toFixed(2)}</td>
-                        <td>₱${(item.pivot.qty * parseFloat(item.pivot.price_per_good)).toFixed(2)}</td>
-                    </tr>
-                `).join('');
+                let orderedGoodsHtml = order.ordered_goods.map(item => {
+                    let thumbnail = defaultThumbnail; // Reset thumbnail to default for each item
+                    let firstBakedGood = item; // Current baked good in the order
+
+                    if (firstBakedGood && firstBakedGood.images && firstBakedGood.images.length > 0) {
+                        // Try to find the thumbnail image
+                        let thumbnailImage = firstBakedGood.images.find(image => image.is_thumbnail);
+                        // Use the thumbnail image if found, otherwise use the first image
+                        thumbnail = thumbnailImage ? thumbnailImage.image_path : firstBakedGood.images[0].image_path;
+                    }
+
+                    return `
+                        <tr>
+                            <td>${item.pivot.id_baked_goods}</td>
+                            <td><img src='${thumbnail}' alt='img' width='30px' height='30px' style='object-fit: cover'></td>
+                            <td>${item.name}</td>
+                            <td>${item.pivot.qty}</td>
+                            <td>₱${parseFloat(item.pivot.price_per_good).toFixed(2)}</td>
+                            <td>₱${(item.pivot.qty * parseFloat(item.pivot.price_per_good)).toFixed(2)}</td>
+                        </tr>
+                    `;
+                }).join('');
 
                 let total = parseFloat(order.ordered_goods.reduce((sum, item) => sum + (item.pivot.qty * parseFloat(item.pivot.price_per_good)), 0)).toFixed(2);
                 let shippingCost = parseFloat(order.shipping_cost).toFixed(2);
@@ -128,6 +145,7 @@ $(document).ready(function() {
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Image</th>
                                         <th>Name</th>
                                         <th>Quantity</th>
                                         <th>Price</th>
@@ -143,8 +161,8 @@ $(document).ready(function() {
                             <p class="d-flex align-items-center justify-content-between "><strong>Discount:</strong> <span>- ₱${discountAmount}</span</p>
                             <hr>
                             <p class="d-flex align-items-center justify-content-between "><strong>Grand Total:</strong> <span>₱${grandTotal}</span</p>
-                            <p class="d-flex align-items-center justify-content-between "><strong>Paid Amount:</strong> <span>₱${order.payments.amount}</span</p>
-                            <p class="d-flex align-items-center justify-content-between "><strong>Mode of Payment:</strong> <span>₱${order.payments.mode}</span</p>
+                            <p class="d-flex align-items-center justify-content-between "><strong>Mode of Payment:</strong> <span>${order.payments[0].mode}</span</p>
+                            <p class="d-flex align-items-center justify-content-between "><strong>Paid Amount:</strong> <span>₱${order.payments[0].amount}</span</p>
                         </div>
                     </div>
                 `;
