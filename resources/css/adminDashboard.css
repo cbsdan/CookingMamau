@@ -128,7 +128,7 @@ body {
   padding: 30px;
   border-radius: 20px;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   cursor: pointer;
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
 }
@@ -246,9 +246,17 @@ body {
   font-size: 14px;
   font-weight: 500;
 }
-.status.return {
+.status.canceled {
   padding: 2px 4px;
   background: rgb(226, 100, 100);
+  color: var(--white);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.status.our-off-delivery {
+  padding: 2px 4px;
+  background: rgb(190, 100, 226);
   color: var(--white);
   border-radius: 4px;
   font-size: 14px;
@@ -266,14 +274,15 @@ body {
 .recentCustomers {
     position: relative;
     display: grid;
-    min-height: 250px;
     padding: 20px;
     background: var(--white);
     box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
     border-radius: 20px;
     overflow-y: auto; /* Make the container scrollable vertically */
 }
-
+.recentCustomers .cardHeader h2 {
+    margin-bottom: 17px;
+}
 .recentCustomers .imgBx {
   position: relative;
   width: 40px;

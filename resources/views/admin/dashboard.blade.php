@@ -3,42 +3,94 @@
 @section('content')
     <!-- ========================= Main ==================== -->
     <div class="main">
-
-
-
         <!-- ======================= Cards ================== -->
         <div class="cardBox grid grid-cols-3 gap-4 p-10">
-
-            <div class="card">
-                <div>
-                    <div class="numbers">80</div>
-                    <div class="cardName">Sales</div>
-                </div>
-
-                <div class="iconBx">
-                    <ion-icon name="cart-outline"></ion-icon>
-                </div>
-            </div>
-
-            <div class="card">
-                <div>
-                    <div class="numbers">{{ $userCount }}</div>
-                    <div class="cardName">User</div>
-                </div>
-
-                <div class="iconBx">
+            <div class="card" style='width: 350px; position: relative'>
+                <div class="iconBx" style="position: absolute; bottom: -10px; right: 15px" >
                     <ion-icon name="people-outline"></ion-icon>
                 </div>
+                <div><h4 class='text-center'>Users Count</h4></div>
+                <div class='d-flex align-items-center g-3'>
+                    <div class="left flex-1">
+                        <div class="userStats p-2">
+                            <div class="cardName">All Users</div>
+                            <div class="all-user-count numbers"></div>
+                        </div>
+                        <div class="userStats p-2">
+                            <div class="cardName">Active Users</div>
+                            <div class="active-user-count numbers"></div>
+                        </div>
+                    </div>
+                    <div class="right flex-1">
+                        <div class="userStats p-2">
+                            <div class="cardName">Deactivated</div>
+                            <div class="deactivated-user-count numbers"></div>
+                        </div>
+                        <div class="userStats p-2">
+                            <div class="cardName">Admins</div>
+                            <div class="admin-user-count numbers"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="card">
-                <div>
-                    <div class="numbers">PHP 7,842</div>
-                    <div class="cardName">Earning</div>
+            <div class="card" style='width: 350px; position: relative'>
+                <div class="iconBx" style="position: absolute; bottom: -10px; right: 15px" >
+                    <ion-icon name="cart-outline"></ion-icon>
                 </div>
+                <div><h4 class='text-center'>Sales Count</h4></div>
+                <div class='d-flex align-items-center g-3'>
+                    <div class="left flex-1">
+                        <div class="userStats p-2">
+                            <div class="cardName">All Sales</div>
+                            <div class="all-sales-count numbers"></div>
+                        </div>
+                        <div class="userStats p-2">
+                            <div class="cardName">Last Schedule</div>
+                            <div class="last-sched-date"></div>
+                            <div class="last-sched-sales-count numbers"></div>
+                        </div>
+                    </div>
+                    <div class="right flex-1">
+                        <div class="userStats p-2">
+                            <div class="cardName">This Week</div>
+                            <div class="this-week-sales-count numbers"></div>
+                        </div>
+                        <div class="userStats p-2">
+                            <div class="cardName">This Month</div>
+                            <div class="this-month-sales-count numbers"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <div class="iconBx">
+            <div class="card" style='width: 350px; position: relative'>
+                <div class="iconBx" style="position: absolute; bottom: -10px; right: 15px" >
                     <ion-icon name="fast-food-outline"></ion-icon>
+                </div>
+                <div><h4 class='text-center'>Earnings</h4></div>
+                <div class='d-flex align-items-center g-3'>
+                    <div class="left flex-1">
+                        <div class="userStats p-2">
+                            <div class="cardName">All Sales</div>
+                            <div class="all-sales-earnings numbers" style='font-size: 25px'></div>
+                        </div>
+                        <div class="userStats p-2">
+                            <div class="cardName">Last Schedule</div>
+                            <div class="last-sched-date"></div>
+                            <div class="last-sched-sales-earnings numbers" style='font-size: 25px'></div>
+                        </div>
+                    </div>
+                    <div class="right flex-1">
+                        <div class="userStats p-2">
+                            <div class="cardName">This Week</div>
+                            <div class="this-week-sales-earnings numbers" style='font-size: 25px'></div>
+                        </div>
+                        <div class="userStats p-2">
+                            <div class="cardName">This Month</div>
+                            <div class="this-month-sales-earnings numbers" style='font-size: 25px'></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,25 +121,20 @@
             <div class="recentOrders">
                 <div class="cardHeader">
                     <h2>Recent Orders</h2>
-                    <a href="#" class="btn">View All</a>
+                    <a href="{{route('orders')}}" class="btn">View All</a>
                 </div>
 
-                <table id="">
+                <table id="previousOrderTable">
                     <thead>
                         <tr>
-                            <td>Name</td>
-                            <td>Price</td>
-                            <td>Payment</td>
+                            <td>Baked Good/s</td>
+                            <td>Customer</td>
+                            <td>Payment (+shipping)</td>
                             <td>Status</td>
                         </tr>
                     </thead>
-                    <tr>
-                        <td>Banana Bread</td>
-                        <td>php 150</td>
-                        <td>Due</td>
-                        <td><span class="status inProgress">In Progress</span></td>
-                    </tr>
                     <tbody>
+                        <!--Content -->
                     </tbody>
                 </table>
             </div>
@@ -98,7 +145,7 @@
                     <h2>Recent Registered User</h2>
                 </div>
 
-                <table>
+                <table id="recentActiveUsersTable">
                     <thead>
                         <tr>
                             <th>Profile</th>
@@ -106,20 +153,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($users as $user)
-                            <tr>
-                                <td width="60px">
-                                    <a href="#" class='btn'>
-                                        <div class="imgBx">
-                                            <img src="{{ ($user->profile_image_path) ? $user->profile_image_path : 'uploaded_files/default-profile.png' }}" alt="">
-                                        </div>
-                                    </a>
-                                </td>
-                                <td>
-                                    <h4>{{ $user->buyer->fname }} {{ $user->buyer->lname }}<br><span>{{ $user->email }}</span></h4>
-                                </td>
-                            </tr>
-                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -131,10 +164,11 @@
     <!-- ====== ionicons ======= -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
 @endsection
 
 @section('head')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="module" src="{{ asset('js/dashboard.js') }}" defer></script>
+    <script src="{{ asset('js/dashboard.js') }}" defer></script>
     @vite(['resources/css/adminDashboard.css', 'resources/js/adminDashboard.js'])
 @endsection

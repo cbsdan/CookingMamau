@@ -52,7 +52,7 @@ Route::middleware(['admin'])->group(function () {
 Route::get('/user/index',[DatatableController::class, 'userIndex'])->name('user.index');
 
 Route::middleware(['admin'])->group(function () {
-    Route::get('/admin/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
+    Route::view('/admin/dashboard', 'admin.dashboard')->name('admin.dashboard');
 });
 
 Route::put('/api/baked_goods/images/{imageId}/set-thumbnail', [BakedGoodsController::class, 'setThumbnail']);

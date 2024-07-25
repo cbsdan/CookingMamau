@@ -85,3 +85,11 @@ Route::put('/users/{id}/update-status', [UserController::class, 'updateStatus'])
 
 //Meili Search
 Route::get('/search/bakedgoods', [SearchController::class, 'search']);
+
+//Dashboard
+Route::get('/dashboard/userInfo', [DashboardController::class, 'usersInfo']);
+Route::get('/dashboard/salesStats', [DashboardController::class, 'salesStats']);
+Route::get('/dashboard/salesEarnings', [DashboardController::class, 'salesEarnings']);
+Route::get('/dashboard/topBakedGoods', [DashboardController::class, 'topBakedGoods']);
+Route::get('/dashboard/latestSevenScheduleSales', [DashboardController::class, 'latestSevenScheduleSales']);
+Route::get('/dashboard/previousOrder', [DashboardController::class, 'previousOrder']);
