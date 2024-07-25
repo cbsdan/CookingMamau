@@ -130,6 +130,7 @@
                             <td>Baked Good/s</td>
                             <td>Customer</td>
                             <td>Payment (+shipping)</td>
+                            <td>Schedule</td>
                             <td>Status</td>
                         </tr>
                     </thead>

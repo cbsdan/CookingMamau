@@ -210,11 +210,22 @@ class UserController extends Controller
         } else {
             DB::beginTransaction();
             try {
+                // Handle profile image if provided
                 $profileImagePath = null;
                 if ($request->hasFile('image')) {
-                    $profileImagePath = $request->file('image')->store('uploaded_files', 'public');
+                    $file = $request->file('image');
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = time() . "." . $extension;
+
+                    $path = "uploaded_files/";
+                    $file->move(public_path($path), $filename);
+                    $profileImagePath = $path . $filename;
                 }
+
+                // Create the user with the profile image path
                 $user = $this->createUser($request, $profileImagePath);
+
+                // Create the buyer
                 $buyer = $this->createBuyer($request, $user->id);
                 DB::commit();
                 return response()->json([

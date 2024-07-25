@@ -241,7 +241,7 @@ class DashboardController extends Controller
     }
 
     public function previousOrder() {
-        $orders = Order::with(['orderedGoods', 'discount', 'buyer'])->get();
+        $orders = Order::with(['orderedGoods', 'discount', 'buyer', 'schedule'])->get();
 
         $previousOrders = [];
 
@@ -273,6 +273,7 @@ class DashboardController extends Controller
                 'productName' => $productName,
                 'customerName' => $order->buyer_name,
                 'price' => $price,
+                'schedule' => $order->schedule->schedule,
                 'orderStatus' => $order->order_status,
             ];
         }

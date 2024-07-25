@@ -247,7 +247,8 @@ $(document).ready(function() {
         dataType: "json",
         success: function (data) {
             console.log(data);
-            let orderColumn = `<tr><td colspan="4">No orders yet</td></tr>`;
+            data.reverse();
+            let orderColumn = `<tr ><td colspan="5" class='text-center'>No orders yet</td></tr>`;
 
             if (data.length > 0) {
                 orderColumn = data.map((order) => {
@@ -278,6 +279,7 @@ $(document).ready(function() {
                                 <td>${order.productName}</td>
                                 <td>${order.customerName}</td>
                                 <td>₱${order.price}</td>
+                                <td>${order.schedule}</td>
                                 <td><span class="${statusClass}">${order.orderStatus}</span></td>
                             </tr>`;
                 }).join('');
