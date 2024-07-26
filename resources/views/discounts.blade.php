@@ -14,7 +14,7 @@
         }
         .discount-code {
             color: rgb(34, 34, 34);
-            background: rgb(255, 243, 154);
+            background: rgb(255, 247, 185);
             font-weight: 600;
             padding: 5px;
         }
@@ -86,7 +86,7 @@
 
                         data.forEach(function(discount) {
                             var discountCard = `
-                                <div class="col-md-4 product-card">
+                                <div class="col-md-4 product-card no-border">
                                     <div class="card mb-4 view-discount" data-bs-toggle="modal" data-bs-target="#discountModal" data-discount='${JSON.stringify(discount)}'>
                                         <img src="${discount.image_path || 'uploaded_files/default-profile.png'}" class="card-img-top" alt="Discount Image" style="object-fit: cover; width: 100%; min-height: 300px; max-height: 300px">
                                         <div class="card-body" style="border-top: 1px solid grey;">
