@@ -77,9 +77,6 @@
     {{-- <script src="{{ asset('js/admin.js') }}"></script> --}}
     @yield('head')
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    {{-- @vite(['resources/css/adminDashboard.css', 'resources/js/adminDashboard.js']) --}}
-    {{-- @vite(['resources/css/adminNavPanel.css', 'resources/js/adminNavPanel.js']) --}}
-    @vite(['resources/css/adminProfile.css'])
 
     {{-- Slick Carousel Jquery --}}
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
