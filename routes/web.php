@@ -39,20 +39,12 @@ Route::middleware(['auth'])->group(function() {
     Route::put('/profile/password/update', [ProfileController::class, 'updatePassword'])->name('user.update.password');
 });
 
-//Admin Account
-Route::middleware(['admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
-    Route::put('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.update.profile');
-    Route::put('/admin/password/update', [AdminController::class, 'updatePassword'])->name('admin.update.password');
-});
-
-
 
 Route::get('/user/index',[DatatableController::class, 'userIndex'])->name('user.index');
 
 Route::middleware(['admin'])->group(function () {
     Route::view('/admin/dashboard', 'admin.dashboard')->name('admin.dashboard');
+    Route::view('/admin/profile', 'admin.profile')->name('admin.profile');
 });
 
 Route::put('/api/baked_goods/images/{imageId}/set-thumbnail', [BakedGoodsController::class, 'setThumbnail']);

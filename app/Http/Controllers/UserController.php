@@ -390,4 +390,16 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    public function getProfileImagePath(Request $request) {
+        $user = User::findOrFail($request->id);
+
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        $profileImagePath = $user->profile_image_path ?? 'uploaded_files/default-profile.png';
+
+        return response()->json(['profile_image_path' => asset($profileImagePath)]);
+    }
 }

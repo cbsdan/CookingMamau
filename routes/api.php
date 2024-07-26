@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\DiscountController;
@@ -82,6 +83,11 @@ Route::get('/check-discount', [DiscountController::class, 'checkDiscount'])->nam
 Route::apiResource('/users', UserController::class);
 Route::put('/users/{id}/update-role', [UserController::class, 'updateRole']);
 Route::put('/users/{id}/update-status', [UserController::class, 'updateStatus']);
+Route::get('/users/{id}/getProfileImagePath', [UserController::class, 'getProfileImagePath']);
+
+//Admin
+Route::post('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.update.profile');
+Route::post('/admin/password/update', [AdminController::class, 'updatePassword'])->name('admin.update.password');
 
 //Meili Search
 Route::get('/search/bakedgoods', [SearchController::class, 'search']);

@@ -37,7 +37,7 @@ class AdminController extends Controller
             $schedule = $carbonDate->format('Y-m-d');
 
             $revenueData[] = [
-                'schedule' => $schedule, 
+                'schedule' => $schedule,
                 'revenue' => $scheduleRevenue,
             ];
         }
@@ -50,11 +50,11 @@ class AdminController extends Controller
             ->select('id_baked_goods', DB::raw('sum(qty) as count'))
             ->groupBy('id_baked_goods')
             ->orderByDesc('count')
-            ->take(10) 
+            ->take(10)
             ->get();
         $topProducts = [];
         foreach ($productCounts as $productCount) {
-            $product = BakedGood::find($productCount->id_baked_goods); 
+            $product = BakedGood::find($productCount->id_baked_goods);
 
             if ($product) {
                 $topProducts[] = [
@@ -74,25 +74,25 @@ class AdminController extends Controller
     public function profile() {
         return view('admin.profile');
     }
-    
+
     public function updateProfile(Request $request)
-    {   
-        $user = User::find(auth()->id());
-        
+    {
+        $user = User::find($request->userId);
+
         // Validate the request data
         $request->validate([
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Validation rules for image
         ]);
-    
+
         // Check if the new email is unique
         if ($user->email !== $request->email) {
             $existingUser = User::where('email', $request->email)->first();
             if ($existingUser) {
-                return redirect()->back()->withErrors(['email' => 'The email has already been taken.'])->withInput();
+                return response()->json(['errors' => ['email' => 'The email has already been taken.']], 422);
             }
         }
-    
+
         // Update the user's email and profile_image_path if an image is uploaded
         $user->email = $request->email;
         if ($request->hasFile('image')) {
@@ -103,35 +103,29 @@ class AdminController extends Controller
             $user->profile_image_path = $path . $filename;
         }
         $user->save();
-    
-        // Redirect back with success message
-        return redirect()->back()->with('success', 'Email and profile image updated successfully.');
+
+        return response()->json(['success' => 'Email and profile image updated successfully.']);
     }
-    
 
     public function updatePassword(Request $request)
     {
-        $user = User::find(auth()->id());
-        
+        $user = User::find($request->userId);
+
         $request->validate([
             'old_password' => ['required', 'string'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
-    
+
         // Check if the old password matches the user's current password
         if (!Hash::check($request->old_password, $user->password)) {
-            return redirect()->back()->withErrors(['old_password' => 'The old password is incorrect.'])->withInput();
+            return response()->json(['errors' => ['old_password' => 'The old password is incorrect.']], 422);
         }
-    
-        // Check if the new password matches the confirmed password
-        if ($request->password !== $request->password_confirmation) {
-            return redirect()->back()->withErrors(['password_confirmation' => 'The new password and confirmation do not match.'])->withInput();
-        }
-    
+
         // Update the user's password
         $user->password = Hash::make($request->password);
         $user->save();
-    
-        return redirect()->back()->with('success', 'Password updated successfully.');
+
+        return response()->json(['success' => 'Password updated successfully.']);
     }
+
 }

@@ -38,7 +38,7 @@
                 <div class="iconBx" style="position: absolute; bottom: -10px; right: 15px" >
                     <ion-icon name="cart-outline"></ion-icon>
                 </div>
-                <div><h4 class='text-center'>Sales Count</h4></div>
+                <div><h4 class='text-center'>Sales Count <br><span style="font-size: 14px; color: darkgrey">(Delivered Orders)</span></h4></div>
                 <div class='d-flex align-items-center g-3'>
                     <div class="left flex-1">
                         <div class="userStats p-2">
@@ -92,6 +92,7 @@
                         </div>
                     </div>
                 </div>
+                <span class='mt-2' style="font-size: 14px; color: darkgrey; font-weight: 600">(Delivered Orders minus shipping fee and discount)</span>
             </div>
         </div>
 
