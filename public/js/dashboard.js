@@ -84,10 +84,10 @@ $(document).ready(function() {
     success: function (data) {
         console.log(data);
         if (data){
-            $('.all-sales-earnings').html(`₱${data.totalEarnings}`)
-            $('.last-sched-sales-earnings').html(`₱${data.lastScheduleEarnings}`)
-            $('.this-week-sales-earnings').html(`₱${data.thisWeekEarnings}`)
-            $('.this-month-sales-earnings').html(`₱${data.thisMonthEarnings}`)
+            $('.all-sales-earnings').html(`₱${data.totalEarnings.toFixed(2)}`)
+            $('.last-sched-sales-earnings').html(`₱${data.lastScheduleEarnings.toFixed(2)}`)
+            $('.this-week-sales-earnings').html(`₱${data.thisWeekEarnings.toFixed(2)}`)
+            $('.this-month-sales-earnings').html(`₱${data.thisMonthEarnings.toFixed(2)}`)
         }
     },
     error: function (error) {
