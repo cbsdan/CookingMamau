@@ -313,6 +313,14 @@ $(document).ready(function () {
         var index = $(this).data('index');
         var imageContainer = $(`#imageContainer${index}`);
 
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait a moment.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
+
         $.ajax({
             type: "DELETE",
             url: `/api/baked_goods/images/${imageId}`,
@@ -343,6 +351,14 @@ $(document).ready(function () {
 
     //Set the thumbnail image of the baked good
     $(document).on('click', '.setImageBtn', function () {
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait a moment.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
+
         var imageId = $(this).data('id');
         var index = $(this).data('index');
         var imageContainer = $(`#imageContainer${index}`);
@@ -389,6 +405,15 @@ $(document).ready(function () {
     // Update baked good
     $("#bakedGoodUpdate").on('click', function (e) {
         e.preventDefault();
+
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait a moment.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
+
         var id = $('#bakedGoodId').val();
         var table = $('#bakedGoodsTable').DataTable();
         var data = $('#bakedGoodForm')[0];
@@ -448,6 +473,14 @@ $(document).ready(function () {
             },
             callback: function (result) {
                 if (result) {
+                    Swal.fire({
+                        title: 'Loading...',
+                        text: 'Please wait a moment.',
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    })
+
                     $.ajax({
                         type: "DELETE",
                         url: `/api/baked_goods/${id}`,
@@ -580,6 +613,15 @@ $(document).ready(function () {
     // Submit new ingredient
     $("#ingredientSubmit").on('click', function (e) {
         e.preventDefault();
+
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait a moment.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
+
         var data = $('#ingredientForm')[0];
         let formData = new FormData(data);
         $.ajax({
@@ -628,6 +670,14 @@ $('#bakedGoodImportForm').on('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
 
     var formData = new FormData(this);
+
+    Swal.fire({
+        title: 'Loading...',
+        text: 'Please wait a moment.',
+        didOpen: () => {
+            Swal.showLoading()
+        }
+    })
 
     $.ajax({
         url: 'api/bakedgood/import', // API endpoint

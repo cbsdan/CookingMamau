@@ -72,7 +72,7 @@
                     render: function(data, type, row) {
                         var activatedSelected = data ? 'selected' : '';
                         var deactivatedSelected = !data ? 'selected' : '';
-                        return `<select class="status-select bg-warning" data-id="${row.id}" style="padding: 10px 20px; border-radius: 10px;">
+                        return `<select class="status-select bg-warning " data-id="${row.id}" style="padding: 10px 20px; border-radius: 10px;">
                                     <option value="1" ${activatedSelected}>Activated</option>
                                     <option value="0" ${deactivatedSelected}>Deactivated</option>
                                 </select>`;
