@@ -98,10 +98,10 @@
 
         <!-- Charts -->
 
-
+        <h3>Charts</h3>
         <div class="grid grid-cols-2 gap-10 p-10">
             <div class="chart-container">
-                <canvas id="pie"></canvas>
+                <canvas id="pie" style="display: block; box-sizing: border-box; height: 273px; width: 546px;"></canvas>
 
             </div>
             <div class="grid grid-rows-2 gap-4">

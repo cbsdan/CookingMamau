@@ -22,7 +22,7 @@
         <form id="bakedGoodImportForm" enctype="multipart/form-data" class='row g-3 mb-3'>
             @csrf
             <div class="col-9">
-                <input type="file" name="item_upload" class="form-control w-100" required/>
+                <input type="file" name="item_upload" class="form-control w-100 bg-c-warning " required/>
             </div>
             <div class="col-3">
                 <button type="submit" class="btn btn-primary w-100">Import Excel File</button>
@@ -30,7 +30,7 @@
         </form>
         <div class="modal fade" id="bakedGoodModal" tabindex="-1" aria-labelledby="bakedGoodModalLabel" aria-hidden="true">
             <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-content" >
                     <div class="modal-header">
                         <h5 class="modal-title" id="bakedGoodModalLabel">Baked Good</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -122,7 +122,7 @@
 
         <div id='bakedgoods' class='container'>
             <div class="table-responsive">
-                <table id="bakedGoodsTable" class="table table-striped table-hover w-100 main-table-bg-color">
+                <table id="bakedGoodsTable" class="table table-striped table-hover table-warning w-100 main-table-bg-color">
                     <thead>
                         <tr>
                             <th>ID</th>

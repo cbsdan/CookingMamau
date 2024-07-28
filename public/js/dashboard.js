@@ -16,27 +16,31 @@ $(document).ready(function() {
 
         data.activatedUsers.reverse();
 
-        // Generate table rows for activated users
-        let activatedUsersRows = '';
-        data.activatedUsers.forEach(user => {
-            activatedUsersRows += `
-                <tr>
-                    <td width="60px">
-                        <a href="#" class='btn'>
-                            <div class="imgBx">
-                                <img src="/${user.profile_image_path ? user.profile_image_path : 'uploaded_files/default-profile.png'}" alt="img">
-                            </div>
-                        </a>
-                    </td>
-                    <td>
-                        <h4>${user.buyer.fname} ${user.buyer.lname}<br><span>${user.email}</span></h4>
-                    </td>
-                </tr>
-            `;
-        });
+        $('#recentActiveUsersTable tbody').html(`<tr ><td colspan="2" class='text-center'>No Users yet</td></tr>`);
 
-        // Append rows to the table body
-        $('#recentActiveUsersTable tbody').html(activatedUsersRows);
+        // Generate table rows for activated users
+        if (data.activatedUsers.length > 0) {
+            let activatedUsersRows = '';
+            data.activatedUsers.forEach(user => {
+                activatedUsersRows += `
+                    <tr>
+                        <td width="60px">
+                            <a href="#" class='btn'>
+                                <div class="imgBx">
+                                    <img src="/${user.profile_image_path ? user.profile_image_path : 'uploaded_files/default-profile.png'}" alt="img">
+                                </div>
+                            </a>
+                        </td>
+                        <td>
+                            <h4>${user.buyer.fname} ${user.buyer.lname}<br><span>${user.email}</span></h4>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Append rows to the table body
+            $('#recentActiveUsersTable tbody').html(activatedUsersRows);
+        }
     },
     error: function (error) {
         console.log(error);

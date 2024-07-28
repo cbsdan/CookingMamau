@@ -9,7 +9,7 @@ $(document).ready(function() {
                 d.order_status = $('#orderStatusFilter').val(); // Add order_status to the request
             }
         },
-        dom: 'Bfrtip',
+        dom: 'lBfrtip',
         buttons: [
             'pdf',
         ],
@@ -38,7 +38,7 @@ $(document).ready(function() {
                 data: 'order_status',
                 render: function(data, type, row) {
                     return `
-                        <select class="form-control status-select" data-id="${row.id}">
+                        <select class="form-control status-select bg-warning" data-id="${row.id}">
                             <option value="Pending" ${data === 'Pending' ? 'selected' : ''}>Pending</option>
                             <option value="Canceled" ${data === 'Canceled' ? 'selected' : ''}>Canceled</option>
                             <option value="Preparing" ${data === 'Preparing' ? 'selected' : ''}>Preparing</option>
@@ -141,7 +141,7 @@ $(document).ready(function() {
                         <div class='w-100 p-2'>
                             <h5>Ordered Goods</h5>
                             <hr>
-                            <table class="table">
+                            <table class="table table-warning" >
                                 <thead>
                                     <tr>
                                         <th>ID</th>

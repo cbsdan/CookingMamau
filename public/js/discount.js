@@ -10,7 +10,7 @@ var table = $('#discountTable').DataTable({
         'excel',
         {
             text: 'Add Discount',
-            className: 'btn btn-primary',
+            className: 'btn btn-primary buttons-add',
             action: function (e, dt, node, config) {
                 $("#discountForm").trigger("reset");
                 $('#discountModal').modal('show');
@@ -40,7 +40,7 @@ var table = $('#discountTable').DataTable({
             data: null,
             render: function (data, type, row) {
                 return `
-                    <a href='#' class='editBtn' data-id=${data.discount_code}><i class='fas fa-edit' aria-hidden='true' style='font-size:24px'></i></a>
+                    <a href='#' class='editBtn' data-id=${data.discount_code}><i class='fas fa-edit' style='font-size:24px'></i></a>
                     <a href='#' class='deleteBtn' data-id=${data.discount_code}><i class='fas fa-trash-alt' style='font-size:24px; color:red'></i></a>
                 `;
             }
@@ -110,123 +110,122 @@ $.validator.addMethod("endDateAfterStartDate", function(value, element) {
     return new Date(endDate) >= new Date(startDate);
 }, "End date must be after the start date");
 
-// Validate the form
-$('#discountForm').validate({
-    rules: {
-        discount_code: {
-            required: true
+$(document).ready(function (){
+    // Validate the form
+    $('#discountForm').validate({
+        rules: {
+            discount_code: {
+                required: true
+            },
+            percent: {
+                required: true,
+                number: true,
+                min: 0,
+                max: 100
+            },
+            max_number_buyer: {
+                number: true,
+                min: 0
+            },
+            min_order_price: {
+                number: true,
+                min: 0
+            },
+            max_discount_amount: {
+                number: true,
+                min: 0
+            },
+            discount_start: {
+                required: true,
+                date: true
+            },
+            discount_end: {
+                required: true,
+                date: true,
+                endDateAfterStartDate: true // Apply the custom date comparison rule
+            },
+            image: {
+                validImage: true
+            }
         },
-        percent: {
-            required: true,
-            number: true,
-            min: 0,
-            max: 100
+        messages: {
+            discount_code: "Please enter a discount code",
+            percent: {
+                required: "Please enter the discount percent",
+                number: "Please enter a valid number",
+                min: "Percent must be at least 0",
+                max: "Percent cannot exceed 100"
+            },
+            max_number_buyer: {
+                number: "Please enter a valid number",
+                min: "Number of buyers cannot be negative"
+            },
+            min_order_price: {
+                number: "Please enter a valid number",
+                min: "Order price cannot be negative"
+            },
+            max_discount_amount: {
+                number: "Please enter a valid number",
+                min: "Discount amount cannot be negative"
+            },
+            discount_start: {
+                required: "Please enter the start date",
+                date: "Please enter a valid date"
+            },
+            discount_end: {
+                required: "Please enter the end date",
+                date: "Please enter a valid date",
+                endDateAfterStartDate: "End date must be after the start date" // Custom error message
+            },
+            image: "Please upload a valid image"
         },
-        max_number_buyer: {
-            number: true,
-            min: 0
+        errorElement: 'div',
+        errorClass: 'invalid-feedback',
+        highlight: function(element) {
+            $(element).addClass('is-invalid');
         },
-        min_order_price: {
-            number: true,
-            min: 0
+        unhighlight: function(element) {
+            $(element).removeClass('is-invalid');
         },
-        max_discount_amount: {
-            number: true,
-            min: 0
-        },
-        discount_start: {
-            required: true,
-            date: true
-        },
-        discount_end: {
-            required: true,
-            date: true,
-            endDateAfterStartDate: true // Apply the custom date comparison rule
-        },
-        image: {
-            validImage: true
+        submitHandler: function() {
+            var data = $('#discountForm')[0];
+            let formData = new FormData(data);
+            $.ajax({
+                type: "POST",
+                url: "/api/discounts",
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        timer: 2000,
+                        text: "Discount added successfully",
+                        confirmButtonText: 'OK'
+                    });
+                    $("#discountModal").modal("hide");
+                    var $discountTable = $('#discountTable').DataTable();
+                    $discountTable.ajax.reload();
+                },
+                error: function (error) {
+                    console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        timer: 2000,
+                        text: "Discount failed to add",
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
         }
-    },
-    messages: {
-        discount_code: "Please enter a discount code",
-        percent: {
-            required: "Please enter the discount percent",
-            number: "Please enter a valid number",
-            min: "Percent must be at least 0",
-            max: "Percent cannot exceed 100"
-        },
-        max_number_buyer: {
-            number: "Please enter a valid number",
-            min: "Number of buyers cannot be negative"
-        },
-        min_order_price: {
-            number: "Please enter a valid number",
-            min: "Order price cannot be negative"
-        },
-        max_discount_amount: {
-            number: "Please enter a valid number",
-            min: "Discount amount cannot be negative"
-        },
-        discount_start: {
-            required: "Please enter the start date",
-            date: "Please enter a valid date"
-        },
-        discount_end: {
-            required: "Please enter the end date",
-            date: "Please enter a valid date",
-            endDateAfterStartDate: "End date must be after the start date" // Custom error message
-        },
-        image: "Please upload a valid image"
-    },
-    errorElement: 'div',
-    errorClass: 'invalid-feedback',
-    highlight: function(element) {
-        $(element).addClass('is-invalid');
-    },
-    unhighlight: function(element) {
-        $(element).removeClass('is-invalid');
-    }
-});
 
-// Submit new discount
-$("#discountSubmit").on('click', function (e) {
-    e.preventDefault();
-    console.log('clicked');
-    var data = $('#discountForm')[0];
-    let formData = new FormData(data);
-    $.ajax({
-        type: "POST",
-        url: "/api/discounts",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        dataType: "json",
-        success: function (data) {
-            console.log(data);
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                timer: 2000,
-                text: "Discount added successfully",
-                confirmButtonText: 'OK'
-            });
-            $("#discountModal").modal("hide");
-            var $discountTable = $('#discountTable').DataTable();
-            $discountTable.ajax.reload();
-        },
-        error: function (error) {
-            console.log(error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                timer: 2000,
-                text: "Discount failed to add",
-                confirmButtonText: 'OK'
-            });
-        }
     });
-});
+})
 
 
 // Edit discount
@@ -409,3 +408,5 @@ $('#discountImportForm').on('submit', function(event) {
         }
     });
 });
+
+

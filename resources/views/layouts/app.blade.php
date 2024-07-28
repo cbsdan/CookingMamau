@@ -78,6 +78,7 @@
     @yield('head')
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
+    <link rel='stylesheet' href='{{ asset('css/app.css')}}'>
     {{-- Slick Carousel Jquery --}}
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
@@ -257,7 +258,7 @@
                 $grandTotal = 0;
                 $cartItemNumber = $cartItems->count();
             @endphp
-            <div id="cart-items-container" class="cart flex-column justify-content-between" style="display:none;">
+            <div id="cart-items-container" class="cart flex-column justify-content-between bg-c-warning" style="display:none;">
                 <div id="cartItems">
                     <h2>My Cart</h2>
                     @foreach ($cartItems as $cartItem)
@@ -329,7 +330,7 @@
                 </span>
             </button>
             <button id="close-btn" class="btn close-btn p-2 cart-toggle-visibility"
-                style="display: none; background:#ead660; margin-right:350px;">
+                style="display: none; background:#ead660; margin-right:400px;">
                 <img src='{{ asset('images/cart-icon.png') }}' alt="Cart"
                     style="width: 50px; height: 50px; border-radius: 50% !important;">
                 <span class='dot-label'>{{ $cartItemNumber }}</span>

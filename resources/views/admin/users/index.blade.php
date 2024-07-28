@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Users</h1>
     <hr>
-    <table id="usersTable" class="table table-striped table-hover w-100">
+    <table id="usersTable" class="table table-striped table-hover w-100 table-warning">
         <thead>
             <tr>
                 <th>ID</th>
@@ -30,6 +30,9 @@
                 dataSrc: 'users'
             },
             dom: 'Bfrtip',
+            buttons: [
+                'pdf',
+            ],
             columns: [
                 { data: 'id' },
                 { data: 'profile_image_path', render: function(data) {
@@ -57,7 +60,7 @@
                     render: function(data, type, row) {
                         var userSelected = data == 0 ? 'selected' : '';
                         var adminSelected = data == 1 ? 'selected' : '';
-                        return `<select class="role-select" data-id="${row.id}">
+                        return `<select class="role-select bg-warning" data-id="${row.id}" style="padding: 10px 20px; border-radius: 10px;">
                                     <option value="0" ${userSelected}>User</option>
                                     <option value="1" ${adminSelected}>Admin</option>
                                 </select>`;
@@ -69,7 +72,7 @@
                     render: function(data, type, row) {
                         var activatedSelected = data ? 'selected' : '';
                         var deactivatedSelected = !data ? 'selected' : '';
-                        return `<select class="status-select" data-id="${row.id}">
+                        return `<select class="status-select bg-warning" data-id="${row.id}" style="padding: 10px 20px; border-radius: 10px;">
                                     <option value="1" ${activatedSelected}>Activated</option>
                                     <option value="0" ${deactivatedSelected}>Deactivated</option>
                                 </select>`;

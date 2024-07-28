@@ -73,9 +73,9 @@
         </div>
 
         <div class='d-flex flex-column gap-2 flex-1 col-5'>
-            <div class='d-flex flex-column gap-2'>
+            <div class='d-flex flex-column gap-2 '>
                 <div id="checkoutItems" class='d-flex flex-column gap-1'>
-                    <h3 class='text-light p-2'>Ordered Baked Goods</h3>
+                    <h3 class='text-warning p-2'>Ordered Baked Goods</h3>
                 </div>
                 <h6 class='d-flex justify-content-between mb-0'>
                     <span>Total:</span>
@@ -132,7 +132,7 @@
                         const imagePath = thumbnailImage ? thumbnailImage.image_path : (firstImage ? firstImage.image_path : 'uploaded_files/default-profile.png');
 
                         $('#checkoutItems').append(`
-                            <div class='d-flex flex-row justify-content-between gap-2 align-items-center border-1 c-white p-2'>
+                            <div class='d-flex flex-row justify-content-between gap-2 align-items-center border-1 c-white p-2 bg-c-warning'>
                                 <img class=" flex-1" src="${imagePath}" alt="${item.baked_good.name}" style="width: 50px !important; height: auto;">
                                 <p class='m-0 flex-1'>${item.baked_good.name}</p>
                                 <div class=" flex-1">

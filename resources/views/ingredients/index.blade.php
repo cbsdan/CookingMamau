@@ -10,7 +10,7 @@
     <form id="ingredientImportForm" enctype="multipart/form-data" class='row g-3 mb-3'>
         @csrf
         <div class="col-9">
-            <input type="file" name="item_upload" class="form-control w-100" required/>
+            <input type="file" name="item_upload" class="form-control w-100 bg-c-warning " required/>
         </div>
         <div class="col-3">
             <button type="submit" class="btn btn-primary w-100">Import Excel File</button>
@@ -27,8 +27,8 @@
             <button type="submit" class="btn btn-info btn-primary ">Import Excel File</button>
 
         </form> --}}
-        <div class="table-responsive">
-            <table id="ingredientTable" class="table table-striped table-hover">
+        <div class="table-responsive" style="overflow-x: hidden;">
+            <table id="ingredientTable" class="table table-striped table-hover table-warning">
                 <thead>
                     <tr>
                         <th>Ingredients ID</th>

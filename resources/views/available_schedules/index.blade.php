@@ -9,8 +9,8 @@
     <hr>
     <!-- Display upcoming schedules -->
     <h2>Upcoming Schedules</h2>
-    <div class="table-responsive">
-        <table id="upcomingScheduleTable" class="table table-striped table-hover">
+    <div class="table-responsive" style="overflow-x: hidden;">
+        <table id="upcomingScheduleTable" class="table table-warning table-hover" >
             <thead>
                 <tr>
                     <th>ID</th>
@@ -26,8 +26,8 @@
     <hr>
     <!-- Display past schedules -->
     <h2>Past Schedules</h2>
-    <div class="table-responsive">
-        <table id="pastScheduleTable" class="table table-striped table-hover">
+    <div class="table-responsive" style="overflow-x: hidden;">
+        <table id="pastScheduleTable" class="table table-striped table-hover table-warning">
             <thead>
                 <tr>
                     <th>ID</th>

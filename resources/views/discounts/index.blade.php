@@ -7,13 +7,13 @@
     <form id="discountImportForm" enctype="multipart/form-data" class='row g-3 mb-3'>
         @csrf
         <div class="col-9">
-            <input type="file" name="item_upload" class="form-control w-100" required/>
+            <input type="file" name="item_upload" class="form-control w-100 bg-c-warning " required/>
         </div>
         <div class="col-3">
             <button type="submit" class="btn btn-primary w-100">Import Excel File</button>
         </div>
     </form>
-    <table class="table" id="discountTable">
+    <table class="table table-warning" id="discountTable">
         <thead>
             <tr>
                 <th>Discount Code</th>
@@ -35,17 +35,14 @@
     </table>
 
     <!-- Modal for Add/Edit Discount -->
-    <div class="modal fade" id="discountModal" tabindex="-1" role="dialog" aria-labelledby="discountModalLabel" aria-hidden="true">
+    <div class="modal fade" id="discountModal" tabindex="-1" role="dialog" aria-labelledby="discountModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="discountModalLabel">Discount</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
                 <div class="modal-body">
-                    <form id="discountForm" enctype="multipart/form-data">
+                    <form id="discountForm" enctype="multipart/form-data" novalidate="novalidate">
                         @csrf
                         <div class="form-group">
                             <label for="discount_code">Discount Code</label>

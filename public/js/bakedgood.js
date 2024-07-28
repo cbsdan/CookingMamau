@@ -13,8 +13,8 @@ $(document).ready(function () {
             'pdf',
             'excel',
             {
-                text: 'Add Baked Good',
-                className: 'btn btn-primary',
+                text: 'Add Product',
+                className: 'btn btn-primary buttons-add',
                 action: function (e, dt, node, config) {
                     $('#added-ingredient-container').html("");
                     $("#ingredientsList").html("");

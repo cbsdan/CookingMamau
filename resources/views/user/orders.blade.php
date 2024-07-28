@@ -315,7 +315,7 @@
                         <div class='w-100 p-2'>
                             <h5>Ordered Goods</h5>
                             <hr>
-                            <table class="table">
+                            <table class="table bg-c-warning" style="background-color: #FFF3CD !important">
                                 <thead>
                                     <tr>
                                         <th>ID</th>

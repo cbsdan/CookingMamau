@@ -17,8 +17,8 @@ $(document).ready(function () {
             'pdf',
             'excel',
             {
-                text: 'Add Available Schedule',
-                className: 'btn btn-primary add-sched-btn',
+                text: 'Add Schedule',
+                className: 'btn btn-primary add-sched-btn buttons-add',
                 action: function (e, dt, node, config) {
                     $("#scheduleForm").trigger("reset");
                     $('#scheduleModal').modal('show');
@@ -34,7 +34,7 @@ $(document).ready(function () {
                 data: null,
                 render: function (data, type, row) {
                     return `
-                        <button class='editBtn' data-id=${data.id}><i class='fas fa-edit' aria-hidden='true' style='font-size:24px'></i></button>
+                        <button class='editBtn btn-primary' data-id=${data.id}><i class='fas fa-edit' aria-hidden='true' style='font-size:24px'></i></button>
                         <button class='deleteBtn' data-id=${data.id}><i class='fas fa-trash-alt' style='font-size:24px; color:red'></i></button>
                     `;
                 }

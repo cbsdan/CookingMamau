@@ -1,3 +1,34 @@
-body {
-    margin-top: 0 !important;
+.modal-content {
+    background-color: #fae6f9;
 }
+
+.modal-header {
+    background-color: #d8bfd8; color: white; border-bottom: 1px solid #d8bfd8;
+}
+
+
+.modal-title {
+    font-family: cursive;
+    font-weight: bold;
+}
+
+.modal-footer {
+    background-color: #d8bfd8; border-top: 1px solid #d8bfd8;
+}
+
+.modal-content button {
+    background-color: rgb(221, 160, 221); border-color: rgb(221, 160, 221);
+}
+
+.buttons-pdf, .buttons-add {
+    border-radius: 20px; width: 150px; height: 40px; margin: 20px 5px 5px; background-color: rgb(218, 149, 218); display: flex; align-items: center; justify-content: center; padding: 10px 20px; font-size: 15px; cursor: pointer;
+}
+
+.bg-c-warning {
+    background-color: #FFF3CD !important;
+}
+
+.table-bg-main {
+    background-color: #d8bfd8 !important;
+}
+

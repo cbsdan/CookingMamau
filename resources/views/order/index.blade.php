@@ -14,7 +14,7 @@
     <hr>
     <div class="mb-3">
         <label for="orderStatusFilter">Filter by Order Status:</label>
-        <select id="orderStatusFilter" class="form-control">
+        <select id="orderStatusFilter" class="form-control" style="background-color: #FFF3CD">
             <option value="">All</option>
             <option value="Pending">Pending</option>
             <option value="Canceled">Canceled</option>
@@ -24,7 +24,7 @@
         </select>
 
     </div>
-    <table id="orders-table" class="table table-striped table-bordered">
+    <table id="orders-table" class="table table-striped table-bordered table-warning table-hover">
         <thead>
             <tr>
                 <th>ID</th>
