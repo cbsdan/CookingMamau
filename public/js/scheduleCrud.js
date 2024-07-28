@@ -96,6 +96,15 @@ $(document).ready(function () {
     // Submit new schedule
     $("#scheduleSubmit").on('click', function (e) {
         e.preventDefault();
+
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait a moment.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
+
         var data = $('#scheduleForm')[0];
         let formData = new FormData(data);
         $.ajax({
@@ -164,6 +173,15 @@ $(document).ready(function () {
     // Update ingredient
     $("#scheduleUpdate").on('click', function (e) {
         e.preventDefault();
+
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait a moment.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
+
         var id = $('#scheduleId').val();
         var table = $('#upcomingScheduleTable').DataTable();
         var data = $('#scheduleForm')[0];
@@ -207,6 +225,7 @@ $(document).ready(function () {
     // Delete Upcoming Schedule
     $('#upcomingScheduleBody').on('click', 'button.deleteBtn', function (e) {
         e.preventDefault();
+
         var table = $('#upcomingScheduleTable').DataTable();
         var id = $(this).data('id');
         var $row = $(this).closest('tr');
@@ -224,6 +243,14 @@ $(document).ready(function () {
             },
             callback: function (result) {
                 if (result) {
+                    Swal.fire({
+                        title: 'Loading...',
+                        text: 'Please wait a moment.',
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    })
+
                     $.ajax({
                         type: "DELETE",
                         url: `/api/available_schedules/${id}`,

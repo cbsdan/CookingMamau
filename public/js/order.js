@@ -238,6 +238,14 @@ $(document).ready(function() {
             },
             callback: function (result) {
                 if (result) {
+                    Swal.fire({
+                        title: 'Loading...',
+                        text: 'Please wait a moment.',
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    })
+
                     $.ajax({
                         url: `api/order/${orderId}`,
                         type: 'DELETE',

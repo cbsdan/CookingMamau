@@ -132,6 +132,14 @@ $(document).ready(function () {
             $(element).removeClass('is-invalid');
         },
         submitHandler: function(form) {
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait a moment.',
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+
             var formData = new FormData(form);
             $.ajax({
                 type: "POST",
@@ -206,6 +214,15 @@ $(document).ready(function () {
     // Update ingredient
     $("#ingredientUpdate").on('click', function (e) {
         e.preventDefault();
+
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait a moment.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
+
         var id = $('#ingredientId').val();
         var data = $('#ingredientForm')[0];
         let formData = new FormData(data);
@@ -247,6 +264,7 @@ $(document).ready(function () {
     // Delete ingredient
     $('#ingredientTable tbody').on('click', 'a.deleteBtn', function (e) {
         e.preventDefault();
+
         var id = $(this).data('id');
         var $row = $(this).closest('tr');
         bootbox.confirm({
@@ -263,6 +281,14 @@ $(document).ready(function () {
             },
             callback: function (result) {
                 if (result) {
+                    Swal.fire({
+                        title: 'Loading...',
+                        text: 'Please wait a moment.',
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    })
+
                     $.ajax({
                         type: "DELETE",
                         url: `/api/ingredients/${id}`,
@@ -299,6 +325,14 @@ $(document).ready(function () {
     //Excel Import
     $('#ingredientImportForm').on('submit', function(event) {
         event.preventDefault(); // Prevent the default form submission
+
+        Swal.fire({
+            title: 'Loading...',
+            text: 'Please wait a moment.',
+            didOpen: () => {
+                Swal.showLoading()
+            }
+        })
 
         var formData = new FormData(this);
 

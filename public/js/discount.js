@@ -188,6 +188,14 @@ $(document).ready(function (){
             $(element).removeClass('is-invalid');
         },
         submitHandler: function() {
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait a moment.',
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            })
+
             var data = $('#discountForm')[0];
             let formData = new FormData(data);
             $.ajax({
@@ -275,6 +283,15 @@ $('#discountTable tbody').on('click', 'a.editBtn', function (e) {
 // Update discount
 $("#discountUpdate").on('click', function (e) {
     e.preventDefault();
+
+    Swal.fire({
+        title: 'Loading...',
+        text: 'Please wait a moment.',
+        didOpen: () => {
+            Swal.showLoading()
+        }
+    })
+
     var id = $('#discountId').val();
     var form = $('#discountForm')[0];
     var formData = new FormData(form);
@@ -337,6 +354,14 @@ $('#discountTable tbody').on('click', 'a.deleteBtn', function (e) {
         },
         callback: function (result) {
             if (result) {
+                Swal.fire({
+                    title: 'Loading...',
+                    text: 'Please wait a moment.',
+                    didOpen: () => {
+                        Swal.showLoading()
+                    }
+                })
+
                 $.ajax({
                     type: "DELETE",
                     url: `/api/discounts/${id}`,
@@ -373,6 +398,14 @@ $('#discountTable tbody').on('click', 'a.deleteBtn', function (e) {
 
 $('#discountImportForm').on('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
+
+    Swal.fire({
+        title: 'Loading...',
+        text: 'Please wait a moment.',
+        didOpen: () => {
+            Swal.showLoading()
+        }
+    })
 
     var formData = new FormData(this);
 

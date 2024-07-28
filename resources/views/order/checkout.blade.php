@@ -267,6 +267,14 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
+                    Swal.fire({
+                        title: 'Loading...',
+                        text: 'Please wait a moment.',
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    })
+
                     let bakedGoodQtys = $("input[name='bakedGoodQtys[]']").map(function() {
                         return parseInt($(this).val(), 10);
                     }).get();
@@ -317,9 +325,6 @@
                     });
                 }
             });
-
-
-
 
         });
     </script>
