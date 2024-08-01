@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\BakedGood;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
@@ -29,7 +30,7 @@ Route::view('/', 'welcome')->name('welcome');
 
 Route::get('/home', function() {
     return view('home');
-})->name('home')->middleware(['auth']);
+})->name('home')->middleware(['auth:sanctum']);
 
 
 //User Acount
@@ -64,6 +65,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::view('/checkout', 'order.checkout')->name('checkout_page');
     Route::view('/my-orders', 'user.orders')->name('my-orders');
+});
+
+Route::post('/save-token', function (Request $request) {
+    $request->session()->put('token', $request->token);
+    return response()->json(['message' => 'Token saved to session']);
+});
+
+Route::get('/get-token', function (Request $request) {
+    return response()->json(['token' => $request->session()->get('token')]);
 });
 
 

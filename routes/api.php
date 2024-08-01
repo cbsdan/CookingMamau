@@ -43,12 +43,29 @@ Route::post('/login', [UserController::class, 'loginUser'])->name('auth.login');
 Route::middleware('auth:sanctum')->get('/profile', [UserController::class, 'profile']);
 Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logout']);
 
-//Api Crud
-Route::apiResource('ingredients', IngredientController::class);
-Route::apiResource('discounts', DiscountController::class);
-Route::apiResource('available_schedules', AvailableScheduleController::class);
-Route::apiResource('baked_goods', BakedGoodsController::class);
-Route::apiResource('/order', OrderController::class);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResource('ingredients', IngredientController::class);
+    Route::apiResource('discounts', DiscountController::class);
+    Route::apiResource('baked_goods', BakedGoodsController::class);
+    Route::apiResource('/order', OrderController::class);
+    Route::apiResource('available_schedules', AvailableScheduleController::class);
+
+    Route::middleware(['auth.admin'])->group(function () {
+        Route::get('/dashboard/userInfo', [DashboardController::class, 'usersInfo']);
+        Route::get('/dashboard/salesStats', [DashboardController::class, 'salesStats']);
+        Route::get('/dashboard/salesEarnings', [DashboardController::class, 'salesEarnings']);
+        Route::get('/dashboard/topBakedGoods', [DashboardController::class, 'topBakedGoods']);
+        Route::get('/dashboard/latestSevenScheduleSales', [DashboardController::class, 'latestSevenScheduleSales']);
+        Route::get('/dashboard/previousOrder', [DashboardController::class, 'previousOrder']);
+    });
+});
+
+
+// Route::apiResource('ingredients', IngredientController::class);
+// Route::apiResource('discounts', DiscountController::class);
+// Route::apiResource('available_schedules', AvailableScheduleController::class);
+// Route::apiResource('baked_goods', BakedGoodsController::class);
+// Route::apiResource('/order', OrderController::class);
 
 //Order Other route
 Route::get('order/{id}/user', [OrderController::class, 'userOrder']);
@@ -93,9 +110,9 @@ Route::post('/admin/password/update', [AdminController::class, 'updatePassword']
 Route::get('/search/bakedgoods', [SearchController::class, 'search']);
 
 //Dashboard
-Route::get('/dashboard/userInfo', [DashboardController::class, 'usersInfo']);
-Route::get('/dashboard/salesStats', [DashboardController::class, 'salesStats']);
-Route::get('/dashboard/salesEarnings', [DashboardController::class, 'salesEarnings']);
-Route::get('/dashboard/topBakedGoods', [DashboardController::class, 'topBakedGoods']);
-Route::get('/dashboard/latestSevenScheduleSales', [DashboardController::class, 'latestSevenScheduleSales']);
-Route::get('/dashboard/previousOrder', [DashboardController::class, 'previousOrder']);
+// Route::get('/dashboard/userInfo', [DashboardController::class, 'usersInfo']);
+// Route::get('/dashboard/salesStats', [DashboardController::class, 'salesStats']);
+// Route::get('/dashboard/salesEarnings', [DashboardController::class, 'salesEarnings']);
+// Route::get('/dashboard/topBakedGoods', [DashboardController::class, 'topBakedGoods']);
+// Route::get('/dashboard/latestSevenScheduleSales', [DashboardController::class, 'latestSevenScheduleSales']);
+// Route::get('/dashboard/previousOrder', [DashboardController::class, 'previousOrder']);
