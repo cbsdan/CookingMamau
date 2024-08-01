@@ -43,12 +43,12 @@ Route::post('/login', [UserController::class, 'loginUser'])->name('auth.login');
 Route::middleware('auth:sanctum')->get('/profile', [UserController::class, 'profile']);
 Route::middleware('auth:sanctum')->post('/logout', [UserController::class, 'logout']);
 
+Route::apiResource('/order', OrderController::class);
+Route::apiResource('available_schedules', AvailableScheduleController::class);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('ingredients', IngredientController::class);
     Route::apiResource('discounts', DiscountController::class);
     Route::apiResource('baked_goods', BakedGoodsController::class);
-    Route::apiResource('/order', OrderController::class);
-    Route::apiResource('available_schedules', AvailableScheduleController::class);
 
     Route::middleware(['auth.admin'])->group(function () {
         Route::get('/dashboard/userInfo', [DashboardController::class, 'usersInfo']);
