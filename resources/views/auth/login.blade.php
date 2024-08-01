@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <div id="login_alert"></div>
-                <form action="{{ route('login') }}" method="POST" id="login_form">
+                <form method="POST" id="login_form">
                     @csrf
                     <div class="mb-3">
                         <input type="email" name="email" id="email" class="form-control rounded-pill" placeholder="Enter Email or Username">
@@ -25,7 +25,7 @@
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="mb-3 d-grid">
-                        <button type="submit" class="btn btn-primary rounded-pill">Log in</button>
+                        <button type="submit" id="loginSubmitBtn" class="btn btn-primary rounded-pill">Log in</button>
                     </div>
                     <div class="text-center">
                         <div class="text-secondary">OR</div>
@@ -42,39 +42,98 @@
 </div>
 <script>
 $(document).ready(function() {
-    $("#login_form").validate({
-        rules: {
-            email: {
-                required: true,
-                email: true
-            },
-            password: {
-                required: true,
-                minlength: 6
-            }
-        },
-        messages: {
-            email: {
-                required: "Please enter your email address",
-                email: "Please enter a valid email address"
-            },
-            password: {
-                required: "Please enter your password",
-                minlength: "Your password must be at least 6 characters long"
-            }
-        },
-        errorElement: 'div',
-        errorPlacement: function(error, element) {
-            error.addClass('invalid-feedback');
-            element.closest('.mb-3').append(error);
-        },
-        highlight: function(element, errorClass, validClass) {
-            $(element).addClass('is-invalid').removeClass('is-valid');
-        },
-        unhighlight: function(element, errorClass, validClass) {
-            $(element).removeClass('is-invalid').addClass('is-valid');
-        }
-    });
+    console.log('1ST')
+    localStorage.setItem('sample', '12345678');
+
+    // $("#login_form").validate({
+    //     rules: {
+    //         email: {
+    //             required: true,
+    //             email: true
+    //         },
+    //         password: {
+    //             required: true,
+    //             minlength: 6
+    //         }
+    //     },
+    //     messages: {
+    //         email: {
+    //             required: "Please enter your email address",
+    //             email: "Please enter a valid email address"
+    //         },
+    //         password: {
+    //             required: "Please enter your password",
+    //             minlength: "Your password must be at least 6 characters long"
+    //         }
+    //     },
+    //     errorElement: 'div',
+    //     errorPlacement: function(error, element) {
+    //         error.addClass('invalid-feedback');
+    //         element.closest('.mb-3').append(error);
+    //     },
+    //     highlight: function(element, errorClass, validClass) {
+    //         $(element).addClass('is-invalid').removeClass('is-valid');
+    //     },
+    //     unhighlight: function(element, errorClass, validClass) {
+    //         $(element).removeClass('is-invalid').addClass('is-valid');
+    //     },
+    // });
+    $('#loginSubmitBtn').on('click', function(e){
+        e.preventDefault();
+        let form = $('#login_form')[0];
+        let formData = new FormData(form);
+
+        $.ajax({
+                url: '/api/login',
+                method: 'POST',
+                data: formData,
+                processData: false, // Prevent jQuery from automatically transforming the data into a query string
+                contentType: false,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                success: function (response) {
+                    console.log(response);
+                    localStorage.setItem('token', response.token);
+                    let user = response.user;
+
+                    $.ajax({
+
+                    url: '{{ route('login') }}',
+                    method: 'POST',
+                    data: formData,
+                    processData: false, // Prevent jQuery from automatically transforming the data into a query string
+                    contentType: false,
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function (response) {
+                        console.log(response);
+                        if (user.is_admin) {
+                            window.location.href = '/admin/dashboard';
+                        } else {
+                            window.location.href = '/home';
+                        }
+                    },
+                    error: function (response) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.responseJSON.message, // Update to show the error message from the response
+                            timer: 2000,
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+                },
+                error: function (response) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response,
+                        timer: 2000,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+
+    })
 });
 </script>
 @endsection
