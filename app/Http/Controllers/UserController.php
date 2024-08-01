@@ -289,9 +289,11 @@ class UserController extends Controller
                 ], 401);
             }
 
+            $user = Auth::user();
             $user = User::where('email', $request->email)->first();
 
             return response()->json([
+                'user' => $user,
                 'status' => true,
                 'message' => 'User Logged In Successfully',
                 'token' => $user->createToken("API TOKEN")->plainTextToken,
